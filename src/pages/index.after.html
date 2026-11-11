@@ -1,0 +1,98 @@
+<!-- KARTA DOMU (drawer) -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" tabindex="-1">
+  <div class="drawer__head"><span class="eyebrow" style="margin:0">Karta domu</span><button class="drawer__close" id="dr-close" aria-label="Zavřít kartu domu"><svg><use href="#i-close"/></svg></button></div>
+  <div class="drawer__body" id="dr-body"></div>
+  <div class="drawer__actions">
+    <button class="btn btn--ghost" id="dr-pdf" type="button" style="justify-content:center"><svg style="width:16px;height:16px"><use href="#i-pdf"/></svg>&nbsp;Karta domu (PDF)</button>
+    <button class="btn" id="dr-interest" type="button">Mám zájem <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+  </div>
+</aside>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Galerie">
+  <div class="lb__bar"><span class="lb__cap" id="lb-cap"></span><button class="lb__btn" id="lb-close" aria-label="Zavřít galerii"><svg><use href="#i-close"/></svg></button></div>
+  <div class="lb__stage" id="lb-stage"><img id="lb-img" alt=""></div>
+  <div class="lb__nav"><button class="lb__btn" id="lb-prev" aria-label="Předchozí"><svg><use href="#i-left"/></svg></button><span class="tnum" id="lb-count" style="align-self:center;min-width:56px;text-align:center"></span><button class="lb__btn" id="lb-next" aria-label="Další"><svg><use href="#i-right"/></svg></button></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- DESIGN SYSTÉM (#komponenty) -->
+<section class="ds" id="ds" aria-labelledby="ds-h">
+  <div class="wrap">
+    <a class="link ds__back" href="#top">← Zpět na web</a>
+    <div style="display:grid;gap:16px;margin-bottom:56px"><span class="eyebrow">Návrh pro HP DOMY</span><h1 class="h1" id="ds-h" style="font-size:clamp(28px,4vw,52px)">Design systém webu Blatec</h1><p class="lead">Všechny stavy prvků ze zadání na jednom místě. Barvy mimo černou a bílou jsou pracovní návrh.</p></div>
+    <div class="ds__grid">
+      <div class="ds__sec"><h3>Logo projektu · pozitiv a negativ</h3>
+        <div class="ds__cols ds__cols--2">
+          <div class="ds__logo" style="background:#fff;border:1px solid var(--stone-100)"><span class="logo logo--lg"><span class="logo__name">Blatec</span><span class="logo__sig">HP DOMY DEVELOPMENT</span></span></div>
+          <div class="ds__logo" style="background:#161616;color:#fff"><span class="logo logo--lg"><span class="logo__name">Blatec</span><span class="logo__sig">HP DOMY DEVELOPMENT</span></span></div>
+        </div>
+        <small style="color:var(--muted)">Název projektu: Encode Sans Expanded Light (pracovně), podpis: Michroma. Minimální šířka 200 px. Finální název čeká na výběr, systém se nemění.</small>
+      </div>
+      <div class="ds__sec"><h3>Favicon a náhled pro sdílení 1200 × 630</h3>
+        <div class="ds__cols" style="grid-template-columns:minmax(0,180px) minmax(0,1fr);align-items:start">
+          <div class="ds__tile" style="justify-items:center"><svg viewBox="0 0 64 64" width="72" height="72"><rect width="64" height="64" rx="14" fill="#161616"/><path d="M14 46V30h20v16zM26 30V18h24v28H34" fill="none" stroke="#fff" stroke-width="3.2"/></svg><small>Favicon 64 × 64</small></div>
+          <div class="og"><img src="img/hero-1200.webp" alt="" loading="lazy"><div class="og__in"><span class="logo"><span class="logo__name">Blatec</span><span class="logo__sig">HP DOMY DEVELOPMENT</span></span><p>14 rodinných domů 8 km od Olomouce</p></div></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Barvy</h3>
+        <div class="ds__cols ds__cols--4">
+          <div class="ds__tile"><div class="swatch" style="background:#161616"></div><b>Černá #161616</b><small>Brand, pevné</small></div>
+          <div class="ds__tile"><div class="swatch" style="background:#fff"></div><b>Bílá #FFFFFF</b><small>Brand, pevné</small></div>
+          <div class="ds__tile"><div class="swatch" style="background:#7a5a3a"></div><b>Ořech #7A5A3A</b><small>Akcent, návrh</small></div>
+          <div class="ds__tile"><div class="swatch" style="background:#f6f5f2"></div><b>Kámen #F6F5F2</b><small>Neutrál, návrh</small></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Typografie</h3>
+        <div class="ds__cols ds__cols--2">
+          <div class="ds__tile"><small>Michroma · nadpisy</small><span class="h2">Nový domov na Hané</span><span class="h3">Příliš žluťoučký kůň úpěl ďábelské ódy</span></div>
+          <div class="ds__tile"><small>Inter · text 400/500/600</small><p class="lead" style="color:var(--ink)">Čtrnáct rodinných domů v klidné obci Blatec.</p><p style="color:var(--stone-600)">Příliš žluťoučký kůň úpěl ďábelské ódy. Užitná plocha 142,6 m², pozemek 612 m².</p></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Tlačítka · stavy</h3>
+        <div class="ds__cols ds__cols--4">
+          <div><span class="state-lbl">Výchozí</span><span class="btn">Vybrat dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></span></div>
+          <div><span class="state-lbl">Najetí myší</span><span class="btn is-hover" style="--bg:#000">Vybrat dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></span></div>
+          <div><span class="state-lbl">Fokus z klávesnice</span><span class="btn is-focus">Vybrat dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></span></div>
+          <div><span class="state-lbl">Odesílání</span><span class="btn is-loading">Odesíláme <span class="ic"><svg><use href="#i-loader"/></svg></span></span></div>
+          <div><span class="state-lbl">Neaktivní</span><span class="btn" aria-disabled="true">Vybrat dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></span></div>
+          <div><span class="state-lbl">Sekundární</span><span class="btn btn--ghost">Kontaktovat prodejce</span></div>
+          <div style="background:var(--ink);padding:14px;border-radius:12px"><span class="state-lbl" style="color:#aaa">Na fotografii</span><span class="btn btn--light">Vybrat dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></span></div>
+          <div><span class="state-lbl">Filtr · vybraný / nevybraný</span><span class="ds__row"><span class="chip" aria-pressed="true">Volné <span class="cnt">9</span></span><span class="chip">Patrové <span class="cnt">8</span></span></span></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Stavy domů</h3>
+        <div class="ds__row"><span class="badge badge--volny">volný</span><span class="badge badge--rezervace">rezervace</span><span class="badge badge--prodany">prodaný</span></div>
+        <div class="tbl-wrap"><table class="houses" style="min-width:640px"><thead><tr><th>Řádek tabulky</th><th>Dům</th><th>Typ</th><th class="num">Cena</th><th>Stav</th></tr></thead><tbody>
+          <tr><td>Výchozí</td><td class="house-no">4</td><td>Přízemní</td><td class="num price">8 790 000 Kč</td><td><span class="badge badge--volny">volný</span></td></tr>
+          <tr class="is-hover"><td>Najetí / zvýraznění ze situace</td><td class="house-no">6</td><td>Patrový</td><td class="num price ask">Na dotaz</td><td><span class="badge badge--volny">volný</span></td></tr>
+          <tr class="is-active"><td>Vybraný dům</td><td class="house-no">3</td><td>Přízemní</td><td class="num price">8 990 000 Kč</td><td><span class="badge badge--rezervace">rezervace</span></td></tr>
+          <tr class="is-sold"><td>Prodaný</td><td class="house-no">5</td><td>Patrový</td><td class="num price">9 390 000 Kč</td><td class="st"><span class="badge badge--prodany">prodaný</span></td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="ds__sec"><h3>Formulář · stavy polí</h3>
+        <div class="ds__cols ds__cols--4">
+          <div class="field"><label>Výchozí</label><input class="input" value="" placeholder="+420 " tabindex="-1"></div>
+          <div class="field"><label>Fokus</label><input class="input is-focus" value="Jana Nováková" tabindex="-1"></div>
+          <div class="field has-error"><label>Chyba</label><input class="input" value="jana@" tabindex="-1"><span class="err"><svg><use href="#i-alert"/></svg>Zadejte e-mail ve tvaru jmeno@domena.cz.</span></div>
+          <div class="field"><label>Neaktivní</label><input class="input" value="Dům 5 · prodaný" disabled></div>
+        </div>
+        <div class="ds__cols ds__cols--2">
+          <div class="form__alert is-on" style="display:flex"><svg><use href="#i-alert"/></svg><span>Zkontrolujte prosím označená pole.</span></div>
+          <div class="ds__tile" style="grid-template-columns:auto 1fr;align-items:center"><div class="form__done" style="position:static;opacity:1;visibility:visible;padding:0;display:contents"><div class="ok" style="width:44px;height:44px"><svg style="width:20px;height:20px"><use href="#i-check"/></svg></div></div><div><b>Odesláno</b><br><small>Děkujeme, poptávka je odeslaná.</small></div></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Menu · mobil zavřené a otevřené</h3>
+        <div class="ds__row" style="align-items:flex-start">
+          <div class="phone" style="background:#cfd8e1"><img src="img/hero-800.webp" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:65% 60%"><div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:18px;color:#fff"><span class="logo"><span class="logo__name" style="font-size:16px">Blatec</span><span class="logo__sig" style="font-size:6px">HP DOMY DEVELOPMENT</span></span><span class="burger" style="display:grid"><span></span></span></div></div>
+          <div class="phone"><div class="menu is-open" style="position:absolute"><ol><li><a><small>01</small>O projektu</a></li><li><a><small>02</small>Lokalita</a></li><li><a><small>03</small>Nabídka domů</a></li><li><a><small>04</small>Standardy</a></li><li><a><small>05</small>Galerie</a></li><li><a><small>06</small>Kontakt</a></li></ol></div></div>
+        </div>
+      </div>
+      <div class="ds__sec"><h3>Ikony vybavenosti a standardů · jednotný styl, mřížka 32 px, tah 1,6</h3>
+        <div class="icons" id="ds-icons"></div>
+      </div>
+    </div>
+  </div>
+</section>

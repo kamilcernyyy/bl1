@@ -1,47 +1,54 @@
 # Blatec · web projektu HP DOMY
 
-Návrh jednostránkového prodejního webu pro 14 rodinných domů v Blatci u Olomouce
-(pracovní název projektu). Statický web bez buildu: `index.html` + složka `img/`.
+Prodejní web pro 14 rodinných domů v Blatci u Olomouce (pracovní název projektu).
+Statický web bez frameworku, připravený k nasazení na libovolný hosting.
 
-## Spuštění
+## Stránky
 
-Stačí otevřít `index.html`, nebo spustit libovolný statický server:
+| Soubor | Obsah |
+| --- | --- |
+| `index.html` | One-pager se všemi sekcemi (úvod, o projektu, lokalita, nabídka, standardy, galerie, kontakt) |
+| `o-projektu.html` | Typy domů vedle sebe, co je v ceně, harmonogram, developer a jeho projekty |
+| `lokalita.html` | Dojezdové časy (auto / vlak / kolo), mapa, ověřená vybavenost obce |
+| `nabidka.html` | Situace propojená s tabulkou, filtry, porovnání až 3 domů, rychlý náhled |
+| `dum-1.html` … `dum-14.html` | Detail domu: fotky, parametry, půdorys s místnostmi, orientace zahrady, kalkulačka splátky, podobné domy |
+| `standardy.html` | Standardy po oblastech s označením V ceně / Příprava / Za příplatek, klientské změny |
+| `galerie.html` | Galerie s filtry a lightboxem, průběh výstavby |
+| `kontakt.html` | Formulář s typem dotazu a předvyplněním domu (`kontakt.html#dum-4`), postup koupě, FAQ |
+
+Design systém návrhu je na `index.html#komponenty`.
+
+Filtry nabídky jdou otevřít odkazem: `nabidka.html#volne`, `#patrove`, `#prizemni`.
+
+## Úpravy
+
+Stránky se generují z `src/` – needitujte HTML v kořeni ručně.
 
 ```bash
-npx serve .
+python3 src/build.py            # vygeneruje web do kořene repozitáře
+python3 src/build.py artifact   # samostatný náhled do _artifact/
 ```
 
-## Struktura stránky
-
-1. Úvod – vizualizace přes celou šířku, logo, claim, podpis HP DOMY DEVELOPMENT
-2. O projektu – text, pruh klíčových čísel, dva typy domů
-3. Lokalita – text, schematická mapa, vzdálenosti, ověřené služby, odkaz na web obce
-4. Nabídka domů – situace 14 domů propojená s tabulkou (desktop) a kartami (mobil), filtry, karta domu
-5. Standardy – akordeon s ikonami, tlačítko na PDF
-6. Galerie – mřížka + lightbox (klávesnice, swipe)
-7. Kontakt – formulář s výběrem domu, validací, stavem odesílání a potvrzením
-8. Patička – firemní údaje HP DOMY, další projekty, ochrana údajů
-
-Na adrese `#komponenty` je design systém: logo v pozitivu a negativu, favicon,
-náhled pro sdílení, barvy, typografie, stavy tlačítek, polí, řádků tabulky, menu a ikony.
-
-## Data domů
-
-Zástupné údaje jsou v poli `H` v `index.html` (sekce `data (zástupné údaje)`):
-`[číslo, typ, pozemek m², cena Kč nebo null = „Na dotaz“, stav]`.
-Stav: `volny`, `rezervace`, `prodany`.
+- **Data domů** (stav, cena, pozemek): pole `RAW` v `src/build.py`.
+  Formát `(číslo, typ, pozemek m², cena Kč nebo None = „Na dotaz“, stav)`, stav `volny` / `rezervace` / `prodany`.
+- **Půdorysy**: `PLANS` v `src/build.py` (ilustrační, nahradit podklady HP DOMY).
+- **Standardy, FAQ, dojezdové časy**: `STD_CATS`, `FAQ`, `TRAVEL` v `src/build.py`.
+- **Styly**: `src/base.css` + `src/pages.css` → `assets/site.css`.
+- **Skripty**: `src/site.js` → `assets/site.js`, data → `assets/data.js`.
 
 ## Co je zástupné
 
-- Vizualizace v `img/` jsou studijní model (renderováno z `tools/scene.py`, Blender).
-  Po dodání vizualizací od HP DOMY stačí přepsat soubory se stejnými názvy.
-- Situace je ilustrační SVG generované ze skriptu, nahradí ji podklad od HP DOMY.
-- Mapa je schematická. Na produkci vložit Mapy.cz nebo Google Maps.
-- Formulář zatím neodesílá – napojit na backend (PHP mailer / Formspree / vlastní endpoint).
+- Vizualizace v `img/` jsou studijní model (render z `tools/scene.py`, Blender). Po dodání vizualizací stačí přepsat soubory se stejnými názvy.
+- Situace a půdorysy jsou ilustrační. Orientace zahrad vychází z ilustrační situace.
+- Ceny, plochy, pozemky a stavy domů jsou zástupné.
+- Dojezdové časy a vzdálenosti (kromě 8 km do Olomouce) jsou orientační.
+- Mapa je schematická – na produkci vložit Mapy.cz.
+- Formulář neodesílá – napojit na backend (PHP mailer / Formspree / vlastní endpoint).
+- Harmonogram nemá termíny – doplní HP DOMY.
 
 ## Technologie
 
-HTML, CSS, vanilla JS, GSAP 3.12.5 + ScrollTrigger (lokálně v `js/`). Písma Michroma,
-Inter a Encode Sans Expanded hostovaná lokálně v `fonts/` (woff2, latin + latin-ext),
-bez požadavků na Google Fonts. Obrázky WebP v několika šířkách přes `srcset`.
-Respektuje `prefers-reduced-motion`.
+HTML, CSS, vanilla JS, GSAP 3.12.5 + ScrollTrigger (lokálně v `js/`).
+Písma Michroma, Inter a Encode Sans Expanded hostovaná lokálně v `fonts/` (woff2, latin + latin-ext), bez Google Fonts.
+Obrázky WebP v několika šířkách přes `srcset`. Respektuje `prefers-reduced-motion`.
+Detail domu má strukturovaná data schema.org (`SingleFamilyResidence`).
