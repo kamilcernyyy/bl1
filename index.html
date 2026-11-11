@@ -31,7 +31,7 @@
   --stone-200:#dedbd4;
   --stone-400:#a39e94;
   --stone-600:#6c675f;
-  --muted:rgba(22,22,22,.58);
+  --muted:rgba(22,22,22,.66);
   --accent:#7a5a3a;         /* ořech – navazuje na dřevěný obklad domů (pracovní návrh) */
   --accent-soft:#efe7dd;
   --st-free:#2f7a4c;  --st-free-bg:#e5f1e9;
@@ -419,7 +419,7 @@ table.houses{width:100%;border-collapse:collapse;font-size:15px;min-width:880px}
 .ftr{background:var(--ink);color:rgba(255,255,255,.72);font-size:14px;padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
 .ftr__grid{display:grid;gap:36px;padding-block:clamp(48px,6vw,72px) 36px;border-top:1px solid rgba(255,255,255,.12)}
 @media (min-width:860px){.ftr__grid{grid-template-columns:1.3fr 1fr 1fr 1fr}}
-.ftr h4{font:500 12px/1 var(--f-text);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:0 0 16px}
+.ftr .ftr-h{font:500 12px/1 var(--f-text);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:0 0 16px}
 .ftr ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
 .ftr a{text-decoration:none;color:rgba(255,255,255,.85);transition:color .2s}
 @media (hover:hover){.ftr a:hover{color:#fff}}
@@ -556,7 +556,7 @@ body.view-ds main.site,body.view-ds .ftr{display:none}
 
 <header class="hdr hdr--hero" id="hdr">
   <div class="wrap hdr__in">
-    <a class="logo" href="#top" aria-label="Blatec – projekt HP DOMY DEVELOPMENT, zpět nahoru">
+    <a class="logo" href="#top" aria-label="Blatec HP DOMY DEVELOPMENT, zpět nahoru">
       <span class="logo__name">Blatec</span>
       <span class="logo__sig">HP DOMY DEVELOPMENT</span>
     </a>
@@ -905,9 +905,9 @@ body.view-ds main.site,body.view-ds .ftr{display:none}
         <p style="max-width:34ch">14 rodinných domů v Blatci u Olomouce.</p>
         <div class="social"><a href="#" aria-label="Instagram HP DOMY"><svg><use href="#i-ig"/></svg></a><a href="#" aria-label="Facebook HP DOMY"><svg><use href="#i-fb"/></svg></a></div>
       </div>
-      <div><h4>Projekt</h4><ul><li><a href="#projekt">O projektu</a></li><li><a href="#lokalita">Lokalita</a></li><li><a href="#nabidka">Nabídka domů</a></li><li><a href="#standardy">Standardy</a></li><li><a href="#galerie">Galerie</a></li><li><a href="#kontakt">Kontakt</a></li></ul></div>
-      <div><h4>Další projekty HP DOMY</h4><ul><li><a href="https://vilynakline.cz" target="_blank" rel="noopener">Vily na Klíně</a></li><li><a href="https://domynajihu.eu" target="_blank" rel="noopener">Domy na jihu</a></li><li><a href="https://www.hpdomy.cz" target="_blank" rel="noopener">Všechny projekty na hpdomy.cz</a></li></ul></div>
-      <div><h4>Developer</h4><p><span class="hpd">HP DOMY</span><br>HP DOMY s.r.o.<br>I. P. Pavlova 692/143<br>783 01 Olomouc<br>IČ: 28603494</p></div>
+      <div><h2 class="ftr-h">Projekt</h2><ul><li><a href="#projekt">O projektu</a></li><li><a href="#lokalita">Lokalita</a></li><li><a href="#nabidka">Nabídka domů</a></li><li><a href="#standardy">Standardy</a></li><li><a href="#galerie">Galerie</a></li><li><a href="#kontakt">Kontakt</a></li></ul></div>
+      <div><h2 class="ftr-h">Další projekty HP DOMY</h2><ul><li><a href="https://vilynakline.cz" target="_blank" rel="noopener">Vily na Klíně</a></li><li><a href="https://domynajihu.eu" target="_blank" rel="noopener">Domy na jihu</a></li><li><a href="https://www.hpdomy.cz" target="_blank" rel="noopener">Všechny projekty na hpdomy.cz</a></li></ul></div>
+      <div><h2 class="ftr-h">Developer</h2><p><span class="hpd">HP DOMY</span><br>HP DOMY s.r.o.<br>I. P. Pavlova 692/143<br>783 01 Olomouc<br>IČ: 28603494</p></div>
     </div>
     <div class="ftr__legal">
       <span>Spisová značka C 44281 vedená u Krajského soudu v Ostravě</span>
@@ -1363,8 +1363,11 @@ const startMotion = () => {
   const ease = 'power3.out';
   // hero load sequence
   gsap.fromTo('[data-hero-media] img', { scale: 1.12 }, { scale: 1, duration: 2.2, ease: 'power2.out' });
-  gsap.from('[data-hero-in]', { y: 28, opacity: 0, duration: 1.1, ease, stagger: .09, delay: .15 });
+  // text moves without fading so the LCP paint is not delayed
+  gsap.from('[data-hero-in]', { y: 28, duration: 1.1, ease, stagger: .09, delay: .1 });
+  gsap.from('.hero__sig, .hero__ctas, .hero__bottom', { opacity: 0, duration: .9, ease, stagger: .1, delay: .25 });
   gsap.from('.hdr__in', { y: -16, opacity: 0, duration: .9, ease, delay: .1 });
+  const rest = () => {
   // hero parallax
   gsap.to('[data-hero-media] img', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
   // intro words: scrubbed reading reveal (Haven)
@@ -1375,7 +1378,7 @@ const startMotion = () => {
       if (n.nodeType === 3) n.textContent.split(/(\s+)/).forEach(w => { if (!w.trim()) h.append(w); else { const s = document.createElement('span'); s.className = 'word'; s.textContent = w; h.append(s); } });
       else h.append(n);
     });
-    gsap.fromTo(h.querySelectorAll('.word'), { opacity: .14 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: h, start: 'top 82%', end: 'bottom 45%', scrub: true } });
+    gsap.fromTo(h.querySelectorAll('.word'), { opacity: .2 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: h, start: 'top 82%', end: 'bottom 45%', scrub: true } });
     gsap.from(h.querySelector('.pill-img'), { width: 0, marginLeft: 0, marginRight: 0, duration: 1.1, ease, scrollTrigger: { trigger: h, start: 'top 75%' } });
   }
   // generic reveals
@@ -1397,6 +1400,8 @@ const startMotion = () => {
   gsap.from('.gal__item, .gal__ph', { y: 30, opacity: 0, duration: .9, ease, stagger: .07, scrollTrigger: { trigger: '#gal', start: 'top 82%', once: true } });
   gsap.from('.amen__item', { y: 24, opacity: 0, duration: .8, ease, stagger: .06, scrollTrigger: { trigger: '.amen__grid', start: 'top 88%', once: true } });
   gsap.from('.form, .person', { y: 30, opacity: 0, duration: 1, ease, stagger: .1, scrollTrigger: { trigger: '.ct', start: 'top 78%', once: true } });
+  };
+  ('requestIdleCallback' in window) ? requestIdleCallback(rest, { timeout: 900 }) : setTimeout(rest, 300);
 };
 if (window.gsap) startMotion(); else window.addEventListener('load', startMotion, { once: true });
 });
