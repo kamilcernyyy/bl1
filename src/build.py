@@ -117,6 +117,28 @@ FAQ = [
     ["Je cena konečná, včetně DPH?", "Uvedené ceny jsou včetně DPH. Příplatky za klientské změny a nadstandardy domluvíte před jejich zadáním do výroby."],
     ["Co když dům ještě nemá cenu?", "U domů s cenou „Na dotaz“ cenu sdělí prodejce. Zveřejníme ji se spuštěním prodeje."],
 ]
+
+# Google reviews of HP DOMY, copied verbatim from the Google profile (state 11. 11. 2026).
+# Texts cut off on Google ("… Více") stay cut off here, never completed.
+GOOGLE = dict(rating=4.6, count=31, dist={5: 24, 4: 4, 3: 2, 2: 0, 1: 1},
+              url="https://www.google.com/search?q=HP+DOMY+Olomouc+recenze")
+REVIEWS = [
+    ("Hana H.", 5, "před 6 lety", "S firmou HP Domy mám dobrou zkušenost, konkrétně Olomoucká pobočka. Chválím především profesionální přístup, rychlost papírování, vše vysvětlí, poradí, případné", True),
+    ("Veronika J. R.", 5, "před 6 lety", "Chtěli bychom z celého <3 poděkovat týmu HP domy, konkrétně tedy pobočce Olomouc, za perfektní jednání od začátku až po předání, veškerá komunikace byla", True),
+    ("Romana M.", 5, "před 3 lety", "S firmou HP DOMY máme pozitivní zkušenost při stavbě našeho domu.Měli jsme i svůj stavební dozor, který nenašel žádné závažné vady či pochybení. Materiál je", True),
+    ("Lada L.", 5, "před rokem", "HP-Domy (Bradlecká pobočka) nám stavěly zděný dům (HP-137 + klientské úpravy) na klíč v okolí Mladé Boleslavi. Z naší strany velká spokojenost, jak s kvalitou a", True),
+    ("Radovan S.", 5, "před 6 lety", "V domě HP90 se dobře bydlí, po ročním bydlení není nutné nic reklamovat, což je myslím dobrá známka. S firmou velmi dobrá zkušenost, doporučuji.", False),
+    ("Petr J.", 5, "před 6 lety", "Stavěl jsem s nimi v roce 2015. Mohu vřele doporučit. Stavba probíhala dle harmonogramu. Vybral jsem si je po delším porovnávání jednotlivých dodavatelů, kde", True),
+    ("Pavel R.", 5, "před 6 lety", "Dům byl postaven v roce 2012. S odstupem času mohu jen konstatovat, že vybrat firmu HP domy bylo velmi dobré rozhodnutí. Oceňuji osobní přístup majitele firmy a", True),
+    ("Vera D.", 5, "před rokem", "Skvělá zkušenost s HP Domy!", True),
+    ("Jitka H.", 5, "před 6 lety", "Za nás maximální spokojenost - rychlost, pečlivost, výborná komunikace. Můžeme jen doporučit, děkujeme HP domy za krásný domeček.", False),
+    ("Vlastimil S.", 5, "před 6 lety", "Neskutečně profesionální přístup, poctivě a kvalitně odvedený kus práce. Za nás maximální spokojenost a mohu všem doporučit všemi deseti :-)", False),
+    ("Ctibor T.", 4, "před 6 lety", "Máme pozitivní zkušenost s výstavbou od HP domy. Komunikace byla dobrá, pomohli s úpravou projektu na atypickou dřevostavbu. Realizace vcelku bez problémů až na", True),
+    ("František N.", 4, "před 6 lety", "korektní jednání a poctivá stavařina...", False),
+    ("Lenka K.", 3, "před 2 lety", "S firmou HP domy máme dobrou zkušenost ohledně výstavby domu HP 90 která", True),
+    ("Roman S.", 5, "před 5 lety", "Lepší firma na stavbu domu (dřevostavba) asi neexistuje. Obešeli jsme několik firem než jsme zvolili firmu HPdomy. A jednání této firmy bylo nad očekávání.", True),
+    ("Petr Š.", 5, "před 2 lety", "Mohu jen doporučit!", False),
+]
 TRAVEL = [
     dict(place="Centrum Olomouce", note="práce, úřady, kultura", km=8, auto=15, vlak=20, kolo=30),
     dict(place="Fakultní nemocnice Olomouc", note="nejbližší velká nemocnice", km=9, auto=15, vlak=30, kolo=35),
@@ -128,6 +150,51 @@ ICONS = [["a-rail", "Vlak"], ["a-road", "Silnice"], ["a-hall", "Obecní dům"], 
          ["s-brick", "Zdivo"], ["s-heat", "Tepelné čerpadlo"], ["s-window", "Okna"], ["s-blind", "Žaluzie"], ["s-sun", "Fotovoltaika"], ["s-snow", "Klimatizace"],
          ["s-floor", "Podlahy"], ["s-door", "Dveře"], ["s-water", "Úpravna vody"], ["s-car", "Parkování"], ["s-plan", "Dispozice"], ["s-area", "Plocha"]]
 DATA = dict(status=STATUS, houses=HOUSES, geo=GEO, gallery=GALLERY, plans=PLANS, stdShort=STD_SHORT, faq=FAQ, travel=TRAVEL, icons=ICONS)
+
+
+# ------------------------------------------------------------------ Google reviews component
+G_MARK = ('<img src="img/google-g.svg" width="18" height="18" alt="">' if os.path.exists(os.path.join(ROOT, "img", "google-g.svg"))
+          else '<svg aria-hidden="true"><use href="#i-star"/></svg>')
+def stars(n, cls="stars"):
+    return f'<span class="{cls}" role="img" aria-label="{n} z 5 hvězdiček">' + "".join(f'<svg class="{"on" if i < round(n) else ""}" aria-hidden="true"><use href="#i-star"/></svg>' for i in range(5)) + "</span>"
+rating_txt = f'{GOOGLE["rating"]:.1f}'.replace(".", ",")
+
+def rating_button(cls="btn btn--ghost on-dark", href="#recenze"):
+    return f'<a class="{cls} rating-btn" href="{href}"><span class="g-mark">{G_MARK}</span><b class="tnum">{rating_txt}</b>{stars(GOOGLE["rating"])}<span class="rating-btn__n">{GOOGLE["count"]} recenzí na Google</span></a>'
+
+def review_card(r):
+    name, n, when, text, cut = r
+    initials = "".join(w[0] for w in name.replace(".", "").split()[:2]).upper()
+    body = esc(text) + ("…" if cut else "")
+    return (f'<article class="rvc"><div class="rvc__top">{stars(n)}<span class="rvc__src">Google</span></div>'
+            f'<blockquote class="rvc__txt"><p>{body}</p></blockquote>'
+            f'<footer class="rvc__who"><span class="rvc__av" aria-hidden="true">{initials}</span><span><b>{esc(name)}</b><small>{when}</small></span>'
+            + (f'<a class="rvc__more" href="{GOOGLE["url"]}" target="_blank" rel="noopener">Celá recenze</a>' if cut else "")
+            + '</footer></article>')
+
+def reviews(variant="full", title="Co o HP DOMY říkají majitelé domů", count=None, sid=None):
+    items = REVIEWS if count is None else REVIEWS[:count]
+    total = GOOGLE["count"]
+    bars = "".join(f'<li><span>{k}</span><svg aria-hidden="true"><use href="#i-star"/></svg><i><b style="width:{GOOGLE["dist"][k] / total * 100:.1f}%"></b></i><span class="tnum">{GOOGLE["dist"][k]}</span></li>' for k in (5, 4, 3, 2, 1))
+    summary = f'''<div class="rv__sum">
+      <div class="rv__score"><b class="tnum">{rating_txt}</b><div>{stars(GOOGLE["rating"])}<span>{total} recenzí na Google</span></div></div>
+      {"<ul class='rv__dist' aria-label='Rozložení hodnocení'>" + bars + "</ul>" if variant == "full" else ""}
+      <a class="btn btn--ghost btn--sm" href="{GOOGLE["url"]}" target="_blank" rel="noopener"><span class="g-mark g-mark--sm">{G_MARK}</span>Všechny recenze</a>
+    </div>'''
+    nav = '<div class="rv__nav"><button class="rv__btn" data-rv="prev" aria-label="Předchozí recenze"><svg><use href="#i-left"/></svg></button><span class="rv__prog" aria-hidden="true"><i></i></span><button class="rv__btn" data-rv="next" aria-label="Další recenze"><svg><use href="#i-right"/></svg></button></div>'
+    head = (f'<div class="sub-head"><span class="eyebrow">Recenze</span><h2 class="h2">{title}</h2>'
+            '<p class="lead">Hodnocení firmy HP DOMY na Google od lidí, kterým už postavila dům.</p></div>') if variant != "inline" else ""
+    return f'''<div class="rv rv--{variant}"{f' id="{sid}"' if sid else ""}>
+  {head}
+  <div class="rv__grid">
+    {summary}
+    <div class="rv__slider" data-slider>
+      <div class="rv__track" tabindex="0" role="region" aria-label="Recenze, posouvejte do stran">{"".join(review_card(r) for r in items)}</div>
+      {nav}
+    </div>
+  </div>
+  <p class="rv__note">Recenze převzaté z Google beze změn, u zkrácených pokračuje text na Google. Jména zkrácena na iniciálu příjmení.</p>
+</div>'''
 
 fmt = lambda n: f"{n:,.0f}".replace(",", " ")
 area = lambda a: (f"{a:.1f}".replace(".", ",") if a % 1 else f"{a:.0f}") + " m²"
@@ -322,6 +389,9 @@ for marker, href, label in [("  <!-- 3 · LOKALITA -->", "o-projektu.html", "Ví
     j = idx_main.rindex("    </div>\n  </section>", 0, i)
     idx_main = idx_main[:j] + more(href, label) + idx_main[j:]
 idx_main = idx_main.replace('<th scope="col">Karta domu</th>', '<th scope="col">Detail</th>')
+idx_main = idx_main.replace('<a class="scroll-cue" href="#projekt"><i></i>Posunout dolů</a>', rating_button())
+idx_main = idx_main.replace("  <!-- FAQ (navíc oproti zadání) -->",
+    f'  <!-- RECENZE -->\n  <section class="sec" id="recenze" style="padding-top:0"><div class="wrap">{reviews("full")}</div></section>\n\n  <!-- FAQ (navíc oproti zadání) -->')
 idx_after = read("pages/index.after.html")
 idx_after = re.sub(r'<!-- KARTA DOMU \(drawer\) -->.*?</aside>\n', DRAWER, idx_after, flags=re.S)
 idx_after = re.sub(r'<!-- LIGHTBOX -->.*?</div>\n</div>\n', LIGHTBOX, idx_after, flags=re.S)
@@ -393,6 +463,7 @@ body = f'''<main class="page">
       <a class="ref" href="https://domynajihu.eu" target="_blank" rel="noopener"><b>Domy na jihu</b><span>3 patrové domy 5+kk, Olomouc-Slavonín</span><small>domynajihu.eu <svg><use href="#i-arrow"/></svg></small></a>
       <a class="ref" href="https://www.hpdomy.cz" target="_blank" rel="noopener"><b>HP DOMY s.r.o.</b><span>I. P. Pavlova 692/143, Olomouc · IČ 28603494</span><small>hpdomy.cz <svg><use href="#i-arrow"/></svg></small></a>
     </div>
+    <div style="margin-top:clamp(36px,5vw,56px)">{reviews("inline", count=10)}</div>
   </div></section>
   {cta_band()}
   {next_page("lokalita", "Lokalita")}
@@ -478,6 +549,7 @@ body = f'''<main class="page" data-compare>
       <div class="tile"><svg class="ti"><use href="#s-plan"/></svg><h3>Typ domu</h3><p>Patrový 5+kk pro větší rodiny, přízemní 4+kk pro bydlení bez schodů.</p></div>
     </div>
   </div></section>
+  <section class="sub-sec"><div class="wrap">{reviews("compact", title="Proč stavět s HP DOMY", count=8)}</div></section>
   {cta_band("Nevíte, který dům vybrat?", "Prodejce s vámi projde rozdíly mezi domy a doporučí ty, které odpovídají vašim představám.")}
   {next_page("standardy", "Standardy")}
 </main>
@@ -589,6 +661,7 @@ body = f'''<main class="page">
       <li><b>Předání</b><p>Po kolaudaci podepíšete kupní smlouvu a převezmete klíče.</p></li>
     </ol>
   </div></section>
+  <section class="sub-sec" style="padding-top:0"><div class="wrap">{reviews("compact", title="Zkušenosti majitelů domů od HP DOMY", count=8)}</div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
     <div class="faq"><div style="display:grid;gap:18px;align-content:start"><span class="eyebrow">Časté dotazy</span><h2 class="h2">Než nám napíšete</h2></div><div class="acc" id="faq-acc"></div></div>
   </div></section>
@@ -642,7 +715,7 @@ for h in HOUSES:
       <div class="hd-price" data-page-in><small>Cena vč. DPH</small><b>{price_txt(h)}</b><div class="row">{actions}<button class="btn btn--ghost" data-pdf="{hid}"><svg style="width:16px;height:16px"><use href="#i-pdf"/></svg>&nbsp;Karta PDF</button></div></div>
     </div>
     <div class="hd-gal" data-lb-list="{gal_attr}" data-page-in>{gal_html}</div>
-    <nav class="subnav" aria-label="Části stránky"><a href="#parametry">Parametry</a><a href="#pudorys">Půdorys</a><a href="#poloha">Poloha</a><a href="#vybaveni">V ceně</a><a href="#financovani">Financování</a><a href="#podobne">Podobné domy</a></nav>
+    <nav class="subnav" aria-label="Části stránky"><a href="#parametry">Parametry</a><a href="#pudorys">Půdorys</a><a href="#poloha">Poloha</a><a href="#vybaveni">V ceně</a><a href="#financovani">Financování</a><a href="#podobne">Podobné domy</a><a href="#recenze">Recenze</a></nav>
     <div class="hd-layout">
       <div class="hd-main">
         <section class="hd-sec" id="parametry"><header><h2 class="h2">Parametry</h2></header>
@@ -684,6 +757,10 @@ for h in HOUSES:
         </section>
         <section class="hd-sec" id="podobne"><header><h2 class="h2">Podobné volné domy</h2><a class="link" href="nabidka.html#volne">Všechny volné <svg><use href="#i-arrow"/></svg></a></header>
           <div class="similar">{sim_html}</div>
+        </section>
+        <section class="hd-sec" id="recenze"><header><h2 class="h2">Kdo dům postaví</h2></header>
+          <p style="color:var(--stone-600);max-width:60ch">Stavět bude HP DOMY, olomoucký developer s hodnocením {rating_txt} z 5 na Google. Takhle o firmě píšou lidé, kterým už postavila dům.</p>
+          {reviews("inline", count=8)}
         </section>
       </div>
       <aside class="hd-side">

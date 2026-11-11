@@ -430,6 +430,29 @@ if (subnav) {
 const mbar = $('.mbar');
 if (mbar) { const top = $('.hd-price'); const io = new IntersectionObserver(([e]) => mbar.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0)); io.observe(top); }
 
+
+/* ---------- review slider (scroll-snap + buttons + mouse drag) ---------- */
+$$('[data-slider]').forEach(sl => {
+  const tr = $('.rv__track', sl), prev = $('[data-rv="prev"]', sl), next = $('[data-rv="next"]', sl), bar = $('.rv__prog i', sl);
+  const step = () => { const c = tr.firstElementChild; return c ? c.getBoundingClientRect().width + 14 : 300; };
+  const upd = () => {
+    const max = tr.scrollWidth - tr.clientWidth;
+    prev.disabled = tr.scrollLeft < 4; next.disabled = tr.scrollLeft > max - 4;
+    const vis = tr.clientWidth / tr.scrollWidth;
+    bar.style.width = (vis * 100) + '%';
+    bar.style.transform = `translateX(${max > 0 ? (tr.scrollLeft / max) * ((1 - vis) / vis) * 100 : 0}%)`;
+  };
+  prev.addEventListener('click', () => tr.scrollBy({ left: -step(), behavior: reduce ? 'auto' : 'smooth' }));
+  next.addEventListener('click', () => tr.scrollBy({ left: step(), behavior: reduce ? 'auto' : 'smooth' }));
+  tr.addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
+  tr.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { e.preventDefault(); next.click(); } if (e.key === 'ArrowLeft') { e.preventDefault(); prev.click(); } });
+  let down = null, moved = false;
+  tr.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; down = { x: e.clientX, s: tr.scrollLeft }; moved = false; });
+  addEventListener('pointermove', e => { if (!down) return; const dx = e.clientX - down.x; if (Math.abs(dx) > 4) { moved = true; tr.classList.add('is-drag'); tr.scrollLeft = down.s - dx; } });
+  addEventListener('pointerup', () => { if (!down) return; down = null; tr.classList.remove('is-drag'); });
+  tr.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+});
+
 /* ---------- keyboard ---------- */
 addEventListener('keydown', e => {
   if (lb && lb.classList.contains('is-open')) { if (e.key === 'Escape') lbClose(); if (e.key === 'ArrowRight') lbShow(LB.i + 1); if (e.key === 'ArrowLeft') lbShow(LB.i - 1); return; }
@@ -489,6 +512,7 @@ const startMotion = () => {
     if (gal) gsap.from('.gal__item, .gal__ph', { y: 30, opacity: 0, duration: .9, ease, stagger: .07, scrollTrigger: { trigger: '#gal', start: 'top 82%', once: true } });
     if ($('.amen__grid')) gsap.from('.amen__item', { y: 24, opacity: 0, duration: .8, ease, stagger: .06, scrollTrigger: { trigger: '.amen__grid', start: 'top 88%', once: true } });
     if ($('.ct')) gsap.from('.ct .form, .ct .person', { y: 30, opacity: 0, duration: 1, ease, stagger: .1, scrollTrigger: { trigger: '.ct', start: 'top 78%', once: true } });
+    $$('.rv__track').forEach(t => gsap.from(t.children, { x: 40, opacity: 0, duration: .8, ease, stagger: .07, scrollTrigger: { trigger: t, start: 'top 88%', once: true } }));
     if ($('.tl')) gsap.from('.tl li', { y: 20, opacity: 0, duration: .7, ease, stagger: .08, scrollTrigger: { trigger: '.tl', start: 'top 85%', once: true } });
   };
   ('requestIdleCallback' in window) ? requestIdleCallback(rest, { timeout: 900 }) : setTimeout(rest, 300);
