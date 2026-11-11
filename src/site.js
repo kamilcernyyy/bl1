@@ -514,6 +514,13 @@ if (wd) {
 
 paintFavs();
 
+/* ---------- wall section (standardy) ---------- */
+const ws = $('.ws');
+if (ws) {
+  const on = (l, v) => $$(`.ws [data-l="${l}"]`).forEach(x => x.classList.toggle('is-on', v));
+  $$('.ws [data-l]').forEach(x => { ['mouseenter', 'focus'].forEach(ev => x.addEventListener(ev, () => on(x.dataset.l, true))); ['mouseleave', 'blur'].forEach(ev => x.addEventListener(ev, () => on(x.dataset.l, false))); });
+}
+
 /* ---------- keyboard ---------- */
 addEventListener('keydown', e => {
   if (lb && lb.classList.contains('is-open')) { if (e.key === 'Escape') lbClose(); if (e.key === 'ArrowRight') lbShow(LB.i + 1); if (e.key === 'ArrowLeft') lbShow(LB.i - 1); return; }
@@ -567,10 +574,10 @@ const startMotion = () => {
       gsap.from(h.querySelector('.pill-img'), { width: 0, marginLeft: 0, marginRight: 0, duration: .8, ease, scrollTrigger: { trigger: h, start: ENTER, once: true } });
     }
     $$('[data-count]').forEach(n => { const end = +n.dataset.count, o = { v: 0 }; gsap.to(o, { v: end, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: n, start: ENTER, once: true }, onUpdate: () => n.textContent = Math.round(o.v) }); });
-    $$('[data-reveal-img]').forEach(f => { gsap.fromTo(f, { clipPath: 'inset(8% 5% 0% 5% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'top 55%', scrub: .2 } }); gsap.fromTo(f.querySelector('img'), { scale: 1.1 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .2 } }); });
+    $$('[data-reveal-img]').forEach(f => { gsap.fromTo(f, { clipPath: 'inset(8% 5% 0% 5% round 8px)' }, { clipPath: 'inset(0% 0% 0% 0% round 8px)', ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'top 55%', scrub: .2 } }); gsap.fromTo(f.querySelector('img'), { scale: 1.1 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .2 } }); });
     const band = $('[data-band]');
     if (band) {
-      gsap.fromTo(band, { clipPath: 'inset(0% 6% 0% 6% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'top 40%', scrub: .2 } });
+      gsap.fromTo(band, { clipPath: 'inset(0% 6% 0% 6% round 8px)' }, { clipPath: 'inset(0% 0% 0% 0% round 8px)', ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'top 40%', scrub: .2 } });
       gsap.fromTo(band.querySelector('img'), { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: .2 } });
     }
     if (svg && $('#plan').getBoundingClientRect().top > innerHeight * .98) gsap.from('#plan .plot', { opacity: 0, y: 8, duration: .45, ease, stagger: .025, scrollTrigger: { trigger: '#plan', start: ENTER, once: true }, clearProps: 'opacity,transform' });

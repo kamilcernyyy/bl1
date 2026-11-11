@@ -75,7 +75,7 @@ PLANS = {
     ],
 }
 STD_SHORT = [
-    ["s-brick", "Zděná stavba", "Cihelné zdivo Porotherm a masivní železobetonový strop. Dům, který dobře drží teplo i ticho.", 0],
+    ["s-brick", "Zděná stavba", "Cihelné zdivo Porotherm a masivní železobetonový strop. Dobře akumuluje teplo a tlumí hluk.", 0],
     ["s-heat", "Tepelné čerpadlo a podlahové topení", "Tepelné čerpadlo vzduch–voda napojené na teplovodní podlahové vytápění v celém domě.", 1],
     ["s-window", "Okna s izolačním trojsklem", "Plastová vícekomorová okna s izolačním trojsklem a kvalitním kováním.", 0],
     ["s-blind", "Příprava pro venkovní žaluzie", "Kastlíky integrované do fasády, žaluzie lze doplnit kdykoli později.", 0],
@@ -173,7 +173,7 @@ def review_card(r):
             + (f'<a class="rvc__more" href="{GOOGLE["url"]}" target="_blank" rel="noopener">Celá recenze</a>' if cut else "")
             + '</footer></article>')
 
-def reviews(variant="full", title="Co o HP DOMY říkají majitelé domů", count=None, sid=None):
+def reviews(variant="full", title="Hodnocení HP DOMY: 4,6 z 5", count=None, sid=None):
     items = REVIEWS if count is None else REVIEWS[:count]
     total = GOOGLE["count"]
     bars = "".join(f'<li><span>{k}</span><svg aria-hidden="true"><use href="#i-star"/></svg><i><b style="width:{GOOGLE["dist"][k] / total * 100:.1f}%"></b></i><span class="tnum">{GOOGLE["dist"][k]}</span></li>' for k in (5, 4, 3, 2, 1))
@@ -184,7 +184,7 @@ def reviews(variant="full", title="Co o HP DOMY říkají majitelé domů", coun
     </div>'''
     nav = '<div class="rv__nav"><button class="rv__btn" data-rv="prev" aria-label="Předchozí recenze"><svg><use href="#i-left"/></svg></button><span class="rv__prog" aria-hidden="true"><i></i></span><button class="rv__btn" data-rv="next" aria-label="Další recenze"><svg><use href="#i-right"/></svg></button></div>'
     head = (f'<div class="sub-head"><h2 class="h2">{title}</h2>'
-            '<p class="lead">Hodnocení firmy HP DOMY na Google od lidí, kterým už postavila dům.</p></div>') if variant != "inline" else ""
+            '<p class="lead">Recenze na Google od lidí, kterým už HP DOMY postavily dům.</p></div>') if variant != "inline" else ""
     return f'''<div class="rv rv--{variant}"{f' id="{sid}"' if sid else ""}>
   {head}
   <div class="rv__grid">
@@ -391,8 +391,64 @@ def cta_band(title="Chcete se podívat na pozemek?", text="Prodejce vám ukáže
   </div></div></section>'''
 
 
-def next_page(slug, label):
-    return f'''<section class="sub-sec" style="padding-top:0"><div class="wrap"><a class="nextp" href="{slug}.html" data-reveal><div><small>Pokračovat</small><span class="h2">{label}</span></div><span class="ic"><svg><use href="#i-arrow"/></svg></span></a></div></section>'''
+PAGES = [("index", "Úvod")] + NAV
+def next_page(slug, label=None):
+    """Quiet previous / next navigation at the end of a page (replaces the big 'Pokračovat' box)."""
+    i = [p for p, _ in PAGES].index(slug)
+    prev = PAGES[i - 1] if i > 0 else None
+    nxt = PAGES[i + 1]
+    lp = f'<a class="pnav__a" href="{prev[0]}.html" rel="prev"><small>Předchozí</small><span>{prev[1]}</span></a>' if prev else '<span></span>'
+    return f'''<nav class="pnav wrap" aria-label="Další stránky">{lp}<a class="pnav__a pnav__a--next" href="{nxt[0]}.html" rel="next"><small>Další</small><span>{nxt[1]} <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a></nav>'''
+
+def spec(rows, cols=2, cls=""):
+    """Technical-sheet list: small label left, value right, hairline between rows."""
+    items = "".join(f'<div class="spec-row"><dt>{k}</dt><dd>{v}</dd></div>' for k, v in rows)
+    return f'<dl class="spec-list spec-list--c{cols} {cls}">{items}</dl>'
+
+def check_list(items):
+    return '<ul class="check-list">' + "".join(f'<li><svg aria-hidden="true"><use href="#i-check"/></svg>{t}</li>' for t in items) + '</ul>'
+
+WALL_LAYERS = [
+    ("Vnitřní omítka", "Vápenocementová omítka, podklad pro malbu."),
+    ("Cihelné zdivo Porotherm", "Nosná keramická stěna. Akumuluje teplo a tlumí hluk."),
+    ("Tepelná izolace", "Zateplení fasády, tloušťku určí projekt."),
+    ("Fasádní omítka", "Probarvená tenkovrstvá omítka, u vstupu dřevěný obklad."),
+]
+FLOOR_LAYERS = [
+    ("Vinylová podlaha", "Prémiový vinyl, tichý a odolný."),
+    ("Anhydritový potěr s topením", "Trubky podlahového topení zalité v potěru."),
+    ("Tepelná izolace", "Izolace pod potěrem, aby teplo šlo nahoru."),
+    ("Železobetonová deska", "Základová deska, nese celý dům."),
+]
+def wall_section():
+    """Construction drawing: wall section + floor build-up with numbered callouts."""
+    hatch = '''<defs>
+  <pattern id="h-brick" width="14" height="10" patternUnits="userSpaceOnUse"><rect width="14" height="10" fill="#fff"/><path d="M0 5h14M7 0v5M0 5v5M14 5v5" stroke="#161616" stroke-width=".7"/></pattern>
+  <pattern id="h-ins" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#fff"/><path d="M0 6c3-6 3 6 6 0s3 6 6 0" fill="none" stroke="#161616" stroke-width=".7"/></pattern>
+  <pattern id="h-conc" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fff"/><circle cx="2" cy="3" r=".9" fill="#161616"/><circle cx="7" cy="7" r=".7" fill="#161616"/><path d="M5 1l1 1.6h-2z" fill="none" stroke="#161616" stroke-width=".5"/></pattern>
+  <pattern id="h-screed" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#fff"/><path d="M0 8L8 0" stroke="#161616" stroke-width=".5"/></pattern>
+</defs>'''
+    # wall: x from 40 (interior) to 300 (exterior), y 30..330
+    w = [(40, 10, "#fff"), (50, 110, "url(#h-brick)"), (160, 90, "url(#h-ins)"), (250, 8, "#fff")]
+    g = ""
+    for k, (x, wd, fill) in enumerate(w):
+        g += f'<g class="ws-layer" data-l="w{k}" tabindex="0" aria-label="{k + 1}. {WALL_LAYERS[k][0]}"><rect x="{x}" y="30" width="{wd}" height="300" fill="{fill}" stroke="#161616" stroke-width="1"/>'
+        cx = x + wd / 2
+        g += f'<line x1="{cx}" y1="30" x2="{cx}" y2="{14 - k * 0}" stroke="#161616" stroke-width=".7"/><circle cx="{cx}" cy="12" r="9" class="ws-dot"/><text x="{cx}" y="16" text-anchor="middle" class="ws-n">{k + 1}</text></g>'
+    g += '<text x="20" y="190" class="ws-cap" transform="rotate(-90 20 190)">INTERIÉR</text><text x="285" y="190" class="ws-cap" transform="rotate(90 285 190)">EXTERIÉR</text>'
+    g += '<line x1="40" y1="350" x2="258" y2="350" stroke="#161616" stroke-width=".7"/><path d="M40 345v10M258 345v10" stroke="#161616" stroke-width=".7"/><text x="149" y="368" text-anchor="middle" class="ws-cap">SKLADBA DLE PROJEKTU</text>'
+    # floor: x 360..700, layers top to bottom
+    f = [(30, 10, "#fff"), (40, 60, "url(#h-screed)"), (100, 70, "url(#h-ins)"), (170, 130, "url(#h-conc)")]
+    for k, (y, h, fill) in enumerate(f):
+        g += f'<g class="ws-layer" data-l="f{k}" tabindex="0" aria-label="{k + 5}. {FLOOR_LAYERS[k][0]}"><rect x="360" y="{y}" width="320" height="{h}" fill="{fill}" stroke="#161616" stroke-width="1"/>'
+        cy = y + h / 2
+        g += f'<line x1="680" y1="{cy}" x2="702" y2="{cy}" stroke="#161616" stroke-width=".7"/><circle cx="712" cy="{cy}" r="9" class="ws-dot"/><text x="712" y="{cy + 4}" text-anchor="middle" class="ws-n">{k + 5}</text></g>'
+    g += "".join(f'<circle cx="{x}" cy="70" r="7" fill="#fff" stroke="#2c3fd6" stroke-width="1.6"/>' for x in range(390, 680, 36))
+    g += '<text x="520" y="324" text-anchor="middle" class="ws-cap">SKLADBA PODLAHY · ILUSTRAČNÍ</text>'
+    svg = f'<svg viewBox="0 0 740 380" class="ws-svg" role="img" aria-label="Řez obvodovou stěnou a skladba podlahy">{hatch}{g}</svg>'
+    legend = "".join(f'<li data-l="w{k}"><i>{k + 1}</i><div><b>{n}</b><span>{d}</span></div></li>' for k, (n, d) in enumerate(WALL_LAYERS))
+    legend += "".join(f'<li data-l="f{k}"><i>{k + 5}</i><div><b>{n}</b><span>{d}</span></div></li>' for k, (n, d) in enumerate(FLOOR_LAYERS))
+    return f'<div class="ws"><div class="ws__draw">{svg}</div><ol class="ws__legend">{legend}</ol></div>'
 
 
 def img(src, alt, sizes="100vw", eager=False, w=1600):
@@ -434,15 +490,11 @@ def watchdog(preset, title, text, house=None, compact=False):
 
 # ------------------------------------------------------------------ index (one-pager)
 idx_main = read("pages/index.main.html")
-more = lambda href, label: f'      <div class="sec-more"><a class="btn btn--ghost" href="{href}">{label} <svg style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>\n'
-for marker, href, label in [("  <!-- 3 · LOKALITA -->", "o-projektu.html", "Více o projektu"),
-                            ("  <!-- přechodový moment -->", "lokalita.html", "Více o lokalitě"),
-                            ("  <!-- 5 · STANDARDY -->", "nabidka.html", "Celá nabídka a porovnání domů"),
-                            ("  <!-- 6 · GALERIE -->", "standardy.html", "Všechny standardy"),
-                            ("  <!-- FAQ (navíc oproti zadání) -->", "galerie.html", "Celá galerie")]:
-    i = idx_main.index(marker)
-    j = idx_main.rindex("    </div>\n  </section>", 0, i)
-    idx_main = idx_main[:j] + more(href, label) + idx_main[j:]
+for hid_, href, label in [("projekt-h", "o-projektu.html", "O projektu"), ("lok-h", "lokalita.html", "Lokalita"),
+                          ("nab-h", "nabidka.html", "Celá nabídka"), ("std-h", "standardy.html", "Všechny standardy"),
+                          ("gal-h", "galerie.html", "Celá galerie")]:
+    m = re.search(r'(<h2 class="h2" id="%s"[^>]*>.*?</h2>)' % hid_, idx_main, re.S)
+    idx_main = idx_main.replace(m.group(1), m.group(1) + f'<a class="sec-link" href="{href}">{label}<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>', 1)
 idx_main = idx_main.replace('<th scope="col">Karta domu</th>', '<th scope="col">Detail</th>')
 idx_main = idx_main.replace('<a class="scroll-cue" href="#projekt"><i></i>Posunout dolů</a>', rating_button())
 idx_main = idx_main.replace("  <!-- FAQ (navíc oproti zadání) -->",
@@ -488,40 +540,36 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "O projektu"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Čtrnáct domů pro klidné bydlení u Olomouce</h1><p class="lead" data-page-in>Nová ulice v Blatci s rodinnými domy ve dvou typech. Každý dům má vlastní pozemek se zahradou a dvě parkovací stání přímo u domu.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Čtrnáct rodinných domů v Blatci</h1><p class="lead" data-page-in>Nová ulice s domy ve dvou typech. Ke každému patří vlastní pozemek se zahradou a dvě stání u domu.</p></div>
       <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><b>14</b> domů</span><span class="fact"><b class="cnt-free-n">–</b> volných</span><span class="fact">od <b data-min-price>–</b></span><span class="fact"><svg><use href="#i-pin"/></svg>8 km od Olomouce</span></div></div>
     </div>
     <figure class="pfig" data-reveal-img>{img("street", "Zástupná vizualizace ulice s novými domy v Blatci", eager=True)}</figure>
   </div>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Vyberte si, jak chcete bydlet</h2><p class="lead">Oba typy mají stejný standard, liší se počtem podlaží a pokojů.</p></div>
+    <div class="sub-head"><h2 class="h2">Patrový, nebo přízemní</h2><p class="lead">Stejný standard, jiný počet podlaží a pokojů.</p></div>
     <div class="tcomp">{type_card("patrovy")}{type_card("prizemni")}</div>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Co dostanete v ceně</h2></div>
-    <div class="grid-4" data-stagger>
-      <div class="tile"><svg class="ti"><use href="#s-area"/></svg><h3>Vlastní pozemek</h3><p>Pozemky od {min(h["plot"] for h in HOUSES)} do {max(h["plot"] for h in HOUSES)} m² se zahradou za domem.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-car"/></svg><h3>Parkování u domu</h3><p>Dvě zpevněná stání na vlastním pozemku, bez garáže.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-heat"/></svg><h3>Tepelné čerpadlo</h3><p>Podlahové topení v celém domě, bez plynu a komína.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-sun"/></svg><h3>Připraveno na FVE</h3><p>Rozvody pro fotovoltaiku, klimatizaci a venkovní žaluzie.</p></div>
-    </div>
-    <div class="more-link"><a class="link" href="standardy.html">Všechny standardy <svg><use href="#i-arrow"/></svg></a></div>
+    <div class="split-head"><h2 class="h2">Ke každému domu</h2><a class="sec-link" href="standardy.html">Všechny standardy<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    {spec([("Pozemek", f'{min(h["plot"] for h in HOUSES)}–{max(h["plot"] for h in HOUSES)} m², zahrada za domem'), ("Parkování", "2 zpevněná stání na pozemku, bez garáže"),
+           ("Vytápění", "tepelné čerpadlo, podlahové topení v celém domě"), ("Bez plynu a komína", "dům je čistě elektrický"),
+           ("Připraveno", "fotovoltaika, klimatizace, venkovní žaluzie"), ("Konstrukce", "cihelné zdivo Porotherm, železobetonový strop")])}
   </div></section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Kde je projekt teď</h2><p class="lead">Termíny doplníme se spuštěním prodeje a budeme je tu průběžně aktualizovat.</p></div>
+    <div class="sub-head"><h2 class="h2">Harmonogram</h2><p class="lead">Termíny zveřejníme se spuštěním prodeje.</p></div>
     <ol class="tl">{tl}</ol>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">HP DOMY, developer z Olomouce</h2><p class="lead">Rodinné domy staví na Olomoucku. Blatec navazuje na jejich předchozí projekty, které můžete navštívit.</p></div>
-    <div class="grid-3" data-stagger>
+    <div class="sub-head"><h2 class="h2">HP DOMY, developer z Olomouce</h2><p class="lead">Předchozí projekty HP DOMY stojí v Olšanech a ve Slavoníně. Můžete se na ně podívat.</p></div>
+    <div class="refs" data-stagger>
       <a class="ref" href="https://vilynakline.cz" target="_blank" rel="noopener"><b>Vily na Klíně</b><span>9 patrových domů 5+kk, Olšany u Prostějova</span><small>vilynakline.cz <svg><use href="#i-arrow"/></svg></small></a>
       <a class="ref" href="https://domynajihu.eu" target="_blank" rel="noopener"><b>Domy na jihu</b><span>3 patrové domy 5+kk, Olomouc-Slavonín</span><small>domynajihu.eu <svg><use href="#i-arrow"/></svg></small></a>
       <a class="ref" href="https://www.hpdomy.cz" target="_blank" rel="noopener"><b>HP DOMY s.r.o.</b><span>I. P. Pavlova 692/143, Olomouc · IČ 28603494</span><small>hpdomy.cz <svg><use href="#i-arrow"/></svg></small></a>
     </div>
     <div style="margin-top:clamp(36px,5vw,56px)">{reviews("inline", count=10)}</div>
   </div></section>
-  {cta_band()}
-  {next_page("lokalita", "Lokalita")}
+  {cta_band("Prohlídka pozemku v Blatci", "Prodejce vám ukáže situaci na místě, projde s vámi půdorysy a odpoví na otázky k financování.")}
+  {next_page("o-projektu")}
 </main>
 '''
 page("o-projektu", "O projektu · Blatec | HP DOMY", "Projekt 14 rodinných domů v Blatci u Olomouce: dva typy domů, co je v ceně, harmonogram a developer HP DOMY.", body, preload="street")
@@ -540,14 +588,14 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Lokalita"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Venkovský klid, Olomouc za 15 minut</h1><p class="lead" data-page-in>Blatec leží na Hané asi 8 km jižně od Olomouce. Do města dojedete autem, vlakem i na kole po rovině.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Do Olomouce 15 minut autem, 20 vlakem</h1><p class="lead" data-page-in>Blatec leží na Hané 8 km jižně od Olomouce. Cesta do města vede po rovině, takže dojedete i na kole.</p></div>
       <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><svg><use href="#a-city"/></svg><b>8 km</b> do centra</span><span class="fact"><svg><use href="#a-rail"/></svg>vlak v obci</span><span class="fact">cca <b>650</b> obyvatel</span></div></div>
     </div>
   </div>
   <section class="sub-sec" style="padding-top:0"><div class="wrap">
     <div class="loc">
       <div class="loc__text">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><h2 class="h3" style="font-size:clamp(20px,2vw,26px)">Jak daleko to mám</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><h2 class="h3" style="font-size:clamp(20px,2vw,26px)">Dojezdy</h2>
           <div class="seg" role="group" aria-label="Způsob dopravy"><button data-mode="auto" aria-pressed="true"><svg><use href="#s-car"/></svg>Auto</button><button data-mode="vlak" aria-pressed="false"><svg><use href="#a-rail"/></svg>Vlak</button><button data-mode="kolo" aria-pressed="false"><svg><use href="#a-road"/></svg>Kolo</button></div></div>
         <ul class="travel" id="travel" aria-live="polite"></ul>
         <span class="placeholder-note"><svg><use href="#i-info"/></svg>Orientační časy ve špičce. Před spuštěním webu je ověříme.</span>
@@ -556,20 +604,24 @@ body = f'''<main class="page">
     </div>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Co najdete v Blatci</h2><p class="lead">Ukazujeme jen služby, které jsme ověřili. Další doplníme po potvrzení s obcí.</p></div>
-    <div class="amen__grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">{amen_html}</div>
+    <div class="sub-head"><h2 class="h2">V obci a okolí</h2><p class="lead">Jen ověřené služby. Další doplníme po potvrzení s obcí.</p></div>
+    <div class="amen__grid amen__grid--3">{amen_html}</div>
     <div class="more-link"><a class="link" href="https://www.blatec.cz/" target="_blank" rel="noopener">Web obce Blatec <svg><use href="#i-arrow"/></svg></a></div>
   </div></section>
   <section class="sub-sec"><div class="wrap">
     <div class="grid-2" style="align-items:center">
-      <div class="sub-head" style="margin:0"><h2 class="h2">Malá obec s dlouhou historií</h2>
+      <div class="sub-head" style="margin:0"><h2 class="h2">Blatec od roku 1131</h2>
         <p style="color:var(--stone-600)">Blatec žije kolem 650 obyvatel a první písemná zmínka o obci pochází z roku 1131. Uprostřed návsi stojí kaple sv. Markéty a obecní dům. Obcí prochází železniční trať Olomouc – Nezamyslice a silnice, která ji spojuje s Olomoucí a Prostějovem.</p>
         <p style="color:var(--stone-600)">Nové domy vzniknou v klidné části obce s vlastní příjezdovou ulicí, takže kolem nebude projíždět tranzitní doprava.</p></div>
       <figure class="pfig" style="aspect-ratio:4/3" data-reveal-img>{img("aerial", "Zástupná vizualizace nových domů z ptačí perspektivy", "(min-width:860px) 50vw, 100vw")}</figure>
     </div>
   </div></section>
-  {cta_band("Přijeďte se podívat na místo", "Prodejce vám ukáže pozemky přímo v Blatci a projde s vámi, kde přesně bude stát váš dům.")}
-  {next_page("nabidka", "Nabídka domů")}
+  <section class="sub-sec" style="padding-top:0"><div class="wrap"><div class="route">
+    <div><b>Blatec, 783 75</b><span>Nová ulice na okraji obce. Přesný příjezd pošle prodejce.</span></div>
+    <a class="btn btn--ghost" href="https://mapy.cz/zakladni?q=Blatec%2C%20okres%20Olomouc" target="_blank" rel="noopener">Naplánovat cestu<svg style="width:14px;height:14px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="btn btn--primary" href="kontakt.html">Domluvit prohlídku <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>
+  </div></div></section>
+  {next_page("lokalita")}
 </main>
 '''
 page("lokalita", "Lokalita · Blatec u Olomouce | HP DOMY", "Blatec leží 8 km jižně od Olomouce. Dojezdové časy autem, vlakem a na kole, vybavenost obce a mapa.", body)
@@ -587,7 +639,7 @@ body = f'''<main class="page" data-compare>
   <div class="wrap">
     {crumbs((None, "Nabídka domů"))}
     <div class="phero phero--split" style="padding-bottom:28px">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Najděte svůj dům v Blatci</h1><p class="lead" data-page-in>Vyberte pozemek v situaci, nebo si domy seřaďte v tabulce. Až tři domy můžete porovnat vedle sebe.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Pozemek vyberete v situaci, domy seřadíte v tabulce. Až tři domy porovnáte vedle sebe.</p></div>
       <div class="ostats" data-page-in>
         <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
         <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
@@ -599,16 +651,13 @@ body = f'''<main class="page" data-compare>
   </div>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">{watchdog(["prodej", "dum"], "Hlídací pes", "Nechte nám e-mail a dáme vám vědět, až zveřejníme ceny, nebo když se uvolní rezervovaný dům.")}</div></section>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Na co se při výběru dívat</h2></div>
-    <div class="grid-3" data-stagger>
-      <div class="tile"><svg class="ti"><use href="#s-area"/></svg><h3>Velikost pozemku</h3><p>Pozemky se liší až o {max(h["plot"] for h in HOUSES) - min(h["plot"] for h in HOUSES)} m². Větší zahrada znamená víc místa, ale i víc údržby.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-sun"/></svg><h3>Orientace zahrady</h3><p>Domy 8–14 mají zahradu na jih, domy 1–7 na sever. Detail domu ukazuje orientaci přesně.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-plan"/></svg><h3>Typ domu</h3><p>Patrový 5+kk pro větší rodiny, přízemní 4+kk pro bydlení bez schodů.</p></div>
-    </div>
+    <div class="split-head"><h2 class="h2">Čím se domy liší</h2></div>
+    {spec([("Pozemek", f'{min(h["plot"] for h in HOUSES)}–{max(h["plot"] for h in HOUSES)} m², rozdíl až {max(h["plot"] for h in HOUSES) - min(h["plot"] for h in HOUSES)} m²'),
+           ("Zahrada", "domy 8–14 na jih, domy 1–7 na sever"), ("Typ", "patrový 5+kk, nebo přízemní 4+kk bez schodů"),
+           ("Cena", "podle velikosti pozemku a polohy v ulici")], cols=2)}
   </div></section>
-  <section class="sub-sec"><div class="wrap">{reviews("compact", title="Proč stavět s HP DOMY", count=8)}</div></section>
-  {cta_band("Nevíte, který dům vybrat?", "Prodejce s vámi projde rozdíly mezi domy a doporučí ty, které odpovídají vašim představám.")}
-  {next_page("standardy", "Standardy")}
+  <section class="sub-sec"><div class="wrap">{reviews("compact", title="Hodnocení HP DOMY", count=8)}</div></section>
+  {next_page("nabidka")}
 </main>
 <div class="tray" id="tray" role="region" aria-label="Porovnání domů"><span class="tray__txt">Porovnat</span><div class="tray__chips" id="tray-chips"></div><button class="tray__clear" id="tray-clear" type="button">Zrušit</button><button class="btn btn--light btn--sm" id="tray-go" type="button" disabled>Porovnat <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></button></div>
 <div class="modal" id="cmp-modal" role="dialog" aria-modal="true" aria-labelledby="cmp-h"><div class="modal__box"><div class="modal__head"><h2 class="h3" id="cmp-h">Porovnání domů</h2><button class="drawer__close" id="cmp-close" aria-label="Zavřít porovnání"><svg><use href="#i-close"/></svg></button></div><div id="cmp-body"></div></div></div>
@@ -626,14 +675,20 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Standardy"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Co dostanete v ceně domu</h1><p class="lead" data-page-in>Přehled podle oblastí. U každé položky vidíte, jestli je v ceně, připravená pro pozdější doplnění, nebo za příplatek.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Standardy domů</h1><p class="lead" data-page-in>U každé položky je vidět, jestli je v ceně, připravená na pozdější doplnění, nebo za příplatek.</p></div>
       <div class="phero__aside" data-page-in><div class="legend-tags">{legend}</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-pdf="standardy">Standardy v PDF <span class="ic"><svg><use href="#i-down"/></svg></span></button></div></div>
     </div>
     <nav class="subnav" aria-label="Oblasti standardů" style="top:calc(84px + env(safe-area-inset-top,0px));margin:0 0 8px">{cats_nav}<a href="#zmeny">Klientské změny</a></nav>
+  </div>
+  <section class="sub-sec" style="padding-top:clamp(24px,3vw,40px)"><div class="wrap">
+    <div class="split-head"><h2 class="h2">Z čeho je dům</h2><span class="calc__note">Ilustrační skladba, přesné tloušťky určí projekt.</span></div>
+    {wall_section()}
+  </div></section>
+  <div class="wrap">
     {cats_html}
   </div>
   <section class="sub-sec sub-sec--tint" id="zmeny" style="scroll-margin-top:150px"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Dům si můžete přizpůsobit</h2><p class="lead">Změny je potřeba zadat včas, dokud stavba nedošla do příslušné fáze. Obvyklý postup:</p></div>
+    <div class="sub-head"><h2 class="h2">Klientské změny</h2><p class="lead">Změny je potřeba zadat dřív, než stavba dojde do příslušné fáze. Vzorky podlah, obkladů a oken vám ukáže prodejce.</p></div>
     <ol class="steps" data-stagger>
       <li><b>Konzultace</b><p>S prodejcem projdete, co chcete změnit.</p></li>
       <li><b>Nacenění</b><p>Dostanete rozpočet změn a termín, do kdy je potvrdit.</p></li>
@@ -644,11 +699,10 @@ body = f'''<main class="page">
     <p class="calc__note" style="margin-top:18px">Postup a termíny upřesní HP DOMY. Standardy vycházejí z předchozích projektů HP DOMY.</p>
   </div></section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Na co se kupující ptají</h2></div>
+    <div class="sub-head"><h2 class="h2">Časté dotazy</h2></div>
     <div class="acc" id="faq-acc"></div>
   </div></section>
-  {cta_band("Chcete vidět materiály naživo?", "Prodejce vám ukáže vzorky podlah, obkladů a oken a vysvětlí, co lze změnit.")}
-  {next_page("galerie", "Galerie")}
+  {next_page("standardy")}
 </main>
 '''
 page("standardy", "Standardy · Blatec | HP DOMY", "Standardy rodinných domů v Blatci: konstrukce, tepelné čerpadlo, okna, interiér a technologie. Co je v ceně a co za příplatek.", body)
@@ -658,7 +712,7 @@ body = f'''<main class="page gallery-page">
   <div class="wrap">
     {crumbs((None, "Galerie"))}
     <div class="phero phero--split" style="padding-bottom:32px">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Jak budou domy vypadat</h1><p class="lead" data-page-in>Zástupné vizualizace obou typů domů. Finální vizualizace exteriéru i interiéru doplníme, jakmile je HP DOMY uvolní.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Galerie</h1><p class="lead" data-page-in>Zástupné vizualizace obou typů domů. Finální exteriéry a interiéry doplníme po uvolnění.</p></div>
       <div class="gal-tabs phero__aside" role="group" aria-label="Filtr galerie" data-page-in style="display:flex;flex-wrap:wrap;gap:8px">
         <button class="chip" aria-pressed="true" data-g="all">Vše</button><button class="chip" aria-pressed="false" data-g="patrovy">Patrový dům</button>
         <button class="chip" aria-pressed="false" data-g="prizemni">Přízemní dům</button><button class="chip" aria-pressed="false" data-g="okoli">Ulice a okolí</button>
@@ -668,12 +722,11 @@ body = f'''<main class="page gallery-page">
     <div class="gal" id="gal"></div>
   </div>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Fotky ze stavby</h2><p class="lead">Po zahájení výstavby sem budeme přidávat fotky z jednotlivých fází, abyste viděli, jak váš dům roste.</p></div>
+    <div class="sub-head"><h2 class="h2">Průběh výstavby</h2><p class="lead">Po zahájení stavby sem přibudou fotky z každé fáze.</p></div>
     <ol class="tl">{tl}</ol>
   </div></section>
-  <section class="sub-sec" style="padding-top:0"><div class="wrap">{watchdog(["stavba"], "Chcete vidět, jak stavba roste?", "Pošleme vám e-mail, když přidáme fotky z nové fáze výstavby.")}</div></section>
-  {cta_band()}
-  {next_page("kontakt", "Kontakt")}
+  <section class="sub-sec" style="padding-top:0"><div class="wrap">{watchdog(["stavba"], "Novinky ze stavby e-mailem", "Napíšeme vám, když přidáme fotky z nové fáze.")}</div></section>
+  {next_page("galerie")}
 </main>
 '''
 page("galerie", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci: patrový a přízemní dům, ulice a okolí.", body, extra=LIGHTBOX)
@@ -709,7 +762,7 @@ body = f'''<main class="page">
     </div></div>
   </section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Jak probíhá koupě domu</h2><p class="lead">Obvyklý postup u novostavby. Konkrétní podmínky upřesní prodejce.</p></div>
+    <div class="sub-head"><h2 class="h2">Postup koupě</h2><p class="lead">Obvyklý postup u novostavby. Podmínky upřesní prodejce.</p></div>
     <ol class="steps" data-stagger>
       <li><b>Výběr a prohlídka</b><p>Vyberete volný dům a prohlédnete si pozemek.</p></li>
       <li><b>Rezervace</b><p>Rezervační smlouvou si dům podržíte, v tabulce se označí jako rezervovaný.</p></li>
@@ -718,9 +771,9 @@ body = f'''<main class="page">
       <li><b>Předání</b><p>Po kolaudaci podepíšete kupní smlouvu a převezmete klíče.</p></li>
     </ol>
   </div></section>
-  <section class="sub-sec" style="padding-top:0"><div class="wrap">{reviews("compact", title="Zkušenosti majitelů domů od HP DOMY", count=8)}</div></section>
+  <section class="sub-sec" style="padding-top:0"><div class="wrap">{reviews("compact", title="Hodnocení HP DOMY", count=8)}</div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="faq"><div style="display:grid;gap:18px;align-content:start"><h2 class="h2">Než nám napíšete</h2></div><div class="acc" id="faq-acc"></div></div>
+    <div class="faq"><div style="display:grid;gap:18px;align-content:start"><h2 class="h2">Časté dotazy</h2></div><div class="acc" id="faq-acc"></div></div>
   </div></section>
 </main>
 '''
@@ -777,14 +830,8 @@ for h in HOUSES:
       <div class="hd-main">
         {watchdog(["dum"], f"Dům {hid} je {'rezervovaný' if h['status'] == 'rezervace' else 'prodaný'}", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, compact=True) if h["status"] != "volny" else ""}
         <section class="hd-sec" id="parametry"><header><h2 class="h2">Parametry</h2></header>
-          <div class="params" data-stagger>
-            <div class="param"><svg><use href="#s-plan"/></svg><div><small>Dispozice</small><b>{h["disp"]}</b></div></div>
-            <div class="param"><svg><use href="#s-area"/></svg><div><small>Užitná plocha</small><b>{area(h["area"])}</b></div></div>
-            <div class="param"><svg><use href="#a-tree"/></svg><div><small>Pozemek</small><b>{area(h["plot"])}</b></div></div>
-            <div class="param"><svg><use href="#s-car"/></svg><div><small>Parkování</small><b>2 stání u domu</b></div></div>
-            <div class="param"><svg><use href="#s-sun"/></svg><div><small>Zahrada</small><b>na {h["garden"]}</b></div></div>
-            <div class="param"><svg><use href="#s-heat"/></svg><div><small>Vytápění</small><b>Tepelné čerpadlo</b></div></div>
-          </div>
+          {spec([("Typ", f'{T["label"]} dům'), ("Dispozice", h["disp"]), ("Užitná plocha", area(h["area"])), ("Pozemek", area(h["plot"])),
+                 ("Podlaží", "2" if h["type"] == "patrovy" else "1"), ("Zahrada", f'na {h["garden"]}'), ("Parkování", "2 stání u domu"), ("Vytápění", "tepelné čerpadlo")], cols=2, cls="spec-list--big")}
         </section>
         <section class="hd-sec" id="pudorys"><header><h2 class="h2">Půdorys</h2>{'<div class="seg" role="group" aria-label="Podlaží">' + floors_btn + '</div>' if len(PLANS[h["type"]]) > 1 else ''}</header>
           <div class="fp" id="fp" data-house="{hid}">
@@ -796,11 +843,9 @@ for h in HOUSES:
           <div class="loc-row"><div class="fp__canvas">{mini_plan(hid)}</div><div class="orient">{garden_dial(h["garden"])}<p><b style="color:var(--ink)">Zahrada na {h["garden"]}</b><br>{garden_note}</p></div></div>
         </section>
         <section class="hd-sec" id="vybaveni"><header><h2 class="h2">Co je v ceně</h2><a class="link" href="standardy.html">Všechny standardy <svg><use href="#i-arrow"/></svg></a></header>
-          <div class="grid-2" style="gap:10px" data-stagger>
-            {"".join(f'<div class="tile" style="grid-template-columns:auto 1fr;align-items:center;padding:16px 18px"><svg class="ti"><use href="#{s[0]}"/></svg><div><h3>{s[1]}</h3></div></div>' for s in STD_SHORT[:6])}
-          </div>
+          {check_list([s[1] for s in STD_SHORT[:8]])}
         </section>
-        <section class="hd-sec" id="financovani"><header><h2 class="h2">Kolik bude splátka</h2></header>
+        <section class="hd-sec" id="financovani"><header><h2 class="h2">Splátka hypotéky</h2></header>
           <div class="calc" id="calc" data-price="{calc_price}">
             <div class="calc__in">
               <div class="range"><div class="range__top"><label for="c-own">Vlastní zdroje</label><output id="o-own"></output></div><input type="range" id="c-own" min="10" max="60" step="5" value="20"></div>
@@ -816,7 +861,7 @@ for h in HOUSES:
         <section class="hd-sec" id="podobne"><header><h2 class="h2">Podobné volné domy</h2><a class="link" href="nabidka.html#volne">Všechny volné <svg><use href="#i-arrow"/></svg></a></header>
           <div class="similar">{sim_html}</div>
         </section>
-        <section class="hd-sec" id="recenze"><header><h2 class="h2">Kdo dům postaví</h2></header>
+        <section class="hd-sec" id="recenze"><header><h2 class="h2">Developer</h2></header>
           <p style="color:var(--stone-600);max-width:60ch">Stavět bude HP DOMY, olomoucký developer s hodnocením {rating_txt} z 5 na Google. Takhle o firmě píšou lidé, kterým už postavila dům.</p>
           {reviews("inline", count=8)}
         </section>
@@ -832,7 +877,6 @@ for h in HOUSES:
     <nav class="house-nav" aria-label="Další domy"><a href="dum-{prev_id}.html"><svg><use href="#i-left"/></svg>Dům {prev_id}</a><a href="dum-{next_id}.html">Dům {next_id}<svg><use href="#i-right"/></svg></a></nav>
   </div>
   <div style="height:clamp(56px,8vw,112px)"></div>
-  {cta_band(f"Zaujal vás dům {hid}?" if not sold else "Hledáte podobný dům?", "Prodejce vám ukáže pozemek a projde s vámi půdorys i financování.")}
 </main>
 <nav class="dock" aria-label="Dům {hid}">
   <div class="dock__top"><div class="dock__info"><small>Dům {hid} · {STATUS[h["status"]]}</small><b>{price_txt(h)}</b></div>

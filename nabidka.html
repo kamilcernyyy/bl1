@@ -110,7 +110,7 @@
   <div class="wrap">
     <nav class="crumbs" aria-label="Drobečková navigace" data-page-in><a href="index.html">Blatec</a><span aria-hidden="true">/</span><span aria-current="page">Nabídka domů</span></nav>
     <div class="phero phero--split" style="padding-bottom:28px">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Najděte svůj dům v Blatci</h1><p class="lead" data-page-in>Vyberte pozemek v situaci, nebo si domy seřaďte v tabulce. Až tři domy můžete porovnat vedle sebe.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Pozemek vyberete v situaci, domy seřadíte v tabulce. Až tři domy porovnáte vedle sebe.</p></div>
       <div class="ostats" data-page-in>
         <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
         <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
@@ -186,15 +186,11 @@
   <div class="wd__done" role="status" aria-live="polite"><span class="ok"><svg><use href="#i-check"/></svg></span><div><b>Hlídáme za vás</b><p id="wd-done-msg"></p></div></div>
 </form></div></section>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">
-    <div class="sub-head"><h2 class="h2">Na co se při výběru dívat</h2></div>
-    <div class="grid-3" data-stagger>
-      <div class="tile"><svg class="ti"><use href="#s-area"/></svg><h3>Velikost pozemku</h3><p>Pozemky se liší až o 199 m². Větší zahrada znamená víc místa, ale i víc údržby.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-sun"/></svg><h3>Orientace zahrady</h3><p>Domy 8–14 mají zahradu na jih, domy 1–7 na sever. Detail domu ukazuje orientaci přesně.</p></div>
-      <div class="tile"><svg class="ti"><use href="#s-plan"/></svg><h3>Typ domu</h3><p>Patrový 5+kk pro větší rodiny, přízemní 4+kk pro bydlení bez schodů.</p></div>
-    </div>
+    <div class="split-head"><h2 class="h2">Čím se domy liší</h2></div>
+    <dl class="spec-list spec-list--c2 "><div class="spec-row"><dt>Pozemek</dt><dd>529–728 m², rozdíl až 199 m²</dd></div><div class="spec-row"><dt>Zahrada</dt><dd>domy 8–14 na jih, domy 1–7 na sever</dd></div><div class="spec-row"><dt>Typ</dt><dd>patrový 5+kk, nebo přízemní 4+kk bez schodů</dd></div><div class="spec-row"><dt>Cena</dt><dd>podle velikosti pozemku a polohy v ulici</dd></div></dl>
   </div></section>
   <section class="sub-sec"><div class="wrap"><div class="rv rv--compact">
-  <div class="sub-head"><h2 class="h2">Proč stavět s HP DOMY</h2><p class="lead">Hodnocení firmy HP DOMY na Google od lidí, kterým už postavila dům.</p></div>
+  <div class="sub-head"><h2 class="h2">Hodnocení HP DOMY</h2><p class="lead">Recenze na Google od lidí, kterým už HP DOMY postavily dům.</p></div>
   <div class="rv__grid">
     <div class="rv__sum">
       <div class="rv__score"><b class="tnum">4,6</b><div><span class="stars" role="img" aria-label="4.6 z 5 hvězdiček"><svg class="on" aria-hidden="true"><use href="#i-star"/></svg><svg class="on" aria-hidden="true"><use href="#i-star"/></svg><svg class="on" aria-hidden="true"><use href="#i-star"/></svg><svg class="on" aria-hidden="true"><use href="#i-star"/></svg><svg class="on" aria-hidden="true"><use href="#i-star"/></svg></span><span>31 recenzí na Google</span></div></div>
@@ -208,13 +204,7 @@
   </div>
   <p class="rv__note">Recenze převzaté z Google beze změn, u zkrácených pokračuje text na Google. Jména zkrácena na iniciálu příjmení.</p>
 </div></div></section>
-  <section class="sub-sec" style="padding-top:0"><div class="wrap">
-  <div class="ctaband" data-reveal>
-    <div><h2 class="h2">Nevíte, který dům vybrat?</h2><p>Prodejce s vámi projde rozdíly mezi domy a doporučí ty, které odpovídají vašim představám.</p>
-      <div class="ctaband__seller"><span class="person__av" aria-hidden="true">PČ</span><span>Pavel Čundrla · <span class="tnum">+420 776 294 498</span></span></div></div>
-    <div class="ctaband__act"><a class="btn btn--light" href="kontakt.html">Domluvit prohlídku <span class="ic"><svg><use href="#i-arrow"/></svg></span></a><a class="btn btn--ghost on-dark" href="nabidka.html#volne">Volné domy</a></div>
-  </div></div></section>
-  <section class="sub-sec" style="padding-top:0"><div class="wrap"><a class="nextp" href="standardy.html" data-reveal><div><small>Pokračovat</small><span class="h2">Standardy</span></div><span class="ic"><svg><use href="#i-arrow"/></svg></span></a></div></section>
+  <nav class="pnav wrap" aria-label="Další stránky"><a class="pnav__a" href="lokalita.html" rel="prev"><small>Předchozí</small><span>Lokalita</span></a><a class="pnav__a pnav__a--next" href="standardy.html" rel="next"><small>Další</small><span>Standardy <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a></nav>
 </main>
 <div class="tray" id="tray" role="region" aria-label="Porovnání domů"><span class="tray__txt">Porovnat</span><div class="tray__chips" id="tray-chips"></div><button class="tray__clear" id="tray-clear" type="button">Zrušit</button><button class="btn btn--light btn--sm" id="tray-go" type="button" disabled>Porovnat <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></button></div>
 <div class="modal" id="cmp-modal" role="dialog" aria-modal="true" aria-labelledby="cmp-h"><div class="modal__box"><div class="modal__head"><h2 class="h3" id="cmp-h">Porovnání domů</h2><button class="drawer__close" id="cmp-close" aria-label="Zavřít porovnání"><svg><use href="#i-close"/></svg></button></div><div id="cmp-body"></div></div></div>
