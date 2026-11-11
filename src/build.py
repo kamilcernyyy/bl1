@@ -400,6 +400,14 @@ def next_page(slug, label=None):
     lp = f'<a class="pnav__a" href="{prev[0]}.html" rel="prev"><small>Předchozí</small><span>{prev[1]}</span></a>' if prev else '<span></span>'
     return f'''<nav class="pnav wrap" aria-label="Další stránky">{lp}<a class="pnav__a pnav__a--next" href="{nxt[0]}.html" rel="next"><small>Další</small><span>{nxt[1]} <svg aria-hidden="true"><use href="#i-arrow"/></svg></span></a></nav>'''
 
+def next_step(text, primary, secondary=None, title="Další krok"):
+    """One clear next action at the end of a page: label, short text, one primary button (+ optional ghost)."""
+    sec = f'<a class="btn btn--ghost" href="{secondary[1]}"{secondary[2] if len(secondary) > 2 else ""}>{secondary[0]}</a>' if secondary else ""
+    return f'''<section class="sub-sec" style="padding-top:0"><div class="wrap"><div class="nstep">
+  <div class="nstep__txt"><span class="nstep__k">{title}</span><p>{text}</p></div>
+  <div class="nstep__act">{sec}<a class="btn btn--primary" href="{primary[1]}">{primary[0]} <span class="ic"><svg><use href="#i-arrow"/></svg></span></a></div>
+</div></div></section>'''
+
 def spec(rows, cols=2, cls=""):
     """Technical-sheet list: small label left, value right, hairline between rows."""
     items = "".join(f'<div class="spec-row"><dt>{k}</dt><dd>{v}</dd></div>' for k, v in rows)
@@ -490,7 +498,9 @@ def watchdog(preset, title, text, house=None, compact=False):
 
 # ------------------------------------------------------------------ index (one-pager)
 idx_main = read("pages/index.main.html")
-for hid_, href, label in [("projekt-h", "o-projektu.html", "O projektu"), ("lok-h", "lokalita.html", "Lokalita"),
+_ip = re.search(r'(<p class="lead" style="text-align:center">.*?</p>)', idx_main, re.S)
+idx_main = idx_main.replace(_ip.group(1), _ip.group(1) + '<a class="sec-link" href="o-projektu.html">O projektu<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>', 1)
+for hid_, href, label in [("lok-h", "lokalita.html", "Lokalita"),
                           ("nab-h", "nabidka.html", "Celá nabídka"), ("std-h", "standardy.html", "Všechny standardy"),
                           ("gal-h", "galerie.html", "Celá galerie")]:
     m = re.search(r'(<h2 class="h2" id="%s"[^>]*>.*?</h2>)' % hid_, idx_main, re.S)
@@ -519,7 +529,7 @@ def type_card(t):
     return f'''<article class="tcard" data-reveal>
   <div class="tcard__img">{img(T["img"], "Zástupná vizualizace – " + T["label"].lower() + " dům", "(min-width:860px) 50vw, 100vw")}</div>
   <div class="tcard__body">
-    <div class="tcard__row"><h3 class="h3" style="font-size:clamp(20px,2vw,26px)">{T["label"]} dům</h3><span class="badge badge--volny">{nfree} volné z {len(hs)}</span></div>
+    <div class="tcard__row"><h3 class="h3">{T["label"]} dům</h3><span class="badge badge--volny">{nfree} volné z {len(hs)}</span></div>
     <p class="tcard__ideal">{ideal}</p>
     <dl class="kv">
       <div><dt>Dispozice</dt><dd>{T["disp"]}</dd></div><div><dt>Užitná plocha</dt><dd>{area(T["area"])}</dd></div>
@@ -595,7 +605,7 @@ body = f'''<main class="page">
   <section class="sub-sec" style="padding-top:0"><div class="wrap">
     <div class="loc">
       <div class="loc__text">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><h2 class="h3" style="font-size:clamp(20px,2vw,26px)">Dojezdy</h2>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><h2 class="h3">Dojezdy</h2>
           <div class="seg" role="group" aria-label="Způsob dopravy"><button data-mode="auto" aria-pressed="true"><svg><use href="#s-car"/></svg>Auto</button><button data-mode="vlak" aria-pressed="false"><svg><use href="#a-rail"/></svg>Vlak</button><button data-mode="kolo" aria-pressed="false"><svg><use href="#a-road"/></svg>Kolo</button></div></div>
         <ul class="travel" id="travel" aria-live="polite"></ul>
         <span class="placeholder-note"><svg><use href="#i-info"/></svg>Orientační časy ve špičce. Před spuštěním webu je ověříme.</span>
@@ -644,7 +654,7 @@ body = f'''<main class="page" data-compare>
         <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
         <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
         <div class="ostat"><b data-cnt="prodany">–</b><span>prodaných</span></div>
-        <div class="ostat"><b style="font-size:20px" data-min-price>–</b><span>nejnižší cena</span></div>
+        <div class="ostat"><b data-min-price>–</b><span>nejnižší cena</span></div>
       </div>
     </div>
     {offer}
@@ -657,6 +667,7 @@ body = f'''<main class="page" data-compare>
            ("Cena", "podle velikosti pozemku a polohy v ulici")], cols=2)}
   </div></section>
   <section class="sub-sec"><div class="wrap">{reviews("compact", title="Hodnocení HP DOMY", count=8)}</div></section>
+  {next_step("Máte vybráno? Prodejce vám ukáže pozemek na místě a projde s vámi půdorys i financování.", ("Domluvit prohlídku", "kontakt.html"), ("Uložené domy", "nabidka.html#oblibene"))}
   {next_page("nabidka")}
 </main>
 <div class="tray" id="tray" role="region" aria-label="Porovnání domů"><span class="tray__txt">Porovnat</span><div class="tray__chips" id="tray-chips"></div><button class="tray__clear" id="tray-clear" type="button">Zrušit</button><button class="btn btn--light btn--sm" id="tray-go" type="button" disabled>Porovnat <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></button></div>
@@ -669,14 +680,14 @@ cats_nav = "".join(f'<a href="#{c[0]}">{c[2]}</a>' for c in STD_CATS)
 cats_html = ""
 for slug, ico, name, sub, items in STD_CATS:
     lis = "".join(f'<li><b>{n}</b><span class="tag {TAGS[k][0]}">{TAGS[k][1]}</span><p>{d}</p></li>' for n, d, k in items)
-    cats_html += f'<section class="std-cat" id="{slug}"><div class="std-cat__head"><svg><use href="#{ico}"/></svg><h2 class="h2">{name}</h2><p style="color:var(--stone-600)">{sub}</p></div><ul class="std-list" data-stagger>{lis}</ul></section>'
+    cats_html += f'<section class="std-cat" id="{slug}"><div class="std-cat__head"><h3 class="h3"><svg aria-hidden="true"><use href="#{ico}"/></svg>{name}</h3><p>{sub}</p></div><ul class="std-list">{lis}</ul></section>'
 legend = "".join(f'<span class="tag {c}">{t}</span>' for c, t in TAGS.values())
 body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Standardy"))}
     <div class="phero phero--split">
       <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Standardy domů</h1><p class="lead" data-page-in>U každé položky je vidět, jestli je v ceně, připravená na pozdější doplnění, nebo za příplatek.</p></div>
-      <div class="phero__aside" data-page-in><div class="legend-tags">{legend}</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-pdf="standardy">Standardy v PDF <span class="ic"><svg><use href="#i-down"/></svg></span></button></div></div>
+      <div class="phero__aside" data-page-in><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn--ghost" data-pdf="standardy">Standardy v PDF <svg style="width:16px;height:16px" aria-hidden="true"><use href="#i-down"/></svg></button></div></div>
     </div>
     <nav class="subnav" aria-label="Oblasti standardů" style="top:calc(84px + env(safe-area-inset-top,0px));margin:0 0 8px">{cats_nav}<a href="#zmeny">Klientské změny</a></nav>
   </div>
@@ -684,9 +695,10 @@ body = f'''<main class="page">
     <div class="split-head"><h2 class="h2">Z čeho je dům</h2><span class="calc__note">Ilustrační skladba, přesné tloušťky určí projekt.</span></div>
     {wall_section()}
   </div></section>
-  <div class="wrap">
+  <section class="sub-sec" style="padding-top:clamp(24px,3vw,40px)"><div class="wrap">
+    <div class="split-head"><h2 class="h2">Podle oblastí</h2><span class="legend-tags">{legend}</span></div>
     {cats_html}
-  </div>
+  </div></section>
   <section class="sub-sec sub-sec--tint" id="zmeny" style="scroll-margin-top:150px"><div class="wrap">
     <div class="sub-head"><h2 class="h2">Klientské změny</h2><p class="lead">Změny je potřeba zadat dřív, než stavba dojde do příslušné fáze. Vzorky podlah, obkladů a oken vám ukáže prodejce.</p></div>
     <ol class="steps" data-stagger>
@@ -702,6 +714,7 @@ body = f'''<main class="page">
     <div class="sub-head"><h2 class="h2">Časté dotazy</h2></div>
     <div class="acc" id="faq-acc"></div>
   </div></section>
+  {next_step("Standard je stejný u všech čtrnácti domů. Teď si vyberte dům, který vám sedí velikostí pozemku a orientací zahrady.", ("Vybrat volný dům", "nabidka.html#volne"), ("Standardy v PDF", "#", ' data-pdf="standardy"'))}
   {next_page("standardy")}
 </main>
 '''
@@ -726,6 +739,7 @@ body = f'''<main class="page gallery-page">
     <ol class="tl">{tl}</ol>
   </div></section>
   <section class="sub-sec" style="padding-top:0"><div class="wrap">{watchdog(["stavba"], "Novinky ze stavby e-mailem", "Napíšeme vám, když přidáme fotky z nové fáze.")}</div></section>
+  {next_step("Fotky ukazují oba typy domů. Konkrétní dům, jeho pozemek a půdorys najdete v nabídce.", ("Vybrat volný dům", "nabidka.html#volne"))}
   {next_page("galerie")}
 </main>
 '''
@@ -736,7 +750,7 @@ form_src = read("pages/index.main.html")
 form_html = form_src[form_src.index('<form class="form"'):form_src.index("</form>") + len("</form>")]
 topics = [("prohlidka", "Prohlídka", "Kdy se vám hodí prohlídka pozemku?"), ("dum", "Dotaz na dům", "Na co se chcete zeptat?"),
           ("financovani", "Financování", "Jakou částku plánujete financovat hypotékou?"), ("jine", "Jiné", "Napište nám, s čím můžeme pomoci.")]
-seg = '<div class="field"><span style="font-size:13.5px;font-weight:500">Co potřebujete</span><div class="seg seg--wrap" role="group" aria-label="Typ dotazu">' + "".join(
+seg = '<div class="field"><span class="field-lbl">Co potřebujete</span><div class="seg seg--wrap" role="group" aria-label="Typ dotazu">' + "".join(
     f'<button type="button" data-topic="{k}" data-ph="{ph}" aria-pressed="{str(i == 0).lower()}">{n}</button>' for i, (k, n, ph) in enumerate(topics)) + "</div></div>"
 form_html = form_html.replace('<div class="form__row form__row--2">', seg + '\n          <div class="form__row form__row--2">', 1)
 form_html = form_html.replace('aria-labelledby="ct-h"', 'aria-labelledby="kt-h"')
@@ -873,6 +887,10 @@ for h in HOUSES:
           {PERSON}
         </div>
       </aside>
+    </div>
+    <div class="nstep" style="margin-top:clamp(48px,6vw,80px)">
+      <div class="nstep__txt"><span class="nstep__k">Další krok</span><p>{"Prohlídka pozemku domu " + str(hid) + ". Prodejce vám ukáže, kde přesně dům stojí, a projde s vámi půdorys i financování." if not sold else "Dům je prodaný. Podívejte se na volné domy s podobným pozemkem."}</p></div>
+      <div class="nstep__act"><button class="btn btn--ghost" type="button" data-fav="{hid}" aria-pressed="false">Uložit dům</button>{('<a class="btn btn--primary" href="kontakt.html#dum-%d">Domluvit prohlídku <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>' % hid) if not sold else '<a class="btn btn--primary" href="nabidka.html#volne">Volné domy <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>'}</div>
     </div>
     <nav class="house-nav" aria-label="Další domy"><a href="dum-{prev_id}.html"><svg><use href="#i-left"/></svg>Dům {prev_id}</a><a href="dum-{next_id}.html">Dům {next_id}<svg><use href="#i-right"/></svg></a></nav>
   </div>

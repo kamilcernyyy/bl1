@@ -69,7 +69,7 @@ $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
   catch { const r = document.createRange(); r.selectNodeContents(b.previousElementSibling); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Označeno, zkopírujte Ctrl+C'); }
 }));
 $$('[data-gdpr]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); toast('Zásady ochrany osobních údajů doplní HP DOMY'); }));
-$$('[data-pdf]').forEach(b => b.addEventListener('click', () => toast(b.dataset.pdf === 'standardy' ? 'PDF se standardy doplníme po dodání podkladů' : `PDF karta domu ${b.dataset.pdf} bude dostupná po dodání podkladů`)));
+$$('[data-pdf]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); toast(b.dataset.pdf === 'standardy' ? 'PDF se standardy doplníme po dodání podkladů' : `PDF karta domu ${b.dataset.pdf} bude dostupná po dodání podkladů`); }));
 
 /* ---------- accordion ---------- */
 function acc(root, items, renderHead, onOpen) {
