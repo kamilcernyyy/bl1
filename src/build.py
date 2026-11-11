@@ -140,27 +140,6 @@ REVIEWS = [
     ("Petr Š.", 5, "před 2 lety", "Mohu jen doporučit!", False),
 ]
 
-ACCENTS = [
-    dict(id="cerna", name="Černá HP DOMY", hex="#161616", ink="#ffffff", tag="Bez nové barvy",
-         why="Dnešní stav. Hover jen přepne do černé. Čisté a bezpečné, ale web zůstane hodně tichý."),
-    dict(id="kobalt", name="Kobalt", hex="#2c3fd6", ink="#ffffff", tag="Nebe nad Hanou", rec=True,
-         why="Hluboká modrá jako obloha na vizualizacích. Proti bílé a černé působí architektonicky a prémiově, nesrazí se se stavy domů (zelená, oranžová, šedá) a modrá u realit podvědomě znamená důvěru."),
-    dict(id="cihla", name="Cihla Porotherm", hex="#b4452a", ink="#ffffff", tag="Příběh materiálu",
-         why="Barva pálené cihly, ze které se domy staví. Teplá, hmatatelná a česká. S bílým textem dobře čitelná, jen je blízko červené, takže ji nepoužívat na chybové stavy."),
-    dict(id="psenice", name="Hanácká pšenice", hex="#e0a92a", ink="#161616", tag="Příběh Hané",
-         why="Zlatá barva polí kolem Blatce. Teplá a přátelská, s černým textem. Pozor, je blízko oranžové u stavu Rezervace, ten bychom museli přebarvit."),
-    dict(id="oranz", name="Signální oranž", hex="#ff5a1f", ink="#161616", tag="Nejvýraznější",
-         why="Stavební signální oranžová. Na černobílém webu udělá největší efekt, ale je hlasitá a hodně používaná, takže riskuje, že web zlevní."),
-    dict(id="orech", name="Ořech", hex="#7a5a3a", ink="#ffffff", tag="Nejtišší",
-         why="Dnešní pracovní akcent podle dřevěného obkladu. Ladí s vizualizacemi, ale kontrast je malý, takže web moc nepozvedne."),
-]
-def _lum(h):
-    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
-    f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
-def contrast(a, b):
-    la, lb = sorted((_lum(a), _lum(b)), reverse=True)
-    return (la + 0.05) / (lb + 0.05)
 TRAVEL = [
     dict(place="Centrum Olomouce", note="práce, úřady, kultura", km=8, auto=15, vlak=20, kolo=30),
     dict(place="Fakultní nemocnice Olomouc", note="nejbližší velká nemocnice", km=9, auto=15, vlak=30, kolo=35),
@@ -171,7 +150,7 @@ TRAVEL = [
 ICONS = [["a-rail", "Vlak"], ["a-road", "Silnice"], ["a-hall", "Obecní dům"], ["a-chapel", "Kaple"], ["a-fire", "Hasiči"], ["a-city", "Město"], ["a-tree", "Příroda"],
          ["s-brick", "Zdivo"], ["s-heat", "Tepelné čerpadlo"], ["s-window", "Okna"], ["s-blind", "Žaluzie"], ["s-sun", "Fotovoltaika"], ["s-snow", "Klimatizace"],
          ["s-floor", "Podlahy"], ["s-door", "Dveře"], ["s-water", "Úpravna vody"], ["s-car", "Parkování"], ["s-plan", "Dispozice"], ["s-area", "Plocha"]]
-DATA = dict(accents=[dict(id=a['id'], name=a['name'], hex=a['hex']) for a in ACCENTS], status=STATUS, houses=HOUSES, geo=GEO, gallery=GALLERY, plans=PLANS, stdShort=STD_SHORT, faq=FAQ, travel=TRAVEL, icons=ICONS)
+DATA = dict(status=STATUS, houses=HOUSES, geo=GEO, gallery=GALLERY, plans=PLANS, stdShort=STD_SHORT, faq=FAQ, travel=TRAVEL, icons=ICONS)
 
 
 # ------------------------------------------------------------------ Google reviews component
@@ -204,7 +183,7 @@ def reviews(variant="full", title="Co o HP DOMY říkají majitelé domů", coun
       <a class="btn btn--ghost btn--sm" href="{GOOGLE["url"]}" target="_blank" rel="noopener"><span class="g-mark g-mark--sm">{G_MARK}</span>Všechny recenze</a>
     </div>'''
     nav = '<div class="rv__nav"><button class="rv__btn" data-rv="prev" aria-label="Předchozí recenze"><svg><use href="#i-left"/></svg></button><span class="rv__prog" aria-hidden="true"><i></i></span><button class="rv__btn" data-rv="next" aria-label="Další recenze"><svg><use href="#i-right"/></svg></button></div>'
-    head = (f'<div class="sub-head"><span class="eyebrow">Recenze</span><h2 class="h2">{title}</h2>'
+    head = (f'<div class="sub-head"><h2 class="h2">{title}</h2>'
             '<p class="lead">Hodnocení firmy HP DOMY na Google od lidí, kterým už postavila dům.</p></div>') if variant != "inline" else ""
     return f'''<div class="rv rv--{variant}"{f' id="{sid}"' if sid else ""}>
   {head}
@@ -218,10 +197,33 @@ def reviews(variant="full", title="Co o HP DOMY říkají majitelé domů", coun
   <p class="rv__note">Recenze převzaté z Google beze změn, u zkrácených pokračuje text na Google. Jména zkrácena na iniciálu příjmení.</p>
 </div>'''
 
-fmt = lambda n: f"{n:,.0f}".replace(",", " ")
-area = lambda a: (f"{a:.1f}".replace(".", ",") if a % 1 else f"{a:.0f}") + " m²"
-price_txt = lambda h: fmt(h["price"]) + " Kč" if h["price"] else "Na dotaz"
+fmt = lambda n: f"{n:,.0f}".replace(",", "\u00a0")
+area = lambda a: (f"{a:.1f}".replace(".", ",") if a % 1 else f"{a:.0f}") + "\u00a0m²"
+price_txt = lambda h: fmt(h["price"]) + "\u00a0Kč" if h["price"] else "Na dotaz"
 free = [h for h in HOUSES if h["status"] == "volny"]
+
+
+# ------------------------------------------------------------------ Czech typography
+_ONE = re.compile(r'(?<![0-9A-Za-zÀ-ž])([vVkKsSzZoOuUaAiI])[ \t\n]+(?=\S)')
+_UNIT = re.compile(r'(\d)[ \t]+(km|m²|m|Kč|min|%|let|lety|obyvatel|ks|fotky|fotek|domů|domy|dům|m²)(?=[^0-9A-Za-zÀ-ž]|$)')
+_THOUS = re.compile(r'(\d)[ ](\d{3})(?!\d)')
+def cz_typo(html_text):
+    """Non-breaking spaces after one-letter words and between numbers and units (text nodes only)."""
+    parts = re.split(r'(<[^>]+>)', html_text)
+    skip = False
+    for i, p in enumerate(parts):
+        if p.startswith('<'):
+            t = p[1:].split()[0].lower() if len(p) > 2 else ''
+            if t in ('script', 'style'): skip = True
+            elif t in ('/script', '/style'): skip = False
+            continue
+        if skip or not p.strip():
+            continue
+        p = _ONE.sub(lambda m: m.group(1) + '\u00a0', p)
+        for _ in range(3): p = _THOUS.sub('\\1\u00a0\\2', p)
+        p = _UNIT.sub('\\1\u00a0\\2', p)
+        parts[i] = p
+    return ''.join(parts)
 
 # ------------------------------------------------------------------ partials
 NAV = [("o-projektu", "O projektu"), ("lokalita", "Lokalita"), ("nabidka", "Nabídka domů"),
@@ -257,8 +259,7 @@ def head(title, desc, preload_img=None, jsonld=None, main=False):
     pre = ('<link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">\n'
            if preload_img == "hero" else "")
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>\n' if jsonld else ""
-    early = '<script>try{var a=localStorage.getItem("blatec-accent");if(a)document.documentElement.dataset.accent=a}catch(e){}</script>\n'
-    meta = (early + f"<title>{esc(title)}</title>\n"
+    meta = (f"<title>{esc(title)}</title>\n"
             + ('<meta name="claude:viewport-fit-sides" content="cover">\n' if FLAVOR != "repo" else "")
             + f'<meta name="description" content="{esc(desc)}">\n<meta name="theme-color" content="#ffffff">\n'
             f'<meta property="og:type" content="website"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}">'
@@ -327,7 +328,7 @@ FOOTER = f'''<footer class="ftr">
     </div>
     <div class="ftr__legal">
       <span>Spisová značka C 44281 vedená u Krajského soudu v Ostravě</span>
-      <span style="display:flex;gap:18px;flex-wrap:wrap"><a href="#" data-gdpr>Ochrana osobních údajů</a><a href="index.html#komponenty">Design systém návrhu</a><a href="vzornik.html">Vzorník barev</a><span>© 2026 HP DOMY s.r.o.</span></span>
+      <span style="display:flex;gap:18px;flex-wrap:wrap"><a href="#" data-gdpr>Ochrana osobních údajů</a><a href="index.html#komponenty">Design systém návrhu</a><span>© 2026 HP DOMY s.r.o.</span></span>
     </div>
   </div>
 </footer>
@@ -335,7 +336,7 @@ FOOTER = f'''<footer class="ftr">
 
 DRAWER = '''<div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" tabindex="-1">
-  <div class="drawer__head"><span class="eyebrow" style="margin:0">Rychlý náhled</span><button class="drawer__close" id="dr-close" aria-label="Zavřít náhled domu"><svg><use href="#i-close"/></svg></button></div>
+  <div class="drawer__head"><span class="drawer__label">Rychlý náhled</span><button class="drawer__close" id="dr-close" aria-label="Zavřít náhled domu"><svg><use href="#i-close"/></svg></button></div>
   <div class="drawer__body" id="dr-body"></div>
   <div class="drawer__actions">
     <a class="btn btn--ghost" id="dr-detail" href="#">Celý detail domu</a>
@@ -395,8 +396,7 @@ def img(src, alt, sizes="100vw", eager=False, w=1600):
 
 def page(slug, title, desc, body, active=None, preload=None, jsonld=None, extra="", main=False, hero=False):
     out = head(title, desc, preload, jsonld, main) + SPRITE + header(active or slug, hero) + body + FOOTER + extra + TOAST + scripts(main)
-    if slug == "vzornik":
-        out = out.replace('<meta name="theme-color"', '<meta name="robots" content="noindex"><meta name="theme-color"', 1)
+    out = cz_typo(out)
     fn = "index.html" if slug == "index" else f"{slug}.html"
     open(os.path.join(OUT, fn), "w", encoding="utf-8").write(out)
     return fn
@@ -458,17 +458,17 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "O projektu"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>O projektu</span><h1 class="h1" data-page-in>Čtrnáct domů pro klidné bydlení u Olomouce</h1><p class="lead" data-page-in>Nová ulice v Blatci s rodinnými domy ve dvou typech. Každý dům má vlastní pozemek se zahradou a dvě parkovací stání přímo u domu.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Čtrnáct domů pro klidné bydlení u Olomouce</h1><p class="lead" data-page-in>Nová ulice v Blatci s rodinnými domy ve dvou typech. Každý dům má vlastní pozemek se zahradou a dvě parkovací stání přímo u domu.</p></div>
       <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><b>14</b> domů</span><span class="fact"><b class="cnt-free-n">–</b> volných</span><span class="fact">od <b data-min-price>–</b></span><span class="fact"><svg><use href="#i-pin"/></svg>8 km od Olomouce</span></div></div>
     </div>
     <figure class="pfig" data-reveal-img>{img("street", "Zástupná vizualizace ulice s novými domy v Blatci", eager=True)}</figure>
   </div>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Typy domů</span><h2 class="h2">Vyberte si, jak chcete bydlet</h2><p class="lead">Oba typy mají stejný standard, liší se počtem podlaží a pokojů.</p></div>
+    <div class="sub-head"><h2 class="h2">Vyberte si, jak chcete bydlet</h2><p class="lead">Oba typy mají stejný standard, liší se počtem podlaží a pokojů.</p></div>
     <div class="tcomp">{type_card("patrovy")}{type_card("prizemni")}</div>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Ke každému domu</span><h2 class="h2">Co dostanete v ceně</h2></div>
+    <div class="sub-head"><h2 class="h2">Co dostanete v ceně</h2></div>
     <div class="grid-4" data-stagger>
       <div class="tile"><svg class="ti"><use href="#s-area"/></svg><h3>Vlastní pozemek</h3><p>Pozemky od {min(h["plot"] for h in HOUSES)} do {max(h["plot"] for h in HOUSES)} m² se zahradou za domem.</p></div>
       <div class="tile"><svg class="ti"><use href="#s-car"/></svg><h3>Parkování u domu</h3><p>Dvě zpevněná stání na vlastním pozemku, bez garáže.</p></div>
@@ -478,11 +478,11 @@ body = f'''<main class="page">
     <div class="more-link"><a class="link" href="standardy.html">Všechny standardy <svg><use href="#i-arrow"/></svg></a></div>
   </div></section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Harmonogram</span><h2 class="h2">Kde je projekt teď</h2><p class="lead">Termíny doplníme se spuštěním prodeje a budeme je tu průběžně aktualizovat.</p></div>
+    <div class="sub-head"><h2 class="h2">Kde je projekt teď</h2><p class="lead">Termíny doplníme se spuštěním prodeje a budeme je tu průběžně aktualizovat.</p></div>
     <ol class="tl">{tl}</ol>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Kdo staví</span><h2 class="h2">HP DOMY, developer z Olomouce</h2><p class="lead">Rodinné domy staví na Olomoucku. Blatec navazuje na jejich předchozí projekty, které můžete navštívit.</p></div>
+    <div class="sub-head"><h2 class="h2">HP DOMY, developer z Olomouce</h2><p class="lead">Rodinné domy staví na Olomoucku. Blatec navazuje na jejich předchozí projekty, které můžete navštívit.</p></div>
     <div class="grid-3" data-stagger>
       <a class="ref" href="https://vilynakline.cz" target="_blank" rel="noopener"><b>Vily na Klíně</b><span>9 patrových domů 5+kk, Olšany u Prostějova</span><small>vilynakline.cz <svg><use href="#i-arrow"/></svg></small></a>
       <a class="ref" href="https://domynajihu.eu" target="_blank" rel="noopener"><b>Domy na jihu</b><span>3 patrové domy 5+kk, Olomouc-Slavonín</span><small>domynajihu.eu <svg><use href="#i-arrow"/></svg></small></a>
@@ -510,7 +510,7 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Lokalita"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Lokalita</span><h1 class="h1" data-page-in>Venkovský klid, Olomouc za 15 minut</h1><p class="lead" data-page-in>Blatec leží na Hané asi 8 km jižně od Olomouce. Do města dojedete autem, vlakem i na kole po rovině.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Venkovský klid, Olomouc za 15 minut</h1><p class="lead" data-page-in>Blatec leží na Hané asi 8 km jižně od Olomouce. Do města dojedete autem, vlakem i na kole po rovině.</p></div>
       <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><svg><use href="#a-city"/></svg><b>8 km</b> do centra</span><span class="fact"><svg><use href="#a-rail"/></svg>vlak v obci</span><span class="fact">cca <b>650</b> obyvatel</span></div></div>
     </div>
   </div>
@@ -526,13 +526,13 @@ body = f'''<main class="page">
     </div>
   </div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">V obci a okolí</span><h2 class="h2">Co najdete v Blatci</h2><p class="lead">Ukazujeme jen služby, které jsme ověřili. Další doplníme po potvrzení s obcí.</p></div>
+    <div class="sub-head"><h2 class="h2">Co najdete v Blatci</h2><p class="lead">Ukazujeme jen služby, které jsme ověřili. Další doplníme po potvrzení s obcí.</p></div>
     <div class="amen__grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">{amen_html}</div>
     <div class="more-link"><a class="link" href="https://www.blatec.cz/" target="_blank" rel="noopener">Web obce Blatec <svg><use href="#i-arrow"/></svg></a></div>
   </div></section>
   <section class="sub-sec"><div class="wrap">
     <div class="grid-2" style="align-items:center">
-      <div class="sub-head" style="margin:0"><span class="eyebrow">O obci</span><h2 class="h2">Malá obec s dlouhou historií</h2>
+      <div class="sub-head" style="margin:0"><h2 class="h2">Malá obec s dlouhou historií</h2>
         <p style="color:var(--stone-600)">Blatec žije kolem 650 obyvatel a první písemná zmínka o obci pochází z roku 1131. Uprostřed návsi stojí kaple sv. Markéty a obecní dům. Obcí prochází železniční trať Olomouc – Nezamyslice a silnice, která ji spojuje s Olomoucí a Prostějovem.</p>
         <p style="color:var(--stone-600)">Nové domy vzniknou v klidné části obce s vlastní příjezdovou ulicí, takže kolem nebude projíždět tranzitní doprava.</p></div>
       <figure class="pfig" style="aspect-ratio:4/3" data-reveal-img>{img("aerial", "Zástupná vizualizace nových domů z ptačí perspektivy", "(min-width:860px) 50vw, 100vw")}</figure>
@@ -549,6 +549,7 @@ offer_src = read("pages/index.main.html")
 offer = offer_src[offer_src.index('<div class="offer-top">'):offer_src.index('<!-- 5 · STANDARDY -->')]
 offer = offer[:offer.rindex("    </div>\n  </section>")]
 offer = offer.replace('<th scope="col">Karta domu</th>', '<th scope="col">Detail</th>')
+offer = offer.replace(' data-limit="5"', '')
 offer = offer.replace('<thead><tr>\n', '<thead><tr>\n                <th scope="col" class="cmp-cell"><span class="sr">Porovnat</span></th>\n')
 offer = offer.replace('<button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>',
                       '<button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>\n          <button class="chip" data-f="rezervace" aria-pressed="false">Rezervace <span class="cnt" data-cnt="rezervace"></span></button>')
@@ -556,7 +557,7 @@ body = f'''<main class="page" data-compare>
   <div class="wrap">
     {crumbs((None, "Nabídka domů"))}
     <div class="phero phero--split" style="padding-bottom:28px">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Nabídka domů</span><h1 class="h1" data-page-in>Najděte svůj dům v Blatci</h1><p class="lead" data-page-in>Vyberte pozemek v situaci, nebo si domy seřaďte v tabulce. Až tři domy můžete porovnat vedle sebe.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Najděte svůj dům v Blatci</h1><p class="lead" data-page-in>Vyberte pozemek v situaci, nebo si domy seřaďte v tabulce. Až tři domy můžete porovnat vedle sebe.</p></div>
       <div class="ostats" data-page-in>
         <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
         <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
@@ -567,7 +568,7 @@ body = f'''<main class="page" data-compare>
     {offer}
   </div>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Jak číst nabídku</span><h2 class="h2">Na co se při výběru dívat</h2></div>
+    <div class="sub-head"><h2 class="h2">Na co se při výběru dívat</h2></div>
     <div class="grid-3" data-stagger>
       <div class="tile"><svg class="ti"><use href="#s-area"/></svg><h3>Velikost pozemku</h3><p>Pozemky se liší až o {max(h["plot"] for h in HOUSES) - min(h["plot"] for h in HOUSES)} m². Větší zahrada znamená víc místa, ale i víc údržby.</p></div>
       <div class="tile"><svg class="ti"><use href="#s-sun"/></svg><h3>Orientace zahrady</h3><p>Domy 8–14 mají zahradu na jih, domy 1–7 na sever. Detail domu ukazuje orientaci přesně.</p></div>
@@ -594,14 +595,14 @@ body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Standardy"))}
     <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Standardy</span><h1 class="h1" data-page-in>Co dostanete v ceně domu</h1><p class="lead" data-page-in>Přehled podle oblastí. U každé položky vidíte, jestli je v ceně, připravená pro pozdější doplnění, nebo za příplatek.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Co dostanete v ceně domu</h1><p class="lead" data-page-in>Přehled podle oblastí. U každé položky vidíte, jestli je v ceně, připravená pro pozdější doplnění, nebo za příplatek.</p></div>
       <div class="phero__aside" data-page-in><div class="legend-tags">{legend}</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-pdf="standardy">Standardy v PDF <span class="ic"><svg><use href="#i-down"/></svg></span></button></div></div>
     </div>
     <nav class="subnav" aria-label="Oblasti standardů" style="top:calc(84px + env(safe-area-inset-top,0px));margin:0 0 8px">{cats_nav}<a href="#zmeny">Klientské změny</a></nav>
     {cats_html}
   </div>
   <section class="sub-sec sub-sec--tint" id="zmeny" style="scroll-margin-top:150px"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Klientské změny</span><h2 class="h2">Dům si můžete přizpůsobit</h2><p class="lead">Změny je potřeba zadat včas, dokud stavba nedošla do příslušné fáze. Obvyklý postup:</p></div>
+    <div class="sub-head"><h2 class="h2">Dům si můžete přizpůsobit</h2><p class="lead">Změny je potřeba zadat včas, dokud stavba nedošla do příslušné fáze. Obvyklý postup:</p></div>
     <ol class="steps" data-stagger>
       <li><b>Konzultace</b><p>S prodejcem projdete, co chcete změnit.</p></li>
       <li><b>Nacenění</b><p>Dostanete rozpočet změn a termín, do kdy je potvrdit.</p></li>
@@ -612,7 +613,7 @@ body = f'''<main class="page">
     <p class="calc__note" style="margin-top:18px">Postup a termíny upřesní HP DOMY. Standardy vycházejí z předchozích projektů HP DOMY.</p>
   </div></section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Časté dotazy</span><h2 class="h2">Na co se kupující ptají</h2></div>
+    <div class="sub-head"><h2 class="h2">Na co se kupující ptají</h2></div>
     <div class="acc" id="faq-acc"></div>
   </div></section>
   {cta_band("Chcete vidět materiály naživo?", "Prodejce vám ukáže vzorky podlah, obkladů a oken a vysvětlí, co lze změnit.")}
@@ -626,7 +627,7 @@ body = f'''<main class="page gallery-page">
   <div class="wrap">
     {crumbs((None, "Galerie"))}
     <div class="phero phero--split" style="padding-bottom:32px">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Galerie</span><h1 class="h1" data-page-in>Jak budou domy vypadat</h1><p class="lead" data-page-in>Zástupné vizualizace obou typů domů. Finální vizualizace exteriéru i interiéru doplníme, jakmile je HP DOMY uvolní.</p></div>
+      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Jak budou domy vypadat</h1><p class="lead" data-page-in>Zástupné vizualizace obou typů domů. Finální vizualizace exteriéru i interiéru doplníme, jakmile je HP DOMY uvolní.</p></div>
       <div class="gal-tabs phero__aside" role="group" aria-label="Filtr galerie" data-page-in style="display:flex;flex-wrap:wrap;gap:8px">
         <button class="chip" aria-pressed="true" data-g="all">Vše</button><button class="chip" aria-pressed="false" data-g="patrovy">Patrový dům</button>
         <button class="chip" aria-pressed="false" data-g="prizemni">Přízemní dům</button><button class="chip" aria-pressed="false" data-g="okoli">Ulice a okolí</button>
@@ -636,7 +637,7 @@ body = f'''<main class="page gallery-page">
     <div class="gal" id="gal"></div>
   </div>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Průběh výstavby</span><h2 class="h2">Fotky ze stavby</h2><p class="lead">Po zahájení výstavby sem budeme přidávat fotky z jednotlivých fází, abyste viděli, jak váš dům roste.</p></div>
+    <div class="sub-head"><h2 class="h2">Fotky ze stavby</h2><p class="lead">Po zahájení výstavby sem budeme přidávat fotky z jednotlivých fází, abyste viděli, jak váš dům roste.</p></div>
     <ol class="tl">{tl}</ol>
   </div></section>
   {cta_band()}
@@ -662,7 +663,6 @@ body = f'''<main class="page">
     <div class="contact__bg" aria-hidden="true"><img src="img/garden-800.webp" alt="" loading="lazy" decoding="async"></div>
     <div class="wrap"><div class="ct">
       <div>
-        <span class="eyebrow">Kontakt</span>
         <h1 class="h2" id="kt-h" style="margin-top:18px" data-page-in>Domluvte si prohlídku pozemku</h1>
         <p class="lead" style="margin-top:18px" data-page-in>Napište nám, nebo rovnou zavolejte. Prodejce se vám ozve do dvou pracovních dnů.</p>
         <div class="ct-direct">
@@ -677,7 +677,7 @@ body = f'''<main class="page">
     </div></div>
   </section>
   <section class="sub-sec"><div class="wrap">
-    <div class="sub-head"><span class="eyebrow">Postup koupě</span><h2 class="h2">Jak probíhá koupě domu</h2><p class="lead">Obvyklý postup u novostavby. Konkrétní podmínky upřesní prodejce.</p></div>
+    <div class="sub-head"><h2 class="h2">Jak probíhá koupě domu</h2><p class="lead">Obvyklý postup u novostavby. Konkrétní podmínky upřesní prodejce.</p></div>
     <ol class="steps" data-stagger>
       <li><b>Výběr a prohlídka</b><p>Vyberete volný dům a prohlédnete si pozemek.</p></li>
       <li><b>Rezervace</b><p>Rezervační smlouvou si dům podržíte, v tabulce se označí jako rezervovaný.</p></li>
@@ -688,7 +688,7 @@ body = f'''<main class="page">
   </div></section>
   <section class="sub-sec" style="padding-top:0"><div class="wrap">{reviews("compact", title="Zkušenosti majitelů domů od HP DOMY", count=8)}</div></section>
   <section class="sub-sec sub-sec--tint"><div class="wrap">
-    <div class="faq"><div style="display:grid;gap:18px;align-content:start"><span class="eyebrow">Časté dotazy</span><h2 class="h2">Než nám napíšete</h2></div><div class="acc" id="faq-acc"></div></div>
+    <div class="faq"><div style="display:grid;gap:18px;align-content:start"><h2 class="h2">Než nám napíšete</h2></div><div class="acc" id="faq-acc"></div></div>
   </div></section>
 </main>
 '''
@@ -700,7 +700,7 @@ def garden_dial(dirn):
     return f'''<svg class="orient__dial" viewBox="-60 -60 120 120" aria-hidden="true"><circle r="56" fill="#fff" stroke="#dedbd4"/><circle r="40" fill="none" stroke="#edebe6"/>
 <text y="-44" text-anchor="middle" font-size="11" font-family="Inter,system-ui" fill="#161616" font-weight="600">S</text><text y="52" text-anchor="middle" font-size="11" font-family="Inter,system-ui" fill="#6c675f">J</text>
 <text x="48" y="4" text-anchor="middle" font-size="11" font-family="Inter,system-ui" fill="#6c675f">V</text><text x="-48" y="4" text-anchor="middle" font-size="11" font-family="Inter,system-ui" fill="#6c675f">Z</text>
-<g transform="rotate({ang})"><path d="M-14 -34 A36 36 0 0 1 14 -34 L6 -6 L-6 -6Z" fill="#7a5a3a" opacity=".85"/></g><rect x="-11" y="-11" width="22" height="22" rx="3" fill="#161616"/></svg>'''
+<g transform="rotate({ang})"><path d="M-14 -34 A36 36 0 0 1 14 -34 L6 -6 L-6 -6Z" fill="#2c3fd6" opacity=".85"/></g><rect x="-11" y="-11" width="22" height="22" rx="3" fill="#161616"/></svg>'''
 
 def mini_plan(hid):
     g = GEO[hid]
@@ -709,7 +709,7 @@ def mini_plan(hid):
         q = GEO[h["id"]]; on = h["id"] == hid
         s += f'<rect x="{q["x"]}" y="{q["y"]}" width="{q["w"]}" height="{q["h"]}" rx="6" fill="{"#161616" if on else "#fff"}" stroke="#cfcac1"/>'
         s += f'<text x="{q["x"] + q["w"] / 2}" y="{q["y"] + q["h"] / 2 + 8}" text-anchor="middle" font-family="Inter,system-ui" font-size="26" font-weight="500" fill="{"#fff" if on else "#a39e94"}">{h["id"]}</text>'
-    return s + f'<circle cx="{g["x"] + g["w"] / 2}" cy="{g["y"] + g["h"] / 2}" r="58" fill="none" stroke="#7a5a3a" stroke-width="6"/></svg>'
+    return s + f'<circle cx="{g["x"] + g["w"] / 2}" cy="{g["y"] + g["h"] / 2}" r="58" fill="none" stroke="#2c3fd6" stroke-width="6"/></svg>'
 
 for h in HOUSES:
     hid, T = h["id"], TYPES[h["type"]]
@@ -807,60 +807,6 @@ for h in HOUSES:
          f"Dům {hid} v Blatci: {T['label'].lower()} {h['disp']}, {area(h['area'])}, pozemek {area(h['plot'])}, zahrada na {h['garden']}. Cena: {price_txt(h)}. Stav: {STATUS[h['status']]}.",
          body, active="nabidka", preload=T["gal"][0], jsonld=jsonld, extra=LIGHTBOX)
 
-
-# ------------------------------------------------------------------ Vzorník akcentní barvy
-def demo_rows():
-    rows = [HOUSES[1], HOUSES[3], HOUSES[4]]  # volný, volný, prodaný
-    out = ""
-    for k, h in enumerate(rows):
-        cls = ("is-sold " if h["status"] == "prodany" else "") + ("is-demo-hot" if k == 1 else "")
-        out += (f'<tr class="{cls}"><td class="house-no">{h["id"]}</td><td class="num">{area(h["plot"])}</td>'
-                f'<td class="num price">{price_txt(h)}</td><td class="st"><span class="badge badge--{h["status"]}">{STATUS[h["status"]]}</span></td>'
-                f'<td class="card-col"><span class="pdf-btn">Detail domu</span></td></tr>')
-    return out
-
-cands = ""
-for a in ACCENTS:
-    cw, cb = contrast(a["hex"], "#ffffff"), contrast(a["hex"], "#161616")
-    ink_ratio = contrast(a["hex"], a["ink"])
-    ok = ink_ratio >= 4.5
-    plot = (f'<svg viewBox="0 0 260 120" aria-hidden="true" style="width:100%;height:auto;display:block;border-radius:12px;background:#f6f5f2">'
-            f'<rect x="10" y="10" width="70" height="100" rx="5" fill="#e5f1e9" stroke="#2f7a4c" stroke-width="1.5"/>'
-            f'<rect x="95" y="10" width="70" height="100" rx="5" fill="#e5f1e9" stroke="{a["hex"]}" stroke-width="3.5"/>'
-            f'<rect x="180" y="10" width="70" height="100" rx="5" fill="#efedea" stroke="#a7a299" stroke-width="1.5"/>'
-            f'<rect x="113" y="40" width="34" height="34" rx="2" fill="#161616"/><rect x="28" y="40" width="34" height="34" rx="2" fill="#161616"/><rect x="198" y="40" width="34" height="34" rx="2" fill="#c9c5bd"/></svg>')
-    cands += f'''<article class="cand{" is-picked" if a["id"] == "cerna" else ""}" data-cand="{a["id"]}" id="{a["id"]}" style="--hot:{a["hex"]};--hot-ink:{a["ink"]}">
-  <div class="cand__sw">{'<span class="rec">Doporučuji</span>' if a.get("rec") else ""}<span class="eyebrow" style="color:inherit;opacity:.8">{a["tag"]}</span><h2 class="h3">{a["name"]}</h2><code>{a["hex"].upper()}</code></div>
-  <div class="cand__body">
-    <p class="cand__why">{a["why"]}</p>
-    <div class="cand__meta"><span class="{"ok" if ok else "warn"}">Text na barvě {ink_ratio:.1f} : 1 {"✓" if ok else "– málo"}</span><span>s bílou {cw:.1f} : 1</span><span>s černou {cb:.1f} : 1</span></div>
-    <div class="cand__demo">
-      <span class="cand__btns"><span class="lbl">Řádek domu při najetí myší (prostřední řádek ukazuje stav hover, ostatní si vyzkoušejte)</span></span>
-      <div class="tbl-wrap"><table class="houses"><thead><tr><th>Dům</th><th class="num">Pozemek</th><th class="num">Cena</th><th>Stav</th><th></th></tr></thead><tbody>{demo_rows()}</tbody></table></div>
-      <div class="grid-2" style="gap:12px;align-items:center">
-        <div class="cand__btns"><span class="lbl">Tlačítka: výchozí a při najetí</span><span class="btn btn--sm">Vybrat dům <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></span><span class="btn btn--sm" style="--bg:var(--hot);--fg:var(--hot-ink)">Vybrat dům <span class="ic" style="width:28px;height:28px;transform:rotate(-45deg)"><svg><use href="#i-arrow"/></svg></span></span></div>
-        <div><span class="lbl" style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">Pozemek v situaci při najetí</span>{plot}</div>
-      </div>
-    </div>
-    <button class="btn" data-acc="{a["id"]}" aria-pressed="false" type="button" style="justify-self:start">Vyzkoušet na celém webu <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
-  </div>
-</article>'''
-strip = "".join(f'<a href="#{a["id"]}" style="background:{a["hex"]};color:{a["ink"]};text-decoration:none">{a["name"]}</a>' for a in ACCENTS)
-body = f'''<main class="page">
-  <div class="wrap">
-    {crumbs((None, "Vzorník barev"))}
-    <div class="phero phero--split">
-      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Pracovní vzorník · neveřejné</span><h1 class="h1" data-page-in>Jedna kontrastní barva navíc</h1>
-        <p class="lead" data-page-in>Černá a bílá zůstávají základem. Nová barva se objeví hlavně tam, kde web reaguje: při najetí na dům, na tlačítka a na pozemek v situaci. Každou barvu si můžete zapnout na celém webu a proklikat.</p></div>
-      <div class="phero__aside" data-page-in><p style="color:var(--stone-600);font-size:15px">Testovací lišta vlevo dole zůstane na všech stránkách, dokud ji nezavřete. Volba se pamatuje jen ve vašem prohlížeči.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--ghost btn--sm" href="nabidka.html">Otestovat v nabídce</a><a class="btn btn--ghost btn--sm" href="index.html">Otestovat na úvodu</a></div></div>
-    </div>
-    <div class="swatch-strip" data-page-in>{strip}</div>
-  </div>
-  <section class="sub-sec"><div class="wrap"><div class="cand-grid">{cands}</div></div></section>
-</main>
-'''
-page("vzornik", "Vzorník barev · Blatec", "Pracovní vzorník akcentní barvy pro web Blatec.", body, active="")
 
 # ------------------------------------------------------------------ assets
 if FLAVOR == "repo":

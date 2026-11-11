@@ -93,7 +93,7 @@
 .tl li::after{content:"";position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--paper);border:2px solid var(--stone-400)}
 .tl li.is-done::before{background:var(--ink)}
 .tl li.is-done::after{background:var(--ink);border-color:var(--ink)}
-.tl li.is-now::after{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 6px rgba(122,90,58,.16)}
+.tl li.is-now::after{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 6px rgba(44,63,214,.16)}
 .tl b{font-weight:500;font-size:16px}
 .tl span{font-size:13.5px;color:var(--muted)}
 .tl em{font-style:normal;font-size:12px;font-weight:500;display:inline-flex;width:max-content;padding:3px 9px;border-radius:var(--r-pill);background:var(--stone-100);color:var(--stone-600)}
@@ -405,12 +405,7 @@
    Accent ("hot") colour — used for hover / focus / active states.
    Default = brand black. Candidates switchable via html[data-accent].
    =================================================================== */
-:root{--hot:#161616;--hot-ink:#ffffff}
-html[data-accent="kobalt"]{--hot:#2c3fd6;--hot-ink:#ffffff}
-html[data-accent="cihla"]{--hot:#b4452a;--hot-ink:#ffffff}
-html[data-accent="psenice"]{--hot:#e0a92a;--hot-ink:#161616}
-html[data-accent="oranz"]{--hot:#ff5a1f;--hot-ink:#161616}
-html[data-accent="orech"]{--hot:#7a5a3a;--hot-ink:#ffffff}
+:root{--hot:#2c3fd6;--hot-ink:#ffffff}
 
 /* buttons */
 @media (hover:hover){
@@ -463,37 +458,26 @@ html[data-accent="orech"]{--hot:#7a5a3a;--hot-ink:#ffffff}
 @media (hover:hover){.hcard:not(.is-sold):hover{border-color:var(--hot)}}
 .hcard:not(.is-sold):active{border-color:var(--hot);transform:scale(.99)}
 
-/* ---------- accent tester (floating) ---------- */
-.acc-test{position:fixed;left:max(14px,env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--stone-100);border-radius:var(--r-pill);padding:6px 6px 6px 14px;box-shadow:0 12px 40px -12px rgba(0,0,0,.3);font-size:12.5px;font-weight:500}
-.acc-test[hidden]{display:none}
-.acc-test button{all:unset;cursor:pointer;width:24px;height:24px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);display:grid;place-items:center}
-.acc-test button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
-.acc-test button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.acc-test .x{background:var(--stone-100);box-shadow:none;margin-left:2px}
-.acc-test .x svg{width:11px;height:11px}
-.acc-test a{color:var(--muted);text-decoration:none;margin-right:2px}
 
-/* ---------- vzorník page ---------- */
-.swatch-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-radius:var(--r-img);overflow:hidden;height:120px}
-@media (max-width:700px){.swatch-strip{grid-template-columns:repeat(3,minmax(0,1fr));height:auto}.swatch-strip>*{height:80px}}
-.swatch-strip>*{display:flex;align-items:flex-end;padding:14px;font-size:12.5px;font-weight:500}
-.cand-grid{display:grid;gap:clamp(18px,2.4vw,28px)}
-@media (min-width:980px){.cand-grid{grid-template-columns:1fr 1fr}}
-.cand{border:1px solid var(--stone-100);border-radius:var(--r-img);overflow:hidden;display:grid;scroll-margin-top:110px}
-.cand.is-picked{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
-.cand__sw{background:var(--hot);color:var(--hot-ink);padding:24px;display:grid;gap:6px;min-height:150px;align-content:end;position:relative}
-.cand__sw .h3{font-size:clamp(20px,2vw,26px)}
-.cand__sw code{font:500 13px var(--f-text);opacity:.85}
-.cand__sw .rec{position:absolute;top:16px;right:16px;background:var(--hot-ink);color:var(--hot);font-size:12px;font-weight:600;padding:5px 10px;border-radius:var(--r-pill)}
-.cand__body{padding:clamp(18px,2.4vw,26px);display:grid;gap:18px}
-.cand__why{color:var(--stone-600);font-size:15px}
-.cand__meta{display:flex;flex-wrap:wrap;gap:8px}
-.cand__meta span{font-size:12.5px;font-weight:500;padding:5px 10px;border-radius:var(--r-pill);background:var(--stone-50)}
-.cand__meta span.ok{background:var(--st-free-bg);color:var(--st-free)}
-.cand__meta span.warn{background:var(--st-res-bg);color:var(--st-res)}
-.cand__demo{display:grid;gap:12px}
-.cand__demo .tbl-wrap table.houses{min-width:430px;font-size:14px}
-.cand__demo .houses td{padding:11px 12px}
-.cand__demo .houses th{padding:10px 12px}
-.cand__btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.cand__btns .lbl{font-size:12px;color:var(--muted);width:100%}
+/* ---------- typography + touch polish ---------- */
+p,.lead,li,.tile p,.cand__why,dd{text-wrap:pretty}
+h1,h2,h3,.h1,.h2,.h3{text-wrap:balance}
+.drawer__label{font-size:13px;font-weight:500;color:var(--muted)}
+.link,.rvc__more{position:relative}
+.link::after,.rvc__more::after{content:"";position:absolute;inset:-12px -6px}
+.cmp-lbl{min-height:44px;padding:0 4px}
+.tl li.is-now em{background:var(--accent-soft);color:var(--accent)}
+@media (max-width:359px){.ostat{padding:14px}.ostat b{font-size:22px}.ostat b[data-min-price]{font-size:15px!important}}
+/* ---------- layout safety (audit) ---------- */
+html,body{overflow-x:clip}
+.offer>*,.plan,.phero>*,.hd-main>*,.loc>*,.ct>*{min-width:0}
+.phero--split .ostats{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* ---------- mobile UX fixes (audit) ---------- */
+@media (max-width:1059px){.hd-side{display:none}}
+@media (max-width:540px){
+  .grid-4{grid-template-columns:1fr}
+  .grid-4 .tile{grid-template-columns:30px 1fr;column-gap:14px;row-gap:4px;padding:16px 18px}
+  .grid-4 .tile svg.ti{grid-row:span 2}
+}
+.cards-more{display:flex;justify-content:center;margin-top:6px}
+[hidden]{display:none!important}

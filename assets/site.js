@@ -8,9 +8,9 @@ const D = window.BLATEC;
 const STATUS = D.status;
 const H = D.houses;
 const byId = id => H.find(h => h.id === +id);
-const fmt = n => Math.round(n).toLocaleString('cs-CZ').replace(/ /g, ' ');
-const fmtArea = n => n.toLocaleString('cs-CZ', { minimumFractionDigits: n % 1 ? 1 : 0 }) + ' m²';
-const priceTxt = h => h.price ? fmt(h.price) + ' Kč' : 'Na dotaz';
+const fmt = n => Math.round(n).toLocaleString('cs-CZ').replace(/[\s\u202f]/g, '\u00a0');
+const fmtArea = n => n.toLocaleString('cs-CZ', { minimumFractionDigits: n % 1 ? 1 : 0 }) + '\u00a0m²';
+const priceTxt = h => h.price ? fmt(h.price) + '\u00a0Kč' : 'Na dotaz';
 const freeCount = H.filter(h => h.status === 'volny').length;
 const scrollToEl = el => el && el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
 
@@ -113,7 +113,7 @@ const el = (t, a = {}, p) => { const n = document.createElementNS(NS, t); for (c
 const COL = { volny: ['#e5f1e9', '#2f7a4c'], rezervace: ['#f8eedb', '#a86a12'], prodany: ['#efedea', '#a7a299'] };
 const geo = D.geo;
 const plots = {};
-const state = { f: 'all', t: null, sort: 'id', dir: 1, active: null, cmp: [] };
+const state = { f: 'all', t: null, sort: 'id', dir: 1, active: null, cmp: [], all: false };
 let vertical = null;
 function buildPlan() {
   if (!svg) return;
@@ -197,6 +197,12 @@ function render() {
       <div class="hcard__bottom"><span class="hcard__price ${h.price ? '' : 'ask'}">${priceTxt(h)}</span>
       <div class="hcard__actions" style="display:flex;gap:8px;align-items:center">${withCmp ? `<label class="cmp-lbl">${cmpBtn(h)}Porovnat</label>` : ''}<a class="btn btn--ghost btn--sm" href="dum-${h.id}.html">Detail domu</a></div></div>
     </article>`).join('');
+  // one-pager on phones: show the first houses, the rest on request
+  const lim = +(cards.dataset.limit || 0);
+  if (lim && !state.all && list.length > lim) {
+    $$('.hcard', cards).slice(lim).forEach(c => c.hidden = true);
+    cards.insertAdjacentHTML('beforeend', `<div class="cards-more"><button class="btn btn--ghost" type="button" data-allcards>Zobrazit všech ${list.length} domů</button></div>`);
+  }
   $('#empty').hidden = list.length > 0;
   applyDim();
   $$('#tbl th[data-sort]').forEach(th => { if (th.dataset.sort === state.sort) th.setAttribute('aria-sort', state.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
@@ -233,6 +239,7 @@ function hover(id, on) {
     tip.classList.add('is-on');
   } else tip.classList.remove('is-on');
 }
+if (cards) cards.addEventListener('click', e => { if (e.target.closest('[data-allcards]')) { state.all = true; render(); } });
 if (tbody) {
   tbody.addEventListener('mouseover', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.add('is-hover'); });
   tbody.addEventListener('mouseout', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.remove('is-hover'); });
@@ -287,7 +294,7 @@ function miniPlan(id) {
   const g = geo[id];
   let s = `<svg viewBox="40 40 920 490" aria-hidden="true"><rect x="30" y="258" width="940" height="52" fill="#dedbd4"/>`;
   H.forEach(h => { const q = geo[h.id]; s += `<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="6" fill="${h.id === id ? '#161616' : '#fff'}" stroke="#cfcac1"/>`; });
-  return s + `<circle cx="${g.x + g.w / 2}" cy="${g.y + g.h / 2}" r="34" fill="none" stroke="#7a5a3a" stroke-width="5"/></svg>`;
+  return s + `<circle cx="${g.x + g.w / 2}" cy="${g.y + g.h / 2}" r="34" fill="none" stroke="#2c3fd6" stroke-width="5"/></svg>`;
 }
 function openHouse(id, from) {
   if (!drawer) { location.href = `dum-${id}.html`; return; }
@@ -454,28 +461,6 @@ $$('[data-slider]').forEach(sl => {
 });
 
 
-/* ---------- accent colour tester (vzorník) ---------- */
-const ACCENTS = D.accents;
-const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} } };
-function setAccent(id, quiet) {
-  if (id === 'cerna') { delete document.documentElement.dataset.accent; store.set('blatec-accent', null); }
-  else { document.documentElement.dataset.accent = id; store.set('blatec-accent', id); }
-  $$('[data-acc]').forEach(b => b.setAttribute('aria-pressed', b.dataset.acc === id));
-  $$('.cand').forEach(c => c.classList.toggle('is-picked', c.dataset.cand === id));
-  if (!quiet) { const a = ACCENTS.find(x => x.id === id); toast(`Na celém webu je teď ${a.name}`); }
-}
-const current = () => document.documentElement.dataset.accent || 'cerna';
-if (store.get('blatec-tester') === '1' || $('.cand-grid')) {
-  store.set('blatec-tester', '1');
-  const bar = document.createElement('div');
-  bar.className = 'acc-test'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Test akcentní barvy');
-  bar.innerHTML = `<a href="vzornik.html">Akcent</a>` + ACCENTS.map(a => `<button data-acc="${a.id}" aria-label="${a.name}" title="${a.name}" style="background:${a.hex}"></button>`).join('') + `<button class="x" aria-label="Skrýt testovací lištu"><svg><use href="#i-close"/></svg></button>`;
-  document.body.appendChild(bar);
-  $('.x', bar).addEventListener('click', () => { bar.hidden = true; store.set('blatec-tester', null); });
-}
-document.addEventListener('click', e => { const b = e.target.closest('[data-acc]'); if (b) setAccent(b.dataset.acc); });
-setAccent(current(), true);
-
 /* ---------- keyboard ---------- */
 addEventListener('keydown', e => {
   if (lb && lb.classList.contains('is-open')) { if (e.key === 'Escape') lbClose(); if (e.key === 'ArrowRight') lbShow(LB.i + 1); if (e.key === 'ArrowLeft') lbShow(LB.i - 1); return; }
@@ -507,7 +492,7 @@ const startMotion = () => {
   if ($('.hero')) {
     gsap.fromTo('[data-hero-media] img', { scale: 1.12 }, { scale: 1, duration: 2.2, ease: 'power2.out' });
     gsap.from('[data-hero-in]', { y: 28, duration: 1.1, ease, stagger: .09, delay: .1 });
-    gsap.from('.hero__sig, .hero__ctas, .hero__bottom', { opacity: 0, duration: .9, ease, stagger: .1, delay: .25 });
+    gsap.from('.hero__ctas, .hero__bottom', { opacity: 0, duration: .9, ease, stagger: .1, delay: .25 });
   }
   if ($('[data-page-in]')) gsap.from('[data-page-in]', { y: 22, duration: .9, ease, stagger: .07, delay: .05 });
   gsap.from('.hdr__in', { y: -16, opacity: 0, duration: .9, ease, delay: .1 });

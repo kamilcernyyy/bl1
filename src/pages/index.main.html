@@ -6,9 +6,8 @@
     </div>
     <div class="wrap hero__in">
       <div class="hero__top">
-        <span class="hero__sig" data-hero-in>PROJEKT HP DOMY DEVELOPMENT</span>
         <h1 class="h1" id="hero-h" data-hero-in>Nový domov na&nbsp;Hané, 8&nbsp;km od&nbsp;Olomouce</h1>
-        <p class="lead" data-hero-in>Čtrnáct rodinných domů v klidné obci Blatec. Přízemní i patrové, každý s parkovacím místem u domu.</p>
+        <p class="lead" data-hero-in>Čtrnáct rodinných domů v klidné obci Blatec od developera HP DOMY. Přízemní i patrové, každý s parkováním u domu.</p>
         <div class="hero__ctas" data-hero-in>
           <a class="btn btn--light" href="#nabidka">Vybrat volný dům <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>
           <a class="btn btn--ghost on-dark" href="#kontakt">Kontaktovat prodejce</a>
@@ -29,7 +28,6 @@
   <section class="sec" id="projekt" aria-labelledby="projekt-h">
     <div class="wrap">
       <div class="intro">
-        <span class="eyebrow">O projektu</span>
         <h2 class="h2" id="projekt-h" data-words>Klidné bydlení <span class="pill-img" aria-hidden="true"><img src="img/garden-800.webp" alt="" width="800" height="450" loading="lazy" decoding="async"></span> s městem na dosah</h2>
         <p class="lead" style="text-align:center">V Blatci vznikne čtrnáct nových rodinných domů ve dvou typech: přízemní pro bydlení bez schodů a patrové pro větší rodiny. Každý dům má vlastní pozemek se zahradou a parkovací místo přímo u domu.</p>
       </div>
@@ -64,7 +62,7 @@
   <section class="sec" id="lokalita" aria-labelledby="lok-h" style="padding-top:0">
     <div class="wrap">
       <div class="sec__head sec__head--split">
-        <div style="display:grid;gap:18px"><span class="eyebrow">Lokalita</span><h2 class="h2" id="lok-h">Blatec, obec mezi poli jižně od&nbsp;Olomouce</h2></div>
+        <div style="display:grid;gap:18px"><h2 class="h2" id="lok-h">Blatec, obec mezi poli jižně od&nbsp;Olomouce</h2></div>
         <p class="lead">Venkovský klid, a přitom město na dosah. Do centra Olomouce je to po silnici i vlakem jen pár minut.</p>
       </div>
       <div class="loc">
@@ -93,8 +91,8 @@
             <g><circle cx="88" cy="510" r="34" fill="#dcd8cf"/><circle cx="88" cy="510" r="4.5" fill="#161616"/><text x="104" y="506" font-family="Michroma,Arial Black,sans-serif" font-size="13" fill="#161616">Prostějov</text></g>
             <path d="M318 262 L335 44" stroke="#161616" stroke-width="1" stroke-dasharray="2 4" opacity=".5"/>
             <g transform="translate(318 262)">
-              <circle r="46" fill="#7a5a3a" opacity=".12"><animate attributeName="r" values="30;56;30" dur="3.2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".22;0;.22" dur="3.2s" repeatCount="indefinite"/></circle>
-              <circle r="22" fill="#7a5a3a" opacity=".16"/>
+              <circle r="46" fill="#2c3fd6" opacity=".12"><animate attributeName="r" values="30;56;30" dur="3.2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".22;0;.22" dur="3.2s" repeatCount="indefinite"/></circle>
+              <circle r="22" fill="#2c3fd6" opacity=".16"/>
               <circle r="9" fill="#161616" stroke="#fff" stroke-width="3"/>
               <rect x="18" y="-30" width="128" height="50" rx="12" fill="#161616"/>
               <text x="32" y="-9" font-family="Michroma,Arial Black,sans-serif" font-size="13" fill="#fff">BLATEC</text>
@@ -132,7 +130,6 @@
     <div class="band" data-band>
       <img src="img/aerial-1600.webp" srcset="img/aerial-800.webp 800w, img/aerial-1600.webp 1600w" sizes="100vw" width="1600" height="900" alt="Zástupná vizualizace domů z ptačí perspektivy" loading="lazy" decoding="async">
       <div class="band__txt">
-        <span class="eyebrow" style="color:rgba(255,255,255,.75)">Situace</span>
         <h2 class="h2">Každý dům s vlastní zahradou a parkováním</h2>
       </div>
     </div>
@@ -142,8 +139,8 @@
   <section class="sec" id="nabidka" aria-labelledby="nab-h">
     <div class="wrap">
       <div class="sec__head sec__head--split">
-        <div style="display:grid;gap:18px"><span class="eyebrow">Nabídka domů</span><h2 class="h2" id="nab-h">Vyberte si dům v situaci nebo v tabulce</h2></div>
-        <p class="lead">Klikněte na pozemek a ukáže se karta domu. Zelené domy jsou volné, oranžové rezervované.</p>
+        <div style="display:grid;gap:18px"><h2 class="h2" id="nab-h">Vyberte si dům v situaci nebo v tabulce</h2></div>
+        <p class="lead">Klikněte na pozemek nebo řádek a otevře se rychlý náhled domu. Zelené domy jsou volné, oranžové rezervované.</p>
       </div>
 
       <div class="offer-top">
@@ -188,7 +185,7 @@
             </table>
           </div>
         </div>
-        <div class="only-mobile"><div class="cards" id="cards"></div></div>
+        <div class="only-mobile"><div class="cards" id="cards" data-limit="5"></div></div>
         <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" style="background:none;border-left:0;border-right:0;border-top:0;cursor:pointer" data-reset>Zobrazit všechny domy</button></div>
       </div>
       <div class="offer-foot">
@@ -202,7 +199,7 @@
   <section class="sec" id="standardy" aria-labelledby="std-h" style="background:var(--stone-50)">
     <div class="wrap">
       <div class="sec__head sec__head--split">
-        <div style="display:grid;gap:18px"><span class="eyebrow">Standardy</span><h2 class="h2" id="std-h">Co je v ceně každého domu</h2></div>
+        <div style="display:grid;gap:18px"><h2 class="h2" id="std-h">Co je v ceně každého domu</h2></div>
         <p class="lead">Stavíme z cihel a betonu, s tepelným čerpadlem a podlahovým topením. Kompletní přehled najdete v PDF se standardy.</p>
       </div>
       <div class="std">
@@ -227,7 +224,7 @@
   <section class="sec" id="galerie" aria-labelledby="gal-h">
     <div class="wrap">
       <div class="sec__head sec__head--split">
-        <div style="display:grid;gap:18px"><span class="eyebrow">Galerie</span><h2 class="h2" id="gal-h">Vizualizace exteriéru a interiéru</h2></div>
+        <div style="display:grid;gap:18px"><h2 class="h2" id="gal-h">Vizualizace exteriéru a interiéru</h2></div>
         <div class="gal-tabs" role="group" aria-label="Typ vizualizace">
           <button class="chip" aria-pressed="true" data-g="all">Vše</button>
           <button class="chip" aria-pressed="false" data-g="ext">Exteriér</button>
@@ -242,7 +239,7 @@
   <section class="sec--tight" aria-labelledby="faq-h" style="padding-top:0">
     <div class="wrap">
       <div class="faq">
-        <div style="display:grid;gap:18px;align-content:start"><span class="eyebrow">Časté dotazy</span><h2 class="h2" id="faq-h">Jak probíhá koupě</h2></div>
+        <div style="display:grid;gap:18px;align-content:start"><h2 class="h2" id="faq-h">Jak probíhá koupě</h2></div>
         <div class="acc" id="faq-acc"></div>
       </div>
     </div>
@@ -254,7 +251,6 @@
     <div class="wrap">
       <div class="ct">
         <div>
-          <span class="eyebrow">Kontakt</span>
           <h2 class="h2" id="ct-h" style="margin-top:18px">Domluvte si prohlídku pozemku</h2>
           <p class="lead" style="margin-top:18px">Napište nám, o který dům máte zájem. Prodejce se vám ozve do dvou pracovních dnů.</p>
           <div class="ct__people">
