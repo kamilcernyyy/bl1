@@ -130,7 +130,8 @@ $$('[data-lb]').forEach(b => b.addEventListener('click', () => { const list = JS
 /* ---------- site plan (situace) ---------- */
 const svg = $('#plan'), NS = 'http://www.w3.org/2000/svg';
 const el = (t, a = {}, p) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); if (p) p.appendChild(n); return n; };
-const COL = { volny: ['#e5f1e9', '#2f7a4c'], rezervace: ['#f8eedb', '#a86a12'], prodany: ['#efedea', '#a7a299'] };
+const COL = { volny: ['#eceefc', '#2c3fd6'], rezervace: ['#f8eedb', '#c9a36a'], prodany: ['#efedea', '#c9c5bd'] };
+const HOUSE = { volny: '#2c3fd6', rezervace: '#8f8a82', prodany: '#c9c5bd' };
 const geo = D.geo;
 const plots = {};
 const state = { f: 'all', t: null, sort: 'id', dir: 1, active: null, cmp: [], all: false };
@@ -158,7 +159,7 @@ function buildPlan() {
     el('rect', { class: 'plot__ring', x: g.x - 5, y: g.y - 5, width: g.w + 10, height: g.h + 10, rx: 10, fill: 'none', stroke: '#161616', 'stroke-width': 1, 'stroke-dasharray': '4 4' }, grp);
     el('rect', { class: 'plot__bg', x: g.x, y: g.y, width: g.w, height: g.h, rx: 6, fill, stroke, 'stroke-width': 1.5 }, grp);
     const hx = g.x + 14, hw = g.w - 28, hy = g.north ? g.y + g.h - 112 : g.y + 50;
-    const houseFill = h.status === 'prodany' ? '#c9c5bd' : '#161616';
+    const houseFill = HOUSE[h.status];
     if (h.type === 'patrovy') {
       el('rect', { class: 'plot__house', x: hx + 8, y: hy, width: hw - 16, height: 66, rx: 2, fill: houseFill }, grp);
       el('rect', { x: hx + 18, y: hy + 10, width: hw - 36, height: 46, rx: 1, fill: 'none', stroke: '#fff', 'stroke-width': 1.2, opacity: .55 }, grp);

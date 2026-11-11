@@ -304,8 +304,8 @@ def header(active, hero=False):
     </nav>
     <div class="hdr__right">
       <a class="hdr__fav" href="nabidka.html#oblibene" aria-label="Uložené domy" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg><span class="fav-n tnum">0</span></a>
-      <a class="btn {"btn--light" if hero else ""} btn--sm hdr__cta" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
-      <a class="btn btn--sm hdr__mcta" href="nabidka.html#volne">Volné <span class="cnt-free tnum"></span></a>
+      <a class="btn btn--primary btn--sm hdr__cta" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
+      <a class="btn btn--primary btn--sm hdr__mcta" href="nabidka.html#volne">Volné <span class="cnt-free tnum"></span></a>
       <button class="burger" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Otevřít menu"><span></span></button>
     </div>
   </div>
@@ -316,7 +316,7 @@ def header(active, hero=False):
   </ol>
   <div class="menu__foot">
     <span>Prodejce: <b>+420 776 294 498</b></span>
-    <a class="btn btn--light btn--sm" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
+    <a class="btn btn--primary btn--sm" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
   </div>
 </div>
 '''
@@ -348,7 +348,7 @@ DRAWER = '''<div class="scrim" id="scrim"></div>
   <div class="drawer__body" id="dr-body"></div>
   <div class="drawer__actions">
     <a class="btn btn--ghost" id="dr-detail" href="#">Celý detail domu</a>
-    <button class="btn" id="dr-interest" type="button">Mám zájem <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+    <button class="btn btn--primary" id="dr-interest" type="button">Mám zájem <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
   </div>
 </aside>
 '''
@@ -425,7 +425,7 @@ def watchdog(preset, title, text, house=None, compact=False):
     <div class="wd__chips" role="group" aria-label="Co chcete hlídat">{chips}</div>
     <div class="wd__row">
       <div class="field"><label class="sr" for="wd-email">E-mail</label><input class="input" id="wd-email" type="email" autocomplete="email" placeholder="váš@email.cz" required><span class="err"><svg><use href="#i-alert"/></svg>Zadejte e-mail ve tvaru jmeno@domena.cz.</span></div>
-      <button class="btn" type="submit">Hlídat <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+      <button class="btn btn--primary" type="submit">Hlídat <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
     </div>
     <label class="consent wd__consent"><input type="checkbox" id="wd-consent" required><span>Souhlasím se zasíláním upozornění k projektu Blatec. Odhlásit se můžete jedním klikem v každém e-mailu.</span></label>
   </div>
@@ -474,7 +474,7 @@ def type_card(t):
       <div><dt>Pozemky</dt><dd>{min(plots)}–{max(plots)} m²</dd></div><div><dt>Cena od</dt><dd>{fmt(min(prices)) + " Kč" if prices else "Na dotaz"}</dd></div>
       <div><dt>Podlaží</dt><dd>{"2" if t == "patrovy" else "1"}</dd></div><div><dt>Parkování</dt><dd>2 stání u domu</dd></div>
     </dl>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="nabidka.html#{anchor}">{T["label"]} domy v nabídce <span class="ic"><svg><use href="#i-arrow"/></svg></span></a><a class="btn btn--ghost" href="dum-{next(h["id"] for h in hs if h["status"] == "volny")}.html#pudorys">Půdorys</a></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--primary" href="nabidka.html#{anchor}">{T["label"]} domy v nabídce <span class="ic"><svg><use href="#i-arrow"/></svg></span></a><a class="btn btn--ghost" href="dum-{next(h["id"] for h in hs if h["status"] == "volny")}.html#pudorys">Půdorys</a></div>
   </div>
 </article>'''
 
@@ -754,7 +754,7 @@ for h in HOUSES:
     sim_html = "".join(f'''<a class="scard" href="dum-{s["id"]}.html"><div class="scard__img"><img src="img/{s["img"]}-800.webp" alt="" loading="lazy" decoding="async" width="800" height="450"></div><div class="scard__body"><div class="scard__row"><b>Dům {s["id"]}</b><span class="badge badge--{s["status"]}">{STATUS[s["status"]]}</span></div><span class="scard__meta">{s["label"]} {s["disp"]} · pozemek {area(s["plot"])} · zahrada na {s["garden"]}</span><span class="scard__price">{price_txt(s)}</span></div></a>''' for s in similar)
     floors_btn = "".join(f'<button data-floor="{k}" aria-pressed="{str(k == 0).lower()}">{f["name"]}</button>' for k, f in enumerate(PLANS[h["type"]]))
     prev_id, next_id = (hid - 2) % 14 + 1, hid % 14 + 1
-    actions = ('<a class="btn" href="kontakt.html#dum-%d">Domluvit prohlídku <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>' % hid) if not sold else '<a class="btn" href="nabidka.html#volne">Volné domy <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>'
+    actions = ('<a class="btn btn--primary" href="kontakt.html#dum-%d">Domluvit prohlídku <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>' % hid) if not sold else '<a class="btn" href="nabidka.html#volne">Volné domy <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>'
     garden_note = ("Zahrada je orientovaná na jih. Nejvíc slunce celý den, ideální pro terasu a záhony." if h["garden"] == "jih"
                    else "Zahrada je orientovaná na sever, terasa bude v létě příjemně ve stínu. Ranní a večerní slunce dopadá z boku.")
     jsonld = {"@context": "https://schema.org", "@type": "SingleFamilyResidence", "name": f"Dům {hid} – Blatec",
@@ -824,7 +824,7 @@ for h in HOUSES:
       <aside class="hd-side">
         <div class="sidecard"><div class="hd-title" style="justify-content:space-between"><b style="font:400 20px var(--f-display)">Dům {hid}</b><span class="badge badge--{h["status"]}">{STATUS[h["status"]]}</span></div>
           <dl class="kv"><div><dt>Cena</dt><dd>{price_txt(h)}</dd></div><div><dt>Pozemek</dt><dd>{area(h["plot"])}</dd></div></dl>
-          {actions.replace('class="btn"', 'class="btn" style="justify-content:space-between"')}
+          {actions.replace('class="btn btn--primary"', 'class="btn btn--primary" style="justify-content:space-between"')}
           {PERSON}
         </div>
       </aside>

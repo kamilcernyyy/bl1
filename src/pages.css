@@ -596,3 +596,68 @@ html,body{overflow-x:clip}
   .hdr__fav:hover{color:var(--hot)}
 }
 .hdr .btn:focus-visible{outline-color:var(--hot)}
+
+/* ===================================================================
+   Kobalt beyond hover: primary buttons, active states, icons,
+   free houses, contact + CTA surfaces
+   =================================================================== */
+:root{--hot-dark:#1f2fb4;--deep:#17207a;--badge-free:#eceefc}
+/* status "volný" follows the site plan */
+.badge--volny{color:var(--hot);background:var(--badge-free)}
+.ostat--free b{color:var(--hot)}
+
+/* primary buttons */
+.btn--primary{--bg:var(--hot);--fg:#fff;border-color:var(--hot)}
+@media (hover:hover){
+  .btn.btn--primary:hover,.hdr .btn.btn--primary:hover,.hdr.is-float .hdr__cta.btn--primary:hover,.hdr__mcta.btn--primary:hover,.menu .btn--primary:hover,.drawer .btn--primary:hover,.dock .btn:hover{--bg:var(--hot-dark);--fg:#fff;border-color:var(--hot-dark);color:#fff}
+  .hdr .btn--primary:hover .ic{background:#fff;color:var(--hot-dark)}
+}
+.hdr.is-float .hdr__cta.btn--primary{--bg:var(--hot);--fg:#fff}
+.hero .btn--primary{box-shadow:0 12px 30px -10px rgba(44,63,214,.55)}
+
+/* active states */
+:focus-visible{outline-color:var(--hot)}
+.chip[aria-pressed="true"]{background:var(--hot);border-color:var(--hot);color:#fff}
+.chip[aria-pressed="true"] .cnt{color:rgba(255,255,255,.75)}
+.hdr.is-float .nav a[aria-current="page"],.hdr--light .nav a[aria-current="page"]{background:var(--accent-soft);color:var(--hot)}
+.subnav a.is-active{background:var(--hot);color:#fff}
+.seg button[aria-pressed="true"]{color:var(--hot)}
+.acc__item.is-open .acc__btn .h3{color:var(--hot)}
+.acc__item.is-open .pm{border-color:var(--hot);background:var(--hot)}
+.acc__item.is-open .pm::before,.acc__item.is-open .pm::after{background:#fff}
+.link{border-bottom-color:rgba(44,63,214,.35)}
+.cmp[aria-pressed="true"],.consent input:checked{background:var(--hot);border-color:var(--hot)}
+.range input{background:linear-gradient(90deg,var(--hot) var(--p,50%),var(--stone-200) var(--p,50%))}
+.range input::-webkit-slider-thumb{border-color:var(--hot)}
+.range input::-moz-range-thumb{border-color:var(--hot)}
+.fp .room.is-on circle{fill:var(--hot);stroke:var(--hot)}
+.rooms li.is-on i{background:var(--hot);border-color:var(--hot)}
+.tl li.is-done::before,.tl li.is-done::after{background:var(--hot);border-color:var(--hot)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--hot);box-shadow:0 0 0 3px rgba(44,63,214,.14)}
+
+/* icons */
+.amen__item:not(.is-pending) svg,.tile svg.ti,.param svg,.acc__btn svg.ico,.std-cat__head svg,.type__meta svg,.fact svg,.icons svg,.dist svg,.cand svg.ti{color:var(--hot)}
+
+/* site plan: hover outline in ink so it reads on kobalt plots */
+.plot.is-hover .plot__bg,.plot:focus-visible .plot__bg{stroke:var(--ink);stroke-width:3}
+
+/* CTA band in kobalt */
+.ctaband{background:var(--hot)}
+.ctaband p,.ctaband__seller{color:rgba(255,255,255,.82)}
+.ctaband__seller .person__av{background:rgba(255,255,255,.16)}
+.ctaband .btn--ghost.on-dark{background:transparent;border-color:rgba(255,255,255,.5)}
+@media (hover:hover){
+  .ctaband .btn--light:hover{--bg:var(--ink);--fg:#fff;border-color:var(--ink);color:#fff}
+  .ctaband .btn--light:hover .ic{background:#fff;color:var(--ink)}
+  .ctaband .btn--ghost.on-dark:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+}
+
+/* contact section in deep kobalt */
+.contact{background:var(--deep)}
+.contact__bg{opacity:.22}
+.contact__bg::after{background:linear-gradient(180deg,rgba(23,32,122,.55),var(--deep) 70%)}
+.contact .person,.ct-direct a,.ct-direct span.row{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
+.contact .person__av{background:rgba(255,255,255,.14)}
+.contact .lead,.contact .person__lines{color:rgba(255,255,255,.8)}
+.contact .copy{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.75)}
+.callfab{border:2px solid rgba(255,255,255,.85)}
