@@ -588,3 +588,11 @@ html,body{overflow-x:clip}
 }
 @media (max-width:359px){.dock__tabs a span{font-size:9.5px}.dock__info b{font-size:15px}}
 @media (max-width:379px){.dock__call{display:none}.dock__top{padding-left:10px}.dock__cta{padding:4px 14px}.dock__info b{font-size:15px}}
+
+/* ---------- every button in the header bubble turns kobalt on hover ---------- */
+@media (hover:hover){
+  .hdr .btn:hover,.hdr.is-float .hdr__cta:hover,.hdr__mcta:hover,.menu .btn:hover,.drawer .btn:not(.btn--ghost):hover,.tray .btn:hover,.dock .btn:hover,.ctaband .btn--light:hover,.calc__out .btn--light:hover{--bg:var(--hot);--fg:#fff;border-color:var(--hot);color:#fff}
+  .hdr .btn:hover .ic,.ctaband .btn--light:hover .ic{background:#fff;color:var(--hot)}
+  .hdr__fav:hover{color:var(--hot)}
+}
+.hdr .btn:focus-visible{outline-color:var(--hot)}

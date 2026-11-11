@@ -549,33 +549,37 @@ const startMotion = () => {
   if ($('[data-page-in]')) gsap.from('[data-page-in]', { y: 22, duration: .9, ease, stagger: .07, delay: .05 });
   gsap.from('.hdr__in', { y: -16, opacity: 0, duration: .9, ease, delay: .1 });
   const rest = () => {
-    if ($('.hero')) gsap.to('[data-hero-media] img', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+    // Reveals fire the moment an element's top edge enters the viewport (not halfway in).
+    // Only elements still below the fold get hidden first, so nothing above it can stay invisible.
+    const ENTER = 'top 98%';
+    const REVEAL = '[data-reveal], .sec__head > *, .sub-head > *, [data-stagger] > *, .amen__item, .gal__item, .gal__ph, .ct .form, .ct .person, .rv__track > *, .tl li, .band__txt, .wd, .std-cat, .tcard, .nextp, .ctaband';
+    const below = [...new Set($$(REVEAL))].filter(e => e.offsetParent && e.getBoundingClientRect().top > innerHeight * .98);
+    gsap.set(below, { opacity: 0, y: 18 });
+    ScrollTrigger.batch(below, { start: ENTER, once: true, interval: .05, batchMax: 6,
+      onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, duration: .55, ease, stagger: .045, overwrite: true, clearProps: 'transform' }) });
+    if ($('.hero')) gsap.to('[data-hero-media] img', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: .2 } });
     const h = $('[data-words]');
     if (h) {
       const nodes = [...h.childNodes]; h.innerHTML = '';
       nodes.forEach(n => { if (n.nodeType === 3) n.textContent.split(/(\s+)/).forEach(w => { if (!w.trim()) h.append(w); else { const s = document.createElement('span'); s.className = 'word'; s.textContent = w; h.append(s); } }); else h.append(n); });
-      gsap.fromTo(h.querySelectorAll('.word'), { opacity: .2 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: h, start: 'top 82%', end: 'bottom 45%', scrub: true } });
-      gsap.from(h.querySelector('.pill-img'), { width: 0, marginLeft: 0, marginRight: 0, duration: 1.1, ease, scrollTrigger: { trigger: h, start: 'top 75%' } });
+      gsap.fromTo(h.querySelectorAll('.word'), { opacity: .25 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: h, start: 'top 96%', end: 'top 45%', scrub: .2 } });
+      gsap.from(h.querySelector('.pill-img'), { width: 0, marginLeft: 0, marginRight: 0, duration: .8, ease, scrollTrigger: { trigger: h, start: ENTER, once: true } });
     }
-    $$('[data-reveal]').forEach(elm => gsap.from(elm, { y: 36, opacity: 0, duration: 1, ease, scrollTrigger: { trigger: elm, start: 'top 88%', once: true } }));
-    $$('.sec__head, .sub-head').forEach(elm => gsap.from(elm.children, { y: 26, opacity: 0, duration: .9, ease, stagger: .08, scrollTrigger: { trigger: elm, start: 'top 86%', once: true } }));
-    $$('[data-stagger]').forEach(g => gsap.from(g.children, { y: 26, opacity: 0, duration: .8, ease, stagger: .06, scrollTrigger: { trigger: g, start: 'top 88%', once: true } }));
-    $$('[data-count]').forEach(n => { const end = +n.dataset.count, o = { v: 0 }; gsap.to(o, { v: end, duration: 1.4, ease: 'power2.out', scrollTrigger: { trigger: n, start: 'top 90%', once: true }, onUpdate: () => n.textContent = Math.round(o.v) }); });
-    $$('[data-reveal-img]').forEach(f => { gsap.fromTo(f, { clipPath: 'inset(10% 6% 0% 6% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: f, start: 'top 95%', end: 'top 35%', scrub: true } }); gsap.fromTo(f.querySelector('img'), { scale: 1.14 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: true } }); });
+    $$('[data-count]').forEach(n => { const end = +n.dataset.count, o = { v: 0 }; gsap.to(o, { v: end, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: n, start: ENTER, once: true }, onUpdate: () => n.textContent = Math.round(o.v) }); });
+    $$('[data-reveal-img]').forEach(f => { gsap.fromTo(f, { clipPath: 'inset(8% 5% 0% 5% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'top 55%', scrub: .2 } }); gsap.fromTo(f.querySelector('img'), { scale: 1.1 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: f, start: 'top bottom', end: 'bottom top', scrub: .2 } }); });
     const band = $('[data-band]');
     if (band) {
-      gsap.fromTo(band, { clipPath: 'inset(0% 8% 0% 8% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: band, start: 'top 90%', end: 'center 55%', scrub: true } });
-      gsap.fromTo(band.querySelector('img'), { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: true } });
-      gsap.from(band.querySelector('.band__txt'), { y: 40, opacity: 0, duration: 1, ease, scrollTrigger: { trigger: band, start: 'top 60%', once: true } });
+      gsap.fromTo(band, { clipPath: 'inset(0% 6% 0% 6% round 22px)' }, { clipPath: 'inset(0% 0% 0% 0% round 22px)', ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'top 40%', scrub: .2 } });
+      gsap.fromTo(band.querySelector('img'), { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: band, start: 'top bottom', end: 'bottom top', scrub: .2 } });
     }
-    if (svg) gsap.from('#plan .plot', { opacity: 0, y: 10, duration: .6, ease, stagger: .04, scrollTrigger: { trigger: '#plan', start: 'top 80%', once: true }, clearProps: 'opacity,transform' });
-    if (gal) gsap.from('.gal__item, .gal__ph', { y: 30, opacity: 0, duration: .9, ease, stagger: .07, scrollTrigger: { trigger: '#gal', start: 'top 82%', once: true } });
-    if ($('.amen__grid')) gsap.from('.amen__item', { y: 24, opacity: 0, duration: .8, ease, stagger: .06, scrollTrigger: { trigger: '.amen__grid', start: 'top 88%', once: true } });
-    if ($('.ct')) gsap.from('.ct .form, .ct .person', { y: 30, opacity: 0, duration: 1, ease, stagger: .1, scrollTrigger: { trigger: '.ct', start: 'top 78%', once: true } });
-    $$('.rv__track').forEach(t => gsap.from(t.children, { x: 40, opacity: 0, duration: .8, ease, stagger: .07, scrollTrigger: { trigger: t, start: 'top 88%', once: true } }));
-    if ($('.tl')) gsap.from('.tl li', { y: 20, opacity: 0, duration: .7, ease, stagger: .08, scrollTrigger: { trigger: '.tl', start: 'top 85%', once: true } });
+    if (svg && $('#plan').getBoundingClientRect().top > innerHeight * .98) gsap.from('#plan .plot', { opacity: 0, y: 8, duration: .45, ease, stagger: .025, scrollTrigger: { trigger: '#plan', start: ENTER, once: true }, clearProps: 'opacity,transform' });
+    // keep trigger positions right when fonts, images or expanding content change the layout
+    let rt; const refresh = () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 150); };
+    document.fonts && document.fonts.ready.then(refresh);
+    addEventListener('load', refresh);
+    if ('ResizeObserver' in window) { let last = document.body.scrollHeight; new ResizeObserver(() => { const hgt = document.body.scrollHeight; if (Math.abs(hgt - last) > 40) { last = hgt; refresh(); } }).observe(document.body); }
   };
-  ('requestIdleCallback' in window) ? requestIdleCallback(rest, { timeout: 900 }) : setTimeout(rest, 300);
+  ('requestIdleCallback' in window) ? requestIdleCallback(rest, { timeout: 400 }) : setTimeout(rest, 200);
 };
 if (document.readyState === 'complete' || window.gsap) startMotion(); else addEventListener('load', startMotion, { once: true });
 })();
