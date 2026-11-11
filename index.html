@@ -6,12 +6,21 @@
 <title>Blatec · HP DOMY</title>
 <meta name="description" content="14 rodinných domů v Blatci u Olomouce. Přízemní i patrové domy s parkováním u domu. Projekt HP DOMY DEVELOPMENT.">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23161616'/%3E%3Cpath d='M14 46V30h20v16zM26 30V18h24v28H34' fill='none' stroke='%23fff' stroke-width='3.2'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300;400&family=Inter:wght@400;500;600&family=Michroma&display=swap">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preload" as="font" type="font/woff2" href="fonts/michroma-latin-400-normal.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/inter-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">
 <style>
+@font-face{font-family:'Michroma';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/michroma-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Michroma';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/michroma-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/inter-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/inter-latin-ext-500-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-latin-600-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/inter-latin-ext-600-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Encode Sans Expanded';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/encode-sans-expanded-latin-300-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Encode Sans Expanded';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/encode-sans-expanded-latin-ext-300-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 /* Layout: Haven-inspired single page — airy white canvas, full-bleed renders with soft radius,
    wide Michroma headlines over generous whitespace, one dark band for the contact finale. */
 :root{
@@ -76,7 +85,7 @@ p{margin:0}
 .btn--light{--bg:var(--paper);--fg:var(--ink)}
 @media (hover:hover){.btn--light:hover{--bg:#f1f0ec}}
 .btn--ghost{background:transparent;color:var(--ink);border-color:var(--stone-200);padding:6px 22px}
-.btn--ghost.on-dark{color:var(--paper);border-color:rgba(255,255,255,.4)}
+.btn--ghost.on-dark{color:var(--paper);border-color:rgba(255,255,255,.45);background:rgba(20,24,30,.22);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 @media (hover:hover){.btn--ghost:hover{border-color:var(--ink);--bg:transparent}.btn--ghost.on-dark:hover{border-color:#fff}}
 .btn--sm{min-height:38px;font-size:14px;padding:4px 16px}
 .btn[disabled],.btn[aria-disabled="true"]{opacity:.42;cursor:not-allowed;pointer-events:none}
@@ -122,8 +131,8 @@ p{margin:0}
 .menu{position:fixed;inset:0;z-index:45;background:rgba(18,18,17,.72);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:96px var(--gut-r) calc(28px + env(safe-area-inset-bottom,0px)) var(--gut);visibility:hidden;opacity:0;transition:opacity .3s var(--ease-out),visibility 0s .3s}
 .menu.is-open{visibility:visible;opacity:1;transition:opacity .3s var(--ease-out)}
 .menu ol{list-style:none;margin:0 0 32px;padding:0;display:grid;gap:2px}
-.menu a{font:400 clamp(26px,8vw,40px)/1.25 var(--f-display);letter-spacing:-.02em;text-decoration:none;display:flex;align-items:baseline;gap:14px}
-.menu a small{font:500 12px/1 var(--f-text);opacity:.5;letter-spacing:.08em}
+.menu ol a{font:400 clamp(26px,8vw,40px)/1.25 var(--f-display);letter-spacing:-.02em;text-decoration:none;display:flex;align-items:baseline;gap:14px}
+.menu ol a small{font:500 12px/1 var(--f-text);opacity:.5;letter-spacing:.08em}
 .menu__foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.18);padding-top:20px;font-size:14px}
 .menu li{transform:translateY(16px);opacity:0;transition:transform .5s var(--ease-out),opacity .5s var(--ease-out)}
 .menu.is-open li{transform:none;opacity:1}
@@ -195,8 +204,7 @@ p{margin:0}
 .dist li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:14px 0;border-bottom:1px solid var(--stone-200);font-size:15px}
 .dist b{font-weight:500}
 .dist span{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.map{position:relative;border-radius:var(--r-img);overflow:hidden;background:#eef0ea;aspect-ratio:1/1;max-width:100%}
-@media (min-width:640px){.map{aspect-ratio:5/4}}
+.map{position:relative;border-radius:var(--r-img);overflow:hidden;background:#eef0ea;aspect-ratio:10/9;max-width:100%}
 .map svg{width:100%;height:100%;display:block}
 .map__tag{position:absolute;left:14px;bottom:14px;right:14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
 .map__btn{background:var(--paper);border-radius:var(--r-pill);padding:9px 14px;font-size:13px;font-weight:500;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.08);display:inline-flex;gap:8px;align-items:center}
@@ -276,10 +284,17 @@ table.houses{width:100%;border-collapse:collapse;font-size:15px;min-width:880px}
 .hcard.is-active{border-color:var(--ink);background:var(--accent-soft)}
 .hcard.is-sold{background:var(--stone-50)}
 .hcard__top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.hcard__title{display:flex;align-items:baseline;gap:10px}
+.hcard__title{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
 .hcard__title b{font:400 20px/1 var(--f-display)}
 .hcard__title span{color:var(--muted);font-size:14px}
-.hcard dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.hcard{gap:14px;padding:16px}
+.hcard dl{margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px;padding-block:12px;border-block:1px solid var(--stone-100)}
+.hcard__bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.hcard__price{font:400 18px/1.1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hcard__price.ask{font:500 15px/1.2 var(--f-text);color:var(--stone-600)}
+.hcard.is-sold .hcard__price{text-decoration:line-through;text-decoration-thickness:1px;color:var(--stone-400)}
+.hcard__actions{flex:0 0 auto}
+.hcard__actions .btn{flex:none}
 .hcard dt{font-size:12px;color:var(--muted);letter-spacing:.04em}
 .hcard dd{margin:2px 0 0;font-weight:500;font-variant-numeric:tabular-nums}
 .hcard__actions{display:flex;gap:8px}
@@ -324,8 +339,8 @@ table.houses{width:100%;border-collapse:collapse;font-size:15px;min-width:880px}
 .gal__item img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out)}
 @media (hover:hover){.gal__item:hover img{transform:scale(1.04)}}
 .gal__item span{position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.9);font-size:12px;font-weight:500;padding:5px 10px;border-radius:var(--r-pill)}
-.gal__ph{all:unset;box-sizing:border-box;border-radius:var(--r-card);border:1px dashed var(--stone-200);display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted);font-size:13.5px;aspect-ratio:4/3;background:var(--stone-50)}
-@media (min-width:860px){.gal__ph{aspect-ratio:auto}}
+.gal__ph{all:unset;box-sizing:border-box;border-radius:var(--r-card);border:1px dashed var(--stone-200);display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted);font-size:13.5px;background:var(--stone-50);grid-column:span 2;min-height:150px}
+.gal__ph:only-child{grid-column:1/-1}
 .gal__ph svg{width:28px;height:28px;margin:0 auto 10px;display:block;color:var(--stone-400)}
 .gal-tabs{display:flex;gap:8px;flex-wrap:wrap}
 
@@ -425,7 +440,8 @@ table.houses{width:100%;border-collapse:collapse;font-size:15px;min-width:880px}
 @media (min-width:760px){.drawer{top:12px;right:12px;bottom:12px;width:min(500px,calc(100% - 24px));border-radius:var(--r-img);transform:translateX(calc(100% + 24px))}.drawer.is-open{transform:none}}
 @media (max-width:759px){.drawer{left:0;right:0;bottom:0;max-height:92svh;border-radius:var(--r-img) var(--r-img) 0 0;transform:translateY(100%);padding-bottom:env(safe-area-inset-bottom,0px)}.drawer.is-open{transform:none}}
 .drawer__head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 16px 12px 22px;border-bottom:1px solid var(--stone-100)}
-.drawer__body{overflow-y:auto;padding:20px 22px 24px;display:grid;gap:20px}
+.drawer__body{overflow-y:auto;padding:20px 22px 24px;display:flex;flex-direction:column;gap:20px;flex:1 1 auto;min-height:0}
+.drawer__body>*{flex:none}
 .drawer__close{width:42px;height:42px;border-radius:50%;border:1px solid var(--stone-200);background:var(--paper);display:grid;place-items:center;cursor:pointer}
 .drawer__close svg{width:16px;height:16px}
 .drawer__img{border-radius:var(--r-card);overflow:hidden;aspect-ratio:16/10;background:var(--stone-100)}
@@ -470,7 +486,8 @@ body.view-ds main.site,body.view-ds .ftr{display:none}
 .og__in{position:absolute;inset:0;z-index:1;color:#fff;padding:7cqw;display:flex;flex-direction:column;justify-content:space-between}
 .og .logo__name{font-size:6.4cqw}
 .og .logo__sig{font-size:1.5cqw}
-.og p{font:400 3.4cqw/1.2 var(--f-display);max-width:16ch;letter-spacing:-.02em}
+.og p{font:400 2.7cqw/1.25 var(--f-display);max-width:20ch;letter-spacing:-.02em;margin-top:2.4cqw}
+.og__in{justify-content:flex-start!important}
 .icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
 .icons div{border:1px solid var(--stone-100);border-radius:12px;padding:18px 10px;display:grid;justify-items:center;gap:10px;font-size:12px;color:var(--stone-600);text-align:center}
 .icons svg{width:30px;height:30px;color:var(--ink)}
@@ -653,7 +670,7 @@ body.view-ds main.site,body.view-ds .ftr{display:none}
           <span class="placeholder-note"><svg><use href="#i-info"/></svg>* Orientační vzdálenosti. Před spuštěním webu je ověříme.</span>
         </div>
         <div class="map" role="img" aria-label="Schematická mapa: Blatec leží asi 8 km jižně od Olomouce, mezi Olomoucí a Prostějovem">
-          <svg viewBox="0 0 600 540" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <svg viewBox="0 0 600 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <rect width="600" height="540" fill="#eef0ea"/>
             <g fill="#e3e7dc"><path d="M0 40 L180 0 H320 L250 120 L60 160Z"/><path d="M380 300 L600 250 V420 L430 470Z"/><path d="M40 360 L210 330 L230 470 L0 520Z"/><path d="M420 40 L600 10 V170 L470 190Z"/></g>
             <path d="M600 60 C520 120 470 150 430 230 C400 290 380 360 330 420 C300 460 280 500 270 540" fill="none" stroke="#c9d6dd" stroke-width="7" stroke-linecap="round"/>
@@ -998,8 +1015,8 @@ body.view-ds main.site,body.view-ds .ftr{display:none}
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="js/gsap.min.js" defer></script>
+<script src="js/ScrollTrigger.min.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 'use strict';
@@ -1072,50 +1089,55 @@ const widths = [118, 112, 128, 124, 110, 112, 126];
 const geo = {}; let x = 60;
 widths.forEach((w, i) => { geo[i + 1] = { x, y: 54, w, h: 196, north: true }; x += w + 6; });
 x = 60; [124, 110, 112, 120, 116, 118, 132].forEach((w, i) => { geo[i + 8] = { x, y: 318, w, h: 196, north: false }; x += w + 6; });
-// base
-el('rect', { x: 0, y: 0, width: 1000, height: 560, fill: '#f6f5f2' }, svg);
-el('rect', { x: 30, y: 258, width: 940, height: 52, rx: 6, fill: '#dedbd4' }, svg); // street
-el('line', { x1: 50, y1: 284, x2: 950, y2: 284, stroke: '#fff', 'stroke-width': 2, 'stroke-dasharray': '14 12' }, svg);
-el('text', { x: 500, y: 289, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 12, fill: '#6c675f', 'letter-spacing': '2' }, svg).textContent = 'NOVÁ PŘÍJEZDOVÁ ULICE';
-el('rect', { x: 970, y: 258, width: 30, height: 52, fill: '#dedbd4' }, svg);
-el('text', { x: 980, y: 246, 'text-anchor': 'end', 'font-family': 'Inter,system-ui', 'font-size': 11, fill: '#8b867d' }, svg).textContent = 'směr náves →';
-// compass + scale
-const cg = el('g', { transform: 'translate(944 40)' }, svg); el('circle', { r: 16, fill: '#fff', stroke: '#dedbd4' }, cg); el('path', { d: 'M0 -10 L5 5 L0 2 L-5 5Z', fill: '#161616' }, cg);
-el('text', { x: 0, y: 30, 'text-anchor': 'middle', 'font-size': 10, 'font-family': 'Inter,system-ui', fill: '#6c675f' }, cg).textContent = 'S';
-const sg = el('g', { transform: 'translate(60 540)', 'font-family': 'Inter,system-ui', 'font-size': 10, fill: '#6c675f' }, svg);
-el('rect', { x: 0, y: -6, width: 60, height: 5, fill: '#161616' }, sg); el('rect', { x: 60, y: -6, width: 60, height: 5, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, sg);
-el('text', { x: 0, y: 10 }, sg).textContent = '0'; el('text', { x: 54, y: 10 }, sg).textContent = '10'; el('text', { x: 114, y: 10 }, sg).textContent = '20 m';
-
 const plots = {};
-H.forEach(h => {
-  const g = geo[h.id], [fill, stroke] = COL[h.status];
-  const grp = el('g', { class: 'plot', tabindex: 0, role: 'button', 'data-id': h.id, 'aria-label': `Dům ${h.id}, ${h.label.toLowerCase()}, ${STATUS[h.status]}` }, svg);
-  el('rect', { class: 'plot__ring', x: g.x - 5, y: g.y - 5, width: g.w + 10, height: g.h + 10, rx: 10, fill: 'none', stroke: '#161616', 'stroke-width': 1, 'stroke-dasharray': '4 4' }, grp);
-  el('rect', { class: 'plot__bg', x: g.x, y: g.y, width: g.w, height: g.h, rx: 6, fill, stroke, 'stroke-width': 1.5 }, grp);
-  // house footprint, near the street
-  const hx = g.x + 14, hw = g.w - 28;
-  const hy = g.north ? g.y + g.h - 112 : g.y + 50;
-  const houseFill = h.status === 'prodany' ? '#c9c5bd' : '#161616';
-  if (h.type === 'patrovy') {
-    el('rect', { class: 'plot__house', x: hx + 8, y: hy, width: hw - 16, height: 66, rx: 2, fill: houseFill }, grp);
-    el('rect', { x: hx + 18, y: hy + 10, width: hw - 36, height: 46, rx: 1, fill: 'none', stroke: '#fff', 'stroke-width': 1.2, opacity: .55 }, grp);
-  } else {
-    const d = `M${hx} ${hy} h${hw} v44 h-${hw * .45} v28 h-${hw * .55} z`;
-    el('path', { class: 'plot__house', d: g.north ? d : d, fill: houseFill, transform: g.north ? '' : `translate(0 ${-6})` }, grp);
-  }
-  // parking
-  const py = g.north ? g.y + g.h - 38 : g.y + 8;
-  el('rect', { x: g.x + g.w - 46, y: py, width: 34, height: 30, rx: 3, fill: '#fff', stroke, 'stroke-width': 1 }, grp);
-  el('text', { x: g.x + g.w - 29, y: py + 20, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 13, 'font-weight': 600, fill: stroke }, grp).textContent = 'P';
-  // garden marks
-  const gy = g.north ? g.y + 18 : g.y + g.h - 26;
-  [0, 1, 2].forEach(k => el('circle', { cx: g.x + 22 + k * 22, cy: gy, r: 6, fill: stroke, opacity: .18 }, grp));
-  // number
-  const nb = el('g', { transform: `translate(${g.x + 18} ${g.north ? g.y + g.h - 30 : g.y + 22})` }, grp);
-  el('circle', { r: 13, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, nb);
-  el('text', { class: 'plot__num', 'text-anchor': 'middle', y: 5 }, nb).textContent = h.id;
-  plots[h.id] = grp;
-});
+let vertical = null;
+function buildPlan() {
+  const v = matchMedia('(max-width: 700px)').matches;
+  if (v === vertical) return; vertical = v;
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', v ? '0 0 560 1000' : '0 0 1000 560');
+  const root = v ? el('g', { transform: 'translate(560 0) rotate(90)' }, svg) : svg;
+  const up = (cx, cy) => v ? ` rotate(-90 ${cx} ${cy})` : '';
+  el('rect', { x: 0, y: 0, width: 1000, height: 560, fill: '#f6f5f2' }, root);
+  el('rect', { x: 30, y: 258, width: 940, height: 52, rx: 6, fill: '#dedbd4' }, root);
+  el('line', { x1: 50, y1: 284, x2: 950, y2: 284, stroke: '#fff', 'stroke-width': 2, 'stroke-dasharray': '14 12' }, root);
+  el('text', { x: 500, y: 289, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 12, fill: '#6c675f', 'letter-spacing': '2' }, root).textContent = 'NOVÁ PŘÍJEZDOVÁ ULICE';
+  const cg = el('g', { transform: 'translate(952 30)' }, root); el('circle', { r: 16, fill: '#fff', stroke: '#dedbd4' }, cg); el('path', { d: 'M0 -10 L5 5 L0 2 L-5 5Z', fill: '#161616' }, cg);
+  el('text', { x: 0, y: 30, 'text-anchor': 'middle', 'font-size': 10, 'font-family': 'Inter,system-ui', fill: '#6c675f', transform: up(0, 27) }, cg).textContent = 'S';
+  const sg = el('g', { transform: 'translate(60 540)', 'font-family': 'Inter,system-ui', 'font-size': 10, fill: '#6c675f' }, root);
+  el('rect', { x: 0, y: -6, width: 60, height: 5, fill: '#161616' }, sg); el('rect', { x: 60, y: -6, width: 60, height: 5, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, sg);
+  el('text', { x: 0, y: 10 }, sg).textContent = '0'; el('text', { x: 54, y: 10 }, sg).textContent = '10'; el('text', { x: 114, y: 10 }, sg).textContent = '20 m';
+  H.forEach(h => {
+    const g = geo[h.id], [fill, stroke] = COL[h.status];
+    const grp = el('g', { class: 'plot', tabindex: 0, role: 'button', 'data-id': h.id, 'aria-label': `Dům ${h.id}, ${h.label.toLowerCase()}, ${STATUS[h.status]}, ${priceTxt(h)}` }, root);
+    el('rect', { class: 'plot__ring', x: g.x - 5, y: g.y - 5, width: g.w + 10, height: g.h + 10, rx: 10, fill: 'none', stroke: '#161616', 'stroke-width': 1, 'stroke-dasharray': '4 4' }, grp);
+    el('rect', { class: 'plot__bg', x: g.x, y: g.y, width: g.w, height: g.h, rx: 6, fill, stroke, 'stroke-width': 1.5 }, grp);
+    const hx = g.x + 14, hw = g.w - 28, hy = g.north ? g.y + g.h - 112 : g.y + 50;
+    const houseFill = h.status === 'prodany' ? '#c9c5bd' : '#161616';
+    if (h.type === 'patrovy') {
+      el('rect', { class: 'plot__house', x: hx + 8, y: hy, width: hw - 16, height: 66, rx: 2, fill: houseFill }, grp);
+      el('rect', { x: hx + 18, y: hy + 10, width: hw - 36, height: 46, rx: 1, fill: 'none', stroke: '#fff', 'stroke-width': 1.2, opacity: .55 }, grp);
+    } else {
+      el('path', { class: 'plot__house', d: `M${hx} ${hy} h${hw} v44 h-${hw * .45} v28 h-${hw * .55} z`, fill: houseFill, transform: g.north ? '' : 'translate(0 -6)' }, grp);
+    }
+    const py = g.north ? g.y + g.h - 38 : g.y + 8, px = g.x + g.w - 29;
+    el('rect', { x: g.x + g.w - 46, y: py, width: 34, height: 30, rx: 3, fill: '#fff', stroke, 'stroke-width': 1 }, grp);
+    el('text', { x: px, y: py + 20, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 13, 'font-weight': 600, fill: stroke, transform: up(px, py + 15) }, grp).textContent = 'P';
+    const gy = g.north ? g.y + 18 : g.y + g.h - 26;
+    [0, 1, 2].forEach(k => el('circle', { cx: g.x + 22 + k * 22, cy: gy, r: 6, fill: stroke, opacity: .18 }, grp));
+    const nb = el('g', { transform: `translate(${g.x + 18} ${g.north ? g.y + g.h - 30 : g.y + 22})${v ? ' rotate(-90)' : ''}` }, grp);
+    el('circle', { r: v ? 16 : 13, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, nb);
+    el('text', { class: 'plot__num', 'text-anchor': 'middle', y: 5, style: v ? 'font-size:18px' : '' }, nb).textContent = h.id;
+    plots[h.id] = grp;
+    grp.addEventListener('mouseenter', () => hover(h.id, true));
+    grp.addEventListener('mouseleave', () => hover(h.id, false));
+    grp.addEventListener('focus', () => hover(h.id, true));
+    grp.addEventListener('blur', () => hover(h.id, false));
+    grp.addEventListener('click', () => openHouse(h.id, grp));
+    grp.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHouse(h.id, grp); } });
+    if (state.active === h.id) grp.classList.add('is-active');
+  });
+}
 
 /* ---------- filters ---------- */
 const state = { f: 'all', t: null, sort: 'id', dir: 1, active: null };
@@ -1141,17 +1163,18 @@ function render() {
     </tr>`).join('');
   cards.innerHTML = list.map(h => `
     <article class="hcard ${h.status === 'prodany' ? 'is-sold' : ''} ${state.active === h.id ? 'is-active' : ''}" data-id="${h.id}">
-      <div class="hcard__top"><div class="hcard__title"><b>Dům ${h.id}</b><span>${h.label}</span></div><span class="badge badge--${h.status}">${STATUS[h.status]}</span></div>
-      <dl><div><dt>Dispozice</dt><dd>${h.disp}</dd></div><div><dt>Užitná plocha</dt><dd>${fmtArea(h.area)}</dd></div>
-      <div><dt>Pozemek</dt><dd>${fmtArea(h.plot)}</dd></div><div><dt>Parkování</dt><dd>${h.parking}</dd></div>
-      <div style="grid-column:1/-1"><dt>Cena</dt><dd style="font-size:18px">${priceTxt(h)}</dd></div></dl>
-      <div class="hcard__actions"><button class="btn btn--ghost btn--sm" data-open="${h.id}" type="button">Karta domu</button>${h.status !== 'prodany' ? `<button class="btn btn--sm" data-want="${h.id}" type="button" style="justify-content:center">Mám zájem</button>` : ''}</div>
+      <div class="hcard__top"><div class="hcard__title"><b>Dům ${h.id}</b><span>${h.label} · ${h.parking}</span></div><span class="badge badge--${h.status}">${STATUS[h.status]}</span></div>
+      <dl><div><dt>Dispozice</dt><dd>${h.disp}</dd></div><div><dt>Užitná plocha</dt><dd>${fmtArea(h.area)}</dd></div><div><dt>Pozemek</dt><dd>${fmtArea(h.plot)}</dd></div></dl>
+      <div class="hcard__bottom"><span class="hcard__price ${h.price ? '' : 'ask'}">${priceTxt(h)}</span>
+      <div class="hcard__actions"><button class="btn btn--ghost btn--sm" data-open="${h.id}" type="button"><svg style="width:15px;height:15px"><use href="#i-pdf"/></svg>&nbsp;Karta domu</button></div></div>
     </article>`).join('');
   $('#empty').hidden = list.length > 0;
   Object.entries(plots).forEach(([id, g]) => g.classList.toggle('is-dim', !visible(byId(+id))));
   $$('#tbl th[data-sort]').forEach(th => { if (th.dataset.sort === state.sort) th.setAttribute('aria-sort', state.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
 }
+buildPlan();
 render();
+matchMedia('(max-width: 700px)').addEventListener('change', () => { buildPlan(); render(); });
 $$('.filters .chip').forEach(c => c.addEventListener('click', () => {
   if (c.dataset.f) { state.f = c.dataset.f; $$('[data-f]').forEach(x => x.setAttribute('aria-pressed', x === c)); }
   if (c.dataset.t) { state.t = state.t === c.dataset.t ? null : c.dataset.t; $$('[data-t]').forEach(x => x.setAttribute('aria-pressed', x.dataset.t === state.t)); }
@@ -1168,21 +1191,13 @@ function hover(id, on) {
   plots[id]?.classList.toggle('is-hover', on);
   $$(`#tbl tr[data-id="${id}"]`).forEach(r => r.classList.toggle('is-hover', on));
   if (on) {
-    const h = byId(id), g = geo[id], r = svg.getBoundingClientRect(), s = r.width / 1000;
+    if (vertical || !plots[id]) return;
+    const h = byId(id), b = box.getBoundingClientRect(), r = plots[id].querySelector('.plot__bg').getBoundingClientRect();
     tip.innerHTML = `<b>Dům ${h.id}</b> · ${h.label} ${h.disp}<br>${fmtArea(h.plot)} pozemek · ${priceTxt(h)} · ${STATUS[h.status]}`;
-    tip.style.left = (g.x + g.w / 2) * s + 'px'; tip.style.top = (g.north ? g.y + 8 : g.y + 12) * s + 'px';
+    tip.style.left = (r.left - b.left + r.width / 2) + 'px'; tip.style.top = (r.top - b.top + 8) + 'px';
     tip.classList.add('is-on');
   } else tip.classList.remove('is-on');
 }
-Object.entries(plots).forEach(([id, g]) => {
-  id = +id;
-  g.addEventListener('mouseenter', () => hover(id, true));
-  g.addEventListener('mouseleave', () => hover(id, false));
-  g.addEventListener('focus', () => hover(id, true));
-  g.addEventListener('blur', () => hover(id, false));
-  g.addEventListener('click', () => openHouse(id, g));
-  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHouse(id, g); } });
-});
 tbody.addEventListener('mouseover', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.add('is-hover'); });
 tbody.addEventListener('mouseout', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.remove('is-hover'); });
 tbody.addEventListener('click', e => { const r = e.target.closest('tr'); if (r) openHouse(+r.dataset.id, r); });

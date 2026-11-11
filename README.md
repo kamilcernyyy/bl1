@@ -41,5 +41,7 @@ Stav: `volny`, `rezervace`, `prodany`.
 
 ## Technologie
 
-HTML, CSS, vanilla JS, GSAP 3.12.5 + ScrollTrigger (cdnjs). Písma Michroma, Inter,
-Encode Sans Expanded z Google Fonts. Respektuje `prefers-reduced-motion`.
+HTML, CSS, vanilla JS, GSAP 3.12.5 + ScrollTrigger (lokálně v `js/`). Písma Michroma,
+Inter a Encode Sans Expanded hostovaná lokálně v `fonts/` (woff2, latin + latin-ext),
+bez požadavků na Google Fonts. Obrázky WebP v několika šířkách přes `srcset`.
+Respektuje `prefers-reduced-motion`.
