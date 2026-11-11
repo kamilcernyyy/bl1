@@ -139,6 +139,28 @@ REVIEWS = [
     ("Roman S.", 5, "před 5 lety", "Lepší firma na stavbu domu (dřevostavba) asi neexistuje. Obešeli jsme několik firem než jsme zvolili firmu HPdomy. A jednání této firmy bylo nad očekávání.", True),
     ("Petr Š.", 5, "před 2 lety", "Mohu jen doporučit!", False),
 ]
+
+ACCENTS = [
+    dict(id="cerna", name="Černá HP DOMY", hex="#161616", ink="#ffffff", tag="Bez nové barvy",
+         why="Dnešní stav. Hover jen přepne do černé. Čisté a bezpečné, ale web zůstane hodně tichý."),
+    dict(id="kobalt", name="Kobalt", hex="#2c3fd6", ink="#ffffff", tag="Nebe nad Hanou", rec=True,
+         why="Hluboká modrá jako obloha na vizualizacích. Proti bílé a černé působí architektonicky a prémiově, nesrazí se se stavy domů (zelená, oranžová, šedá) a modrá u realit podvědomě znamená důvěru."),
+    dict(id="cihla", name="Cihla Porotherm", hex="#b4452a", ink="#ffffff", tag="Příběh materiálu",
+         why="Barva pálené cihly, ze které se domy staví. Teplá, hmatatelná a česká. S bílým textem dobře čitelná, jen je blízko červené, takže ji nepoužívat na chybové stavy."),
+    dict(id="psenice", name="Hanácká pšenice", hex="#e0a92a", ink="#161616", tag="Příběh Hané",
+         why="Zlatá barva polí kolem Blatce. Teplá a přátelská, s černým textem. Pozor, je blízko oranžové u stavu Rezervace, ten bychom museli přebarvit."),
+    dict(id="oranz", name="Signální oranž", hex="#ff5a1f", ink="#161616", tag="Nejvýraznější",
+         why="Stavební signální oranžová. Na černobílém webu udělá největší efekt, ale je hlasitá a hodně používaná, takže riskuje, že web zlevní."),
+    dict(id="orech", name="Ořech", hex="#7a5a3a", ink="#ffffff", tag="Nejtišší",
+         why="Dnešní pracovní akcent podle dřevěného obkladu. Ladí s vizualizacemi, ale kontrast je malý, takže web moc nepozvedne."),
+]
+def _lum(h):
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    f = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+def contrast(a, b):
+    la, lb = sorted((_lum(a), _lum(b)), reverse=True)
+    return (la + 0.05) / (lb + 0.05)
 TRAVEL = [
     dict(place="Centrum Olomouce", note="práce, úřady, kultura", km=8, auto=15, vlak=20, kolo=30),
     dict(place="Fakultní nemocnice Olomouc", note="nejbližší velká nemocnice", km=9, auto=15, vlak=30, kolo=35),
@@ -149,7 +171,7 @@ TRAVEL = [
 ICONS = [["a-rail", "Vlak"], ["a-road", "Silnice"], ["a-hall", "Obecní dům"], ["a-chapel", "Kaple"], ["a-fire", "Hasiči"], ["a-city", "Město"], ["a-tree", "Příroda"],
          ["s-brick", "Zdivo"], ["s-heat", "Tepelné čerpadlo"], ["s-window", "Okna"], ["s-blind", "Žaluzie"], ["s-sun", "Fotovoltaika"], ["s-snow", "Klimatizace"],
          ["s-floor", "Podlahy"], ["s-door", "Dveře"], ["s-water", "Úpravna vody"], ["s-car", "Parkování"], ["s-plan", "Dispozice"], ["s-area", "Plocha"]]
-DATA = dict(status=STATUS, houses=HOUSES, geo=GEO, gallery=GALLERY, plans=PLANS, stdShort=STD_SHORT, faq=FAQ, travel=TRAVEL, icons=ICONS)
+DATA = dict(accents=[dict(id=a['id'], name=a['name'], hex=a['hex']) for a in ACCENTS], status=STATUS, houses=HOUSES, geo=GEO, gallery=GALLERY, plans=PLANS, stdShort=STD_SHORT, faq=FAQ, travel=TRAVEL, icons=ICONS)
 
 
 # ------------------------------------------------------------------ Google reviews component
@@ -235,7 +257,8 @@ def head(title, desc, preload_img=None, jsonld=None, main=False):
     pre = ('<link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">\n'
            if preload_img == "hero" else "")
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>\n' if jsonld else ""
-    meta = (f"<title>{esc(title)}</title>\n"
+    early = '<script>try{var a=localStorage.getItem("blatec-accent");if(a)document.documentElement.dataset.accent=a}catch(e){}</script>\n'
+    meta = (early + f"<title>{esc(title)}</title>\n"
             + ('<meta name="claude:viewport-fit-sides" content="cover">\n' if FLAVOR != "repo" else "")
             + f'<meta name="description" content="{esc(desc)}">\n<meta name="theme-color" content="#ffffff">\n'
             f'<meta property="og:type" content="website"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}">'
@@ -304,7 +327,7 @@ FOOTER = f'''<footer class="ftr">
     </div>
     <div class="ftr__legal">
       <span>Spisová značka C 44281 vedená u Krajského soudu v Ostravě</span>
-      <span style="display:flex;gap:18px;flex-wrap:wrap"><a href="#" data-gdpr>Ochrana osobních údajů</a><a href="index.html#komponenty">Design systém návrhu</a><span>© 2026 HP DOMY s.r.o.</span></span>
+      <span style="display:flex;gap:18px;flex-wrap:wrap"><a href="#" data-gdpr>Ochrana osobních údajů</a><a href="index.html#komponenty">Design systém návrhu</a><a href="vzornik.html">Vzorník barev</a><span>© 2026 HP DOMY s.r.o.</span></span>
     </div>
   </div>
 </footer>
@@ -372,6 +395,8 @@ def img(src, alt, sizes="100vw", eager=False, w=1600):
 
 def page(slug, title, desc, body, active=None, preload=None, jsonld=None, extra="", main=False, hero=False):
     out = head(title, desc, preload, jsonld, main) + SPRITE + header(active or slug, hero) + body + FOOTER + extra + TOAST + scripts(main)
+    if slug == "vzornik":
+        out = out.replace('<meta name="theme-color"', '<meta name="robots" content="noindex"><meta name="theme-color"', 1)
     fn = "index.html" if slug == "index" else f"{slug}.html"
     open(os.path.join(OUT, fn), "w", encoding="utf-8").write(out)
     return fn
@@ -781,6 +806,61 @@ for h in HOUSES:
     page(f"dum-{hid}", f"Dům {hid} · {T['label']} {h['disp']} · Blatec | HP DOMY",
          f"Dům {hid} v Blatci: {T['label'].lower()} {h['disp']}, {area(h['area'])}, pozemek {area(h['plot'])}, zahrada na {h['garden']}. Cena: {price_txt(h)}. Stav: {STATUS[h['status']]}.",
          body, active="nabidka", preload=T["gal"][0], jsonld=jsonld, extra=LIGHTBOX)
+
+
+# ------------------------------------------------------------------ Vzorník akcentní barvy
+def demo_rows():
+    rows = [HOUSES[1], HOUSES[3], HOUSES[4]]  # volný, volný, prodaný
+    out = ""
+    for k, h in enumerate(rows):
+        cls = ("is-sold " if h["status"] == "prodany" else "") + ("is-demo-hot" if k == 1 else "")
+        out += (f'<tr class="{cls}"><td class="house-no">{h["id"]}</td><td class="num">{area(h["plot"])}</td>'
+                f'<td class="num price">{price_txt(h)}</td><td class="st"><span class="badge badge--{h["status"]}">{STATUS[h["status"]]}</span></td>'
+                f'<td class="card-col"><span class="pdf-btn">Detail domu</span></td></tr>')
+    return out
+
+cands = ""
+for a in ACCENTS:
+    cw, cb = contrast(a["hex"], "#ffffff"), contrast(a["hex"], "#161616")
+    ink_ratio = contrast(a["hex"], a["ink"])
+    ok = ink_ratio >= 4.5
+    plot = (f'<svg viewBox="0 0 260 120" aria-hidden="true" style="width:100%;height:auto;display:block;border-radius:12px;background:#f6f5f2">'
+            f'<rect x="10" y="10" width="70" height="100" rx="5" fill="#e5f1e9" stroke="#2f7a4c" stroke-width="1.5"/>'
+            f'<rect x="95" y="10" width="70" height="100" rx="5" fill="#e5f1e9" stroke="{a["hex"]}" stroke-width="3.5"/>'
+            f'<rect x="180" y="10" width="70" height="100" rx="5" fill="#efedea" stroke="#a7a299" stroke-width="1.5"/>'
+            f'<rect x="113" y="40" width="34" height="34" rx="2" fill="#161616"/><rect x="28" y="40" width="34" height="34" rx="2" fill="#161616"/><rect x="198" y="40" width="34" height="34" rx="2" fill="#c9c5bd"/></svg>')
+    cands += f'''<article class="cand{" is-picked" if a["id"] == "cerna" else ""}" data-cand="{a["id"]}" id="{a["id"]}" style="--hot:{a["hex"]};--hot-ink:{a["ink"]}">
+  <div class="cand__sw">{'<span class="rec">Doporučuji</span>' if a.get("rec") else ""}<span class="eyebrow" style="color:inherit;opacity:.8">{a["tag"]}</span><h2 class="h3">{a["name"]}</h2><code>{a["hex"].upper()}</code></div>
+  <div class="cand__body">
+    <p class="cand__why">{a["why"]}</p>
+    <div class="cand__meta"><span class="{"ok" if ok else "warn"}">Text na barvě {ink_ratio:.1f} : 1 {"✓" if ok else "– málo"}</span><span>s bílou {cw:.1f} : 1</span><span>s černou {cb:.1f} : 1</span></div>
+    <div class="cand__demo">
+      <span class="cand__btns"><span class="lbl">Řádek domu při najetí myší (prostřední řádek ukazuje stav hover, ostatní si vyzkoušejte)</span></span>
+      <div class="tbl-wrap"><table class="houses"><thead><tr><th>Dům</th><th class="num">Pozemek</th><th class="num">Cena</th><th>Stav</th><th></th></tr></thead><tbody>{demo_rows()}</tbody></table></div>
+      <div class="grid-2" style="gap:12px;align-items:center">
+        <div class="cand__btns"><span class="lbl">Tlačítka: výchozí a při najetí</span><span class="btn btn--sm">Vybrat dům <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></span><span class="btn btn--sm" style="--bg:var(--hot);--fg:var(--hot-ink)">Vybrat dům <span class="ic" style="width:28px;height:28px;transform:rotate(-45deg)"><svg><use href="#i-arrow"/></svg></span></span></div>
+        <div><span class="lbl" style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">Pozemek v situaci při najetí</span>{plot}</div>
+      </div>
+    </div>
+    <button class="btn" data-acc="{a["id"]}" aria-pressed="false" type="button" style="justify-self:start">Vyzkoušet na celém webu <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+  </div>
+</article>'''
+strip = "".join(f'<a href="#{a["id"]}" style="background:{a["hex"]};color:{a["ink"]};text-decoration:none">{a["name"]}</a>' for a in ACCENTS)
+body = f'''<main class="page">
+  <div class="wrap">
+    {crumbs((None, "Vzorník barev"))}
+    <div class="phero phero--split">
+      <div style="display:grid;gap:20px"><span class="eyebrow" data-page-in>Pracovní vzorník · neveřejné</span><h1 class="h1" data-page-in>Jedna kontrastní barva navíc</h1>
+        <p class="lead" data-page-in>Černá a bílá zůstávají základem. Nová barva se objeví hlavně tam, kde web reaguje: při najetí na dům, na tlačítka a na pozemek v situaci. Každou barvu si můžete zapnout na celém webu a proklikat.</p></div>
+      <div class="phero__aside" data-page-in><p style="color:var(--stone-600);font-size:15px">Testovací lišta vlevo dole zůstane na všech stránkách, dokud ji nezavřete. Volba se pamatuje jen ve vašem prohlížeči.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--ghost btn--sm" href="nabidka.html">Otestovat v nabídce</a><a class="btn btn--ghost btn--sm" href="index.html">Otestovat na úvodu</a></div></div>
+    </div>
+    <div class="swatch-strip" data-page-in>{strip}</div>
+  </div>
+  <section class="sub-sec"><div class="wrap"><div class="cand-grid">{cands}</div></div></section>
+</main>
+'''
+page("vzornik", "Vzorník barev · Blatec", "Pracovní vzorník akcentní barvy pro web Blatec.", body, active="")
 
 # ------------------------------------------------------------------ assets
 if FLAVOR == "repo":

@@ -453,6 +453,29 @@ $$('[data-slider]').forEach(sl => {
   tr.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
 });
 
+
+/* ---------- accent colour tester (vzorník) ---------- */
+const ACCENTS = D.accents;
+const store = { get: k => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} } };
+function setAccent(id, quiet) {
+  if (id === 'cerna') { delete document.documentElement.dataset.accent; store.set('blatec-accent', null); }
+  else { document.documentElement.dataset.accent = id; store.set('blatec-accent', id); }
+  $$('[data-acc]').forEach(b => b.setAttribute('aria-pressed', b.dataset.acc === id));
+  $$('.cand').forEach(c => c.classList.toggle('is-picked', c.dataset.cand === id));
+  if (!quiet) { const a = ACCENTS.find(x => x.id === id); toast(`Na celém webu je teď ${a.name}`); }
+}
+const current = () => document.documentElement.dataset.accent || 'cerna';
+if (store.get('blatec-tester') === '1' || $('.cand-grid')) {
+  store.set('blatec-tester', '1');
+  const bar = document.createElement('div');
+  bar.className = 'acc-test'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Test akcentní barvy');
+  bar.innerHTML = `<a href="vzornik.html">Akcent</a>` + ACCENTS.map(a => `<button data-acc="${a.id}" aria-label="${a.name}" title="${a.name}" style="background:${a.hex}"></button>`).join('') + `<button class="x" aria-label="Skrýt testovací lištu"><svg><use href="#i-close"/></svg></button>`;
+  document.body.appendChild(bar);
+  $('.x', bar).addEventListener('click', () => { bar.hidden = true; store.set('blatec-tester', null); });
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-acc]'); if (b) setAccent(b.dataset.acc); });
+setAccent(current(), true);
+
 /* ---------- keyboard ---------- */
 addEventListener('keydown', e => {
   if (lb && lb.classList.contains('is-open')) { if (e.key === 'Escape') lbClose(); if (e.key === 'ArrowRight') lbShow(LB.i + 1); if (e.key === 'ArrowLeft') lbShow(LB.i - 1); return; }
