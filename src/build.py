@@ -230,6 +230,9 @@ NAV = [("o-projektu", "O projektu"), ("lokalita", "Lokalita"), ("nabidka", "Nab�
        ("standardy", "Standardy"), ("galerie", "Galerie"), ("kontakt", "Kontakt")]
 SPRITE = read("sprite.svg")
 CSS = read("base.css") + "\n" + read("pages.css")
+CSS_MIN = re.sub(r"/\*.*?\*/", "", CSS, flags=re.S)
+CSS_MIN = re.sub(r"\s*\n\s*", "", CSS_MIN)
+CSS_MIN = re.sub(r"\s*([{};,])\s*", r"\1", CSS_MIN).replace(";}", "}")
 JS = read("site.js")
 GSAP_V = "3.12.5"
 
@@ -256,8 +259,12 @@ def head(title, desc, preload_img=None, jsonld=None, main=False):
                   '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
                   '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Encode+Sans+Expanded:wght@300;400&family=Inter:wght@400;500;600&family=Michroma&display=swap">\n'
                   f'<style>\n{CSS}\n</style>\n')
-    pre = ('<link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">\n'
-           if preload_img == "hero" else "")
+    if preload_img == "hero":
+        pre = '<link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">\n'
+    elif preload_img:
+        pre = f'<link rel="preload" as="image" href="img/{preload_img}-800.webp" imagesrcset="img/{preload_img}-800.webp 800w, img/{preload_img}-1600.webp 1600w" imagesizes="(min-width:860px) 66vw, 100vw" fetchpriority="high">\n'
+    else:
+        pre = ""
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>\n' if jsonld else ""
     meta = (f"<title>{esc(title)}</title>\n"
             + ('<meta name="claude:viewport-fit-sides" content="cover">\n' if FLAVOR != "repo" else "")
@@ -296,6 +303,7 @@ def header(active, hero=False):
 {links}
     </nav>
     <div class="hdr__right">
+      <a class="hdr__fav" href="nabidka.html#oblibene" aria-label="Uložené domy" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg><span class="fav-n tnum">0</span></a>
       <a class="btn {"btn--light" if hero else ""} btn--sm hdr__cta" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
       <a class="btn btn--sm hdr__mcta" href="nabidka.html#volne">Volné <span class="cnt-free tnum"></span></a>
       <button class="burger" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Otevřít menu"><span></span></button>
@@ -395,12 +403,34 @@ def img(src, alt, sizes="100vw", eager=False, w=1600):
 
 
 def page(slug, title, desc, body, active=None, preload=None, jsonld=None, extra="", main=False, hero=False):
-    out = head(title, desc, preload, jsonld, main) + SPRITE + header(active or slug, hero) + body + FOOTER + extra + TOAST + scripts(main)
+    fab = '' if slug.startswith("dum-") else CALL_FAB
+    out = head(title, desc, preload, jsonld, main) + SPRITE + header(active or slug, hero) + body + FOOTER + extra + fab + TOAST + scripts(main)
     out = cz_typo(out)
     fn = "index.html" if slug == "index" else f"{slug}.html"
     open(os.path.join(OUT, fn), "w", encoding="utf-8").write(out)
     return fn
 
+
+
+# ------------------------------------------------------------------ call FAB + watchdog
+CALL_FAB = ('<a class="callfab" href="tel:+420776294498" aria-label="Zavolat prodejci, +420 776 294 498">'
+            '<svg aria-hidden="true"><use href="#i-phone"/></svg><span>Zavolat</span></a>\n')
+WD_TOPICS = [("prodej", "Spuštění prodeje a ceny"), ("dum", "Uvolnění rezervovaného domu"), ("stavba", "Novinky ze stavby")]
+
+def watchdog(preset, title, text, house=None, compact=False):
+    chips = "".join(f'<button type="button" class="chip" data-wd-topic="{k}" aria-pressed="{str(k in preset).lower()}">{n if not (house and k == "dum") else f"Uvolnění domu {house}"}</button>' for k, n in WD_TOPICS)
+    return f'''<form class="wd{" wd--compact" if compact else ""}" id="hlidaci-pes" novalidate data-wd{f' data-house="{house}"' if house else ""}>
+  <div class="wd__head"><span class="wd__ico" aria-hidden="true"><svg><use href="#i-bell"/></svg></span><div><h2 class="h3">{title}</h2><p>{text}</p></div></div>
+  <div class="wd__body">
+    <div class="wd__chips" role="group" aria-label="Co chcete hlídat">{chips}</div>
+    <div class="wd__row">
+      <div class="field"><label class="sr" for="wd-email">E-mail</label><input class="input" id="wd-email" type="email" autocomplete="email" placeholder="váš@email.cz" required><span class="err"><svg><use href="#i-alert"/></svg>Zadejte e-mail ve tvaru jmeno@domena.cz.</span></div>
+      <button class="btn" type="submit">Hlídat <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+    </div>
+    <label class="consent wd__consent"><input type="checkbox" id="wd-consent" required><span>Souhlasím se zasíláním upozornění k projektu Blatec. Odhlásit se můžete jedním klikem v každém e-mailu.</span></label>
+  </div>
+  <div class="wd__done" role="status" aria-live="polite"><span class="ok"><svg><use href="#i-check"/></svg></span><div><b>Hlídáme za vás</b><p id="wd-done-msg"></p></div></div>
+</form>'''
 
 # ------------------------------------------------------------------ index (one-pager)
 idx_main = read("pages/index.main.html")
@@ -567,6 +597,7 @@ body = f'''<main class="page" data-compare>
     </div>
     {offer}
   </div>
+  <section class="sub-sec" style="padding-bottom:0"><div class="wrap">{watchdog(["prodej", "dum"], "Hlídací pes", "Nechte nám e-mail a dáme vám vědět, až zveřejníme ceny, nebo když se uvolní rezervovaný dům.")}</div></section>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">
     <div class="sub-head"><h2 class="h2">Na co se při výběru dívat</h2></div>
     <div class="grid-3" data-stagger>
@@ -640,6 +671,7 @@ body = f'''<main class="page gallery-page">
     <div class="sub-head"><h2 class="h2">Fotky ze stavby</h2><p class="lead">Po zahájení výstavby sem budeme přidávat fotky z jednotlivých fází, abyste viděli, jak váš dům roste.</p></div>
     <ol class="tl">{tl}</ol>
   </div></section>
+  <section class="sub-sec" style="padding-top:0"><div class="wrap">{watchdog(["stavba"], "Chcete vidět, jak stavba roste?", "Pošleme vám e-mail, když přidáme fotky z nové fáze výstavby.")}</div></section>
   {cta_band()}
   {next_page("kontakt", "Kontakt")}
 </main>
@@ -737,12 +769,13 @@ for h in HOUSES:
     <div class="hd-top">
       <div><div class="hd-title" data-page-in><h1 class="h1">Dům {hid}</h1><span class="badge badge--{h["status"]}">{STATUS[h["status"]]}</span></div>
         <p class="hd-sub" data-page-in>{T["label"]} dům {h["disp"]} · {area(h["area"])} užitné plochy · pozemek {area(h["plot"])}</p></div>
-      <div class="hd-price" data-page-in><small>Cena vč. DPH</small><b>{price_txt(h)}</b><div class="row">{actions}<button class="btn btn--ghost" data-pdf="{hid}"><svg style="width:16px;height:16px"><use href="#i-pdf"/></svg>&nbsp;Karta PDF</button></div></div>
+      <div class="hd-price" data-page-in><small>Cena vč. DPH</small><b>{price_txt(h)}</b><div class="row">{actions}<button class="fav fav--lg" type="button" data-fav="{hid}" aria-pressed="false" aria-label="Uložit dům {hid}"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><button class="btn btn--ghost" data-pdf="{hid}"><svg style="width:16px;height:16px"><use href="#i-pdf"/></svg>&nbsp;Karta PDF</button></div></div>
     </div>
     <div class="hd-gal" data-lb-list="{gal_attr}" data-page-in>{gal_html}</div>
     <nav class="subnav" aria-label="Části stránky"><a href="#parametry">Parametry</a><a href="#pudorys">Půdorys</a><a href="#poloha">Poloha</a><a href="#vybaveni">V ceně</a><a href="#financovani">Financování</a><a href="#podobne">Podobné domy</a><a href="#recenze">Recenze</a></nav>
     <div class="hd-layout">
       <div class="hd-main">
+        {watchdog(["dum"], f"Dům {hid} je {'rezervovaný' if h['status'] == 'rezervace' else 'prodaný'}", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, compact=True) if h["status"] != "volny" else ""}
         <section class="hd-sec" id="parametry"><header><h2 class="h2">Parametry</h2></header>
           <div class="params" data-stagger>
             <div class="param"><svg><use href="#s-plan"/></svg><div><small>Dispozice</small><b>{h["disp"]}</b></div></div>
@@ -801,7 +834,7 @@ for h in HOUSES:
   <div style="height:clamp(56px,8vw,112px)"></div>
   {cta_band(f"Zaujal vás dům {hid}?" if not sold else "Hledáte podobný dům?", "Prodejce vám ukáže pozemek a projde s vámi půdorys i financování.")}
 </main>
-<div class="mbar" aria-hidden="false"><div><small>Dům {hid} · {STATUS[h["status"]]}</small><b>{price_txt(h)}</b></div>{('<a class="btn btn--sm" href="kontakt.html#dum-%d">Mám zájem</a>' % hid) if not sold else '<a class="btn btn--sm" href="nabidka.html#volne">Volné domy</a>'}</div>
+<div class="mbar" aria-hidden="false"><div><small>Dům {hid} · {STATUS[h["status"]]}</small><b>{price_txt(h)}</b></div><div class="mbar__act"><a class="mbar__call" href="tel:+420776294498" aria-label="Zavolat prodejci"><svg aria-hidden="true"><use href="#i-phone"/></svg></a>{('<a class="btn btn--sm" href="kontakt.html#dum-%d">Mám zájem</a>' % hid) if not sold else '<a class="btn btn--sm" href="nabidka.html#volne">Volné domy</a>'}</div></div>
 '''
     page(f"dum-{hid}", f"Dům {hid} · {T['label']} {h['disp']} · Blatec | HP DOMY",
          f"Dům {hid} v Blatci: {T['label'].lower()} {h['disp']}, {area(h['area'])}, pozemek {area(h['plot'])}, zahrada na {h['garden']}. Cena: {price_txt(h)}. Stav: {STATUS[h['status']]}.",
@@ -811,7 +844,7 @@ for h in HOUSES:
 # ------------------------------------------------------------------ assets
 if FLAVOR == "repo":
     os.makedirs(os.path.join(OUT, "assets"), exist_ok=True)
-    open(os.path.join(OUT, "assets/site.css"), "w", encoding="utf-8").write(CSS)
+    open(os.path.join(OUT, "assets/site.css"), "w", encoding="utf-8").write(CSS_MIN)
     open(os.path.join(OUT, "assets/site.js"), "w", encoding="utf-8").write(JS)
     open(os.path.join(OUT, "assets/data.js"), "w", encoding="utf-8").write("window.BLATEC=" + json.dumps(DATA, ensure_ascii=False) + ";\n")
 else:

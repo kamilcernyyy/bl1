@@ -40,8 +40,28 @@ const setMenu = open => {
   if (open) hdr.classList.remove('is-float'); else onScroll();
   document.documentElement.style.overflow = open ? 'hidden' : '';
 };
-burger && burger.addEventListener('click', () => setMenu(burger.getAttribute('aria-expanded') !== 'true'));
+burger && burger.addEventListener('click', () => { setMenu(burger.getAttribute('aria-expanded') !== 'true'); const f = $('.callfab'); f && f.classList.toggle('is-on', !menu.classList.contains('is-open') && scrollY > 300); });
 $$('#menu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+
+/* ---------- favourites (saved houses, this browser only) ---------- */
+const FKEY = 'blatec-oblibene';
+let favs = (() => { try { return JSON.parse(localStorage.getItem(FKEY) || '[]').filter(id => byId(id)); } catch { return []; } })();
+const saveFavs = () => { try { localStorage.setItem(FKEY, JSON.stringify(favs)); } catch {} };
+function paintFavs() {
+  $$('[data-fav]').forEach(b => { const on = favs.includes(+b.dataset.fav); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', `${on ? 'Odebrat' : 'Uložit'} dům ${b.dataset.fav}`); });
+  $$('.fav-n').forEach(n => n.textContent = favs.length);
+  $$('.hdr__fav, .chip--fav').forEach(x => x.hidden = favs.length === 0);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fav]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const id = +b.dataset.fav, i = favs.indexOf(id);
+  if (i > -1) favs.splice(i, 1); else favs.push(id);
+  saveFavs(); paintFavs();
+  toast(i > -1 ? `Dům ${id} odebrán z uložených` : `Dům ${id} uložen. Najdete ho pod srdíčkem nahoře.`);
+  if (state.f === 'fav' && typeof render === 'function') { if (!favs.length) setFilter('all', state.t); else render(); }
+});
 
 /* ---------- copy + placeholders ---------- */
 $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
@@ -164,7 +184,7 @@ function buildPlan() {
   });
   applyDim();
 }
-const visible = h => (state.f === 'all' || h.status === state.f) && (!state.t || h.type === state.t);
+const visible = h => (state.f === 'all' || (state.f === 'fav' ? favs.includes(h.id) : h.status === state.f)) && (!state.t || h.type === state.t);
 const applyDim = () => Object.entries(plots).forEach(([id, g]) => g.classList.toggle('is-dim', !visible(byId(id))));
 
 /* ---------- table + cards ---------- */
@@ -180,6 +200,7 @@ function render() {
     if (k === 'type') { va = a.label; vb = b.label; }
     return (va > vb ? 1 : va < vb ? -1 : a.id - b.id) * state.dir;
   });
+  const favBtn = h => `<button class="fav" type="button" data-fav="${h.id}" aria-pressed="${favs.includes(h.id)}" aria-label="${favs.includes(h.id) ? 'Odebrat' : 'Uložit'} dům ${h.id}"><svg aria-hidden="true"><use href="#i-heart"/></svg></button>`;
   const cmpBtn = h => `<button class="cmp" type="button" data-cmp="${h.id}" aria-pressed="${state.cmp.includes(h.id)}" aria-label="Porovnat dům ${h.id}"></button>`;
   tbody.innerHTML = list.map(h => `
     <tr data-id="${h.id}" class="${h.status === 'prodany' ? 'is-sold' : ''} ${state.active === h.id ? 'is-active' : ''}" tabindex="0">
@@ -188,11 +209,11 @@ function render() {
       <td class="num">${fmtArea(h.area)}</td><td class="num">${fmtArea(h.plot)}</td><td>${h.parking}</td>
       <td class="num price ${h.price ? '' : 'ask'}">${priceTxt(h)}</td>
       <td class="st"><span class="badge badge--${h.status}">${STATUS[h.status]}</span></td>
-      <td class="card-col"><a class="pdf-btn" href="dum-${h.id}.html" data-nodrawer>Detail domu</a></td>
+      <td class="card-col"><span class="row-act">${favBtn(h)}<a class="pdf-btn" href="dum-${h.id}.html" data-nodrawer>Detail domu</a></span></td>
     </tr>`).join('');
   cards.innerHTML = list.map(h => `
     <article class="hcard ${h.status === 'prodany' ? 'is-sold' : ''} ${state.active === h.id ? 'is-active' : ''}" data-id="${h.id}">
-      <div class="hcard__top"><div class="hcard__title"><b>Dům ${h.id}</b><span>${h.label} · ${h.parking}</span></div><span class="badge badge--${h.status}">${STATUS[h.status]}</span></div>
+      <div class="hcard__top"><div class="hcard__title"><b>Dům ${h.id}</b><span>${h.label} · ${h.parking}</span></div><span class="hcard__tr"><span class="badge badge--${h.status}">${STATUS[h.status]}</span>${favBtn(h)}</span></div>
       <dl><div><dt>Dispozice</dt><dd>${h.disp}</dd></div><div><dt>Užitná plocha</dt><dd>${fmtArea(h.area)}</dd></div><div><dt>Pozemek</dt><dd>${fmtArea(h.plot)}</dd></div></dl>
       <div class="hcard__bottom"><span class="hcard__price ${h.price ? '' : 'ask'}">${priceTxt(h)}</span>
       <div class="hcard__actions" style="display:flex;gap:8px;align-items:center">${withCmp ? `<label class="cmp-lbl">${cmpBtn(h)}Porovnat</label>` : ''}<a class="btn btn--ghost btn--sm" href="dum-${h.id}.html">Detail domu</a></div></div>
@@ -204,7 +225,7 @@ function render() {
     cards.insertAdjacentHTML('beforeend', `<div class="cards-more"><button class="btn btn--ghost" type="button" data-allcards>Zobrazit všech ${list.length} domů</button></div>`);
   }
   $('#empty').hidden = list.length > 0;
-  applyDim();
+  applyDim(); paintFavs();
   $$('#tbl th[data-sort]').forEach(th => { if (th.dataset.sort === state.sort) th.setAttribute('aria-sort', state.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
 }
 function setFilter(f, t) {
@@ -223,7 +244,7 @@ if (svg || tbody) {
   const rs = $('[data-reset]'); rs && rs.addEventListener('click', () => setFilter('all', null));
   $$('#tbl th[data-sort] button').forEach(b => b.addEventListener('click', () => { const k = b.parentElement.dataset.sort; state.dir = state.sort === k ? -state.dir : 1; state.sort = k; render(); }));
   // filters from the URL hash (#volne, #patrove, #prizemni)
-  const hashFilter = () => { const m = { volne: ['volny', null], patrove: ['all', 'patrovy'], prizemni: ['all', 'prizemni'] }[location.hash.slice(1)]; if (m) setFilter(m[0], m[1]); };
+  const hashFilter = () => { const m = { volne: ['volny', null], patrove: ['all', 'patrovy'], prizemni: ['all', 'prizemni'], oblibene: ['fav', null] }[location.hash.slice(1)]; if (m) setFilter(m[0], m[1]); };
   hashFilter(); addEventListener('hashchange', hashFilter);
 }
 const tip = $('#tip'), box = $('#plan-box');
@@ -243,7 +264,7 @@ if (cards) cards.addEventListener('click', e => { if (e.target.closest('[data-al
 if (tbody) {
   tbody.addEventListener('mouseover', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.add('is-hover'); });
   tbody.addEventListener('mouseout', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.remove('is-hover'); });
-  tbody.addEventListener('click', e => { if (e.target.closest('[data-nodrawer],[data-cmp]')) return; const r = e.target.closest('tr'); if (r) openHouse(+r.dataset.id, r); });
+  tbody.addEventListener('click', e => { if (e.target.closest('[data-nodrawer],[data-cmp],[data-fav]')) return; const r = e.target.closest('tr'); if (r) openHouse(+r.dataset.id, r); });
   tbody.addEventListener('keydown', e => { const r = e.target.closest('tr'); if (r && e.key === 'Enter' && e.target === r) openHouse(+r.dataset.id, r); });
 }
 
@@ -460,6 +481,37 @@ $$('[data-slider]').forEach(sl => {
   tr.addEventListener('click', e => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
 });
 
+
+
+/* ---------- floating call button: appears with the bubble ---------- */
+const fab = $('.callfab');
+if (fab) { const f = () => fab.classList.toggle('is-on', scrollY > 300 && !(menu && menu.classList.contains('is-open'))); addEventListener('scroll', f, { passive: true }); f(); }
+
+/* ---------- watchdog (hlídací pes) ---------- */
+const wd = $('[data-wd]');
+if (wd) {
+  $$('[data-wd-topic]', wd).forEach(b => b.addEventListener('click', () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true')));
+  const em = $('#wd-email'), cons = $('#wd-consent');
+  const ok = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim());
+  em.addEventListener('input', () => { if (em.closest('.field').classList.contains('has-error')) em.closest('.field').classList.toggle('has-error', !ok()); });
+  cons.addEventListener('change', () => cons.closest('.consent').classList.toggle('has-error', !cons.checked));
+  wd.addEventListener('submit', e => {
+    e.preventDefault();
+    const topics = $$('[data-wd-topic][aria-pressed="true"]', wd);
+    em.closest('.field').classList.toggle('has-error', !ok()); em.setAttribute('aria-invalid', !ok());
+    cons.closest('.consent').classList.toggle('has-error', !cons.checked);
+    if (!topics.length) { toast('Vyberte, co máme hlídat'); return; }
+    if (!ok()) { em.focus(); return; }
+    if (!cons.checked) { cons.focus(); return; }
+    const btn = $('button[type="submit"]', wd); btn.classList.add('is-loading'); btn.disabled = true; btn.querySelector('use').setAttribute('href', '#i-loader');
+    setTimeout(() => {
+      $('#wd-done-msg').textContent = `Na ${em.value.trim()} vám napíšeme: ${topics.map(t => t.textContent.toLowerCase()).join(', ')}.`;
+      wd.classList.add('is-done');
+    }, 1000);
+  });
+}
+
+paintFavs();
 
 /* ---------- keyboard ---------- */
 addEventListener('keydown', e => {

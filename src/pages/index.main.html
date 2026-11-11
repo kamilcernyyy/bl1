@@ -147,6 +147,7 @@
         <div class="filters" role="group" aria-label="Filtr domů">
           <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
           <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
+          <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
           <span class="filters__sep" aria-hidden="true"></span>
           <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
           <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
@@ -189,6 +190,7 @@
         <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" style="background:none;border-left:0;border-right:0;border-top:0;cursor:pointer" data-reset>Zobrazit všechny domy</button></div>
       </div>
       <div class="offer-foot">
+        <a class="link" href="nabidka.html#hlidaci-pes"><svg><use href="#i-bell"/></svg>Hlídací pes: dáme vědět, až se uvolní dům</a>
         <span class="placeholder-note"><svg><use href="#i-info"/></svg>Zástupné údaje. Plochy, pozemky, ceny a stavy dodá HP DOMY.</span>
         <span>Ceny včetně DPH · „Na dotaz“ do spuštění prodeje</span>
       </div>

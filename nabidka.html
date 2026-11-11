@@ -64,6 +64,8 @@
     <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 3.5h2.6l1.4 4.1-2 1.4a11 11 0 0 0 6.3 6.3l1.4-2 4.1 1.4v2.6a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
     <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 7.5l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
     <symbol id="i-star" viewBox="0 0 20 20"><path d="M10 1.8l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.7l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z" fill="currentColor"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z" fill="var(--heart-fill,none)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2H4.5zM10 20.5a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
   </defs>
 </svg>
 <header class="hdr hdr--light" id="hdr">
@@ -81,6 +83,7 @@
       <a href="kontakt.html">Kontakt</a>
     </nav>
     <div class="hdr__right">
+      <a class="hdr__fav" href="nabidka.html#oblibene" aria-label="Uložené domy" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg><span class="fav-n tnum">0</span></a>
       <a class="btn  btn--sm hdr__cta" href="nabidka.html#volne">Volné domy <span class="cnt-free tnum"></span></a>
       <a class="btn btn--sm hdr__mcta" href="nabidka.html#volne">Volné <span class="cnt-free tnum"></span></a>
       <button class="burger" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Otevřít menu"><span></span></button>
@@ -118,6 +121,7 @@
           <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
           <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
           <button class="chip" data-f="rezervace" aria-pressed="false">Rezervace <span class="cnt" data-cnt="rezervace"></span></button>
+          <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
           <span class="filters__sep" aria-hidden="true"></span>
           <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
           <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
@@ -161,11 +165,24 @@
         <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" style="background:none;border-left:0;border-right:0;border-top:0;cursor:pointer" data-reset>Zobrazit všechny domy</button></div>
       </div>
       <div class="offer-foot">
+        <a class="link" href="nabidka.html#hlidaci-pes"><svg><use href="#i-bell"/></svg>Hlídací pes: dáme vědět, až se uvolní dům</a>
         <span class="placeholder-note"><svg><use href="#i-info"/></svg>Zástupné údaje. Plochy, pozemky, ceny a stavy dodá HP DOMY.</span>
         <span>Ceny včetně DPH · „Na dotaz“ do spuštění prodeje</span>
       </div>
 
   </div>
+  <section class="sub-sec" style="padding-bottom:0"><div class="wrap"><form class="wd" id="hlidaci-pes" novalidate data-wd>
+  <div class="wd__head"><span class="wd__ico" aria-hidden="true"><svg><use href="#i-bell"/></svg></span><div><h2 class="h3">Hlídací pes</h2><p>Nechte nám e-mail a dáme vám vědět, až zveřejníme ceny, nebo když se uvolní rezervovaný dům.</p></div></div>
+  <div class="wd__body">
+    <div class="wd__chips" role="group" aria-label="Co chcete hlídat"><button type="button" class="chip" data-wd-topic="prodej" aria-pressed="true">Spuštění prodeje a ceny</button><button type="button" class="chip" data-wd-topic="dum" aria-pressed="true">Uvolnění rezervovaného domu</button><button type="button" class="chip" data-wd-topic="stavba" aria-pressed="false">Novinky ze stavby</button></div>
+    <div class="wd__row">
+      <div class="field"><label class="sr" for="wd-email">E-mail</label><input class="input" id="wd-email" type="email" autocomplete="email" placeholder="váš@email.cz" required><span class="err"><svg><use href="#i-alert"/></svg>Zadejte e-mail ve tvaru jmeno@domena.cz.</span></div>
+      <button class="btn" type="submit">Hlídat <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
+    </div>
+    <label class="consent wd__consent"><input type="checkbox" id="wd-consent" required><span>Souhlasím se zasíláním upozornění k projektu Blatec. Odhlásit se můžete jedním klikem v každém e-mailu.</span></label>
+  </div>
+  <div class="wd__done" role="status" aria-live="polite"><span class="ok"><svg><use href="#i-check"/></svg></span><div><b>Hlídáme za vás</b><p id="wd-done-msg"></p></div></div>
+</form></div></section>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">
     <div class="sub-head"><h2 class="h2">Na co se při výběru dívat</h2></div>
     <div class="grid-3" data-stagger>
@@ -226,6 +243,7 @@
     <button class="btn" id="dr-interest" type="button">Mám zájem <span class="ic"><svg><use href="#i-arrow"/></svg></span></button>
   </div>
 </aside>
+<a class="callfab" href="tel:+420776294498" aria-label="Zavolat prodejci, +420 776 294 498"><svg aria-hidden="true"><use href="#i-phone"/></svg><span>Zavolat</span></a>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script src="js/gsap.min.js" defer></script>
 <script src="js/ScrollTrigger.min.js" defer></script>

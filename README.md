@@ -18,6 +18,15 @@ Statický web bez frameworku, připravený k nasazení na libovolný hosting.
 
 Design systém návrhu je na `index.html#komponenty`.
 
+## Funkce pro kupce
+
+- **Uložené domy** – srdíčko u domu (tabulka, karty, detail), počet v plovoucí hlavičce, filtr `nabidka.html#oblibene`. Ukládá se jen v prohlížeči kupce.
+- **Porovnání** až 3 domů v nabídce.
+- **Hlídací pes** – formulář na upozornění (spuštění prodeje, uvolnění domu, novinky ze stavby). Je v nabídce, v galerii a u rezervovaných a prodaných domů. **Zatím neodesílá** – napojit na e-mailingový nástroj (Ecomail, Mailchimp, SmartEmailing) nebo vlastní backend.
+- **Zavolat** – plovoucí tlačítko na mobilu a tabletu, na detailu domu je telefon ve spodní liště.
+- **Kalkulačka splátky** na detailu domu.
+- **Google recenze** HP DOMY (`REVIEWS` v `src/build.py`).
+
 Filtry nabídky jdou otevřít odkazem: `nabidka.html#volne`, `#patrove`, `#prizemni`.
 
 ## Úpravy
@@ -43,7 +52,7 @@ python3 src/build.py artifact   # samostatný náhled do _artifact/
 - Ceny, plochy, pozemky a stavy domů jsou zástupné.
 - Dojezdové časy a vzdálenosti (kromě 8 km do Olomouce) jsou orientační.
 - Mapa je schematická – na produkci vložit Mapy.cz.
-- Formulář neodesílá – napojit na backend (PHP mailer / Formspree / vlastní endpoint).
+- Kontaktní formulář a Hlídací pes neodesílají – napojit na backend (PHP mailer / Formspree / e-mailingový nástroj).
 - Harmonogram nemá termíny – doplní HP DOMY.
 
 ## Technologie
