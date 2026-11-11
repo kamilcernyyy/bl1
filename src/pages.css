@@ -548,3 +548,43 @@ html,body{overflow-x:clip}
 @media (max-width:419px){.hdr.is-float .logo__name{font-size:15px;letter-spacing:.28em}.hdr.is-float .logo__sig{font-size:5.6px}.hdr__fav{width:38px}}
 @media (max-width:379px){.hdr__mcta{display:none!important}}
 .hcard.is-sold .hcard__price{color:var(--stone-600)}
+
+/* ===================================================================
+   Mobile: secondary navigation lives at the bottom as a dark app dock,
+   clearly different from the white header bubble at the top.
+   =================================================================== */
+.dock{display:none}
+.mbar{display:none!important}
+@media (max-width:1059px){
+  .subnav--house{display:none}
+  .hd-sec{scroll-margin-top:96px}
+  .dock{display:grid;gap:6px;position:fixed;z-index:54;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    background:var(--ink);color:#fff;border-radius:26px;padding:8px;box-shadow:0 22px 50px -14px rgba(0,0,0,.5);transform:translateY(calc(100% + 24px));transition:transform .5s var(--ease-out)}
+  .dock.is-on{transform:none}
+  .dock__top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:4px 4px 10px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .dock__info{min-width:0}
+  .dock__info small{display:block;font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap}
+  .dock__info b{display:block;font:400 17px/1.15 var(--f-display);letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .dock__act{display:flex;align-items:center;gap:8px;flex:none}
+  .dock__call{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.22);color:#fff}
+  .dock__call svg{width:18px;height:18px}
+  .dock__cta{--bg:var(--hot);--fg:#fff;border-color:var(--hot);min-height:42px;padding:4px 18px}
+  .dock__tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+  .dock__tabs a{display:grid;justify-items:center;gap:3px;padding:7px 2px 6px;border-radius:16px;font-size:10.5px;font-weight:500;letter-spacing:.01em;color:rgba(255,255,255,.58);text-decoration:none;transition:background-color .25s,color .25s}
+  .dock__tabs a svg{width:21px;height:21px}
+  .dock__tabs a.is-active{background:var(--hot);color:#fff}
+  .dock__tabs a:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+  body:has(.dock) .ftr{padding-bottom:calc(170px + env(safe-area-inset-bottom,0px))}
+  body:has(.dock) .toast{bottom:calc(166px + env(safe-area-inset-bottom,0px))}
+
+  /* standards page: category bubble → dark bottom bar */
+  .subnav:not(.subnav--house){position:fixed!important;top:auto!important;margin:0!important;z-index:54;left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));
+    width:auto;max-width:none;background:var(--ink);border-color:transparent;border-radius:var(--r-pill);padding:6px;box-shadow:0 22px 50px -14px rgba(0,0,0,.5);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .subnav:not(.subnav--house) a{color:rgba(255,255,255,.62)}
+  .subnav:not(.subnav--house) a.is-active{background:var(--hot);color:#fff}
+  body:has(.subnav:not(.subnav--house)) .callfab{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+  body:has(.subnav:not(.subnav--house)) .ftr{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  body:has(.subnav:not(.subnav--house)) .toast{bottom:calc(140px + env(safe-area-inset-bottom,0px))}
+}
+@media (max-width:359px){.dock__tabs a span{font-size:9.5px}.dock__info b{font-size:15px}}
+@media (max-width:379px){.dock__call{display:none}.dock__top{padding-left:10px}.dock__cta{padding:4px 14px}.dock__info b{font-size:15px}}

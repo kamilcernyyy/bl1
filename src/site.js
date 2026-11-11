@@ -449,13 +449,13 @@ if (calc) {
   };
   Object.values(ins).forEach(i => i.addEventListener('input', upd)); upd();
 }
-const subnav = $('.subnav');
+const subnav = $('.subnav, .dock__tabs');
 if (subnav) {
-  const links = $$('a', subnav);
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => { const on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('is-active', on); if (on) a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }); }), { rootMargin: '-40% 0px -55% 0px' });
+  const links = $$('.subnav a, .dock__tabs a');
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => { const on = a.getAttribute('href') === '#' + e.target.id; a.classList.toggle('is-active', on); if (on) { const p = a.parentElement; if (p.offsetParent && p.scrollWidth > p.clientWidth) p.scrollTo({ left: a.offsetLeft - (p.clientWidth - a.clientWidth) / 2, behavior: reduce ? 'auto' : 'smooth' }); } }); }), { rootMargin: '-40% 0px -55% 0px' });
   links.forEach(a => { const t = $(a.getAttribute('href')); t && io.observe(t); });
 }
-const mbar = $('.mbar');
+const mbar = $('.dock');
 if (mbar) { const top = $('.hd-price'); const io = new IntersectionObserver(([e]) => mbar.classList.toggle('is-on', !e.isIntersecting && e.boundingClientRect.top < 0)); io.observe(top); }
 
 

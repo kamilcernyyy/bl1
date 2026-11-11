@@ -772,7 +772,7 @@ for h in HOUSES:
       <div class="hd-price" data-page-in><small>Cena vč. DPH</small><b>{price_txt(h)}</b><div class="row">{actions}<button class="fav fav--lg" type="button" data-fav="{hid}" aria-pressed="false" aria-label="Uložit dům {hid}"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><button class="btn btn--ghost" data-pdf="{hid}"><svg style="width:16px;height:16px"><use href="#i-pdf"/></svg>&nbsp;Karta PDF</button></div></div>
     </div>
     <div class="hd-gal" data-lb-list="{gal_attr}" data-page-in>{gal_html}</div>
-    <nav class="subnav" aria-label="Části stránky"><a href="#parametry">Parametry</a><a href="#pudorys">Půdorys</a><a href="#poloha">Poloha</a><a href="#vybaveni">V ceně</a><a href="#financovani">Financování</a><a href="#podobne">Podobné domy</a><a href="#recenze">Recenze</a></nav>
+    <nav class="subnav subnav--house" aria-label="Části stránky"><a href="#parametry">Parametry</a><a href="#pudorys">Půdorys</a><a href="#poloha">Poloha</a><a href="#vybaveni">V ceně</a><a href="#financovani">Financování</a><a href="#podobne">Podobné domy</a><a href="#recenze">Recenze</a></nav>
     <div class="hd-layout">
       <div class="hd-main">
         {watchdog(["dum"], f"Dům {hid} je {'rezervovaný' if h['status'] == 'rezervace' else 'prodaný'}", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, compact=True) if h["status"] != "volny" else ""}
@@ -834,7 +834,17 @@ for h in HOUSES:
   <div style="height:clamp(56px,8vw,112px)"></div>
   {cta_band(f"Zaujal vás dům {hid}?" if not sold else "Hledáte podobný dům?", "Prodejce vám ukáže pozemek a projde s vámi půdorys i financování.")}
 </main>
-<div class="mbar" aria-hidden="false"><div><small>Dům {hid} · {STATUS[h["status"]]}</small><b>{price_txt(h)}</b></div><div class="mbar__act"><a class="mbar__call" href="tel:+420776294498" aria-label="Zavolat prodejci"><svg aria-hidden="true"><use href="#i-phone"/></svg></a>{('<a class="btn btn--sm" href="kontakt.html#dum-%d">Mám zájem</a>' % hid) if not sold else '<a class="btn btn--sm" href="nabidka.html#volne">Volné domy</a>'}</div></div>
+<nav class="dock" aria-label="Dům {hid}">
+  <div class="dock__top"><div class="dock__info"><small>Dům {hid} · {STATUS[h["status"]]}</small><b>{price_txt(h)}</b></div>
+    <div class="dock__act"><a class="dock__call" href="tel:+420776294498" aria-label="Zavolat prodejci"><svg aria-hidden="true"><use href="#i-phone"/></svg></a>{('<a class="btn btn--sm dock__cta" href="kontakt.html#dum-%d">Mám zájem</a>' % hid) if not sold else '<a class="btn btn--sm dock__cta" href="nabidka.html#volne">Volné domy</a>'}</div></div>
+  <div class="dock__tabs">
+    <a href="#parametry"><svg aria-hidden="true"><use href="#s-area"/></svg><span>Parametry</span></a>
+    <a href="#pudorys"><svg aria-hidden="true"><use href="#s-plan"/></svg><span>Půdorys</span></a>
+    <a href="#poloha"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>Poloha</span></a>
+    <a href="#financovani"><svg aria-hidden="true"><use href="#i-calc"/></svg><span>Splátka</span></a>
+    <a href="#podobne"><svg aria-hidden="true"><use href="#i-home"/></svg><span>Podobné</span></a>
+  </div>
+</nav>
 '''
     page(f"dum-{hid}", f"Dům {hid} · {T['label']} {h['disp']} · Blatec | HP DOMY",
          f"Dům {hid} v Blatci: {T['label'].lower()} {h['disp']}, {area(h['area'])}, pozemek {area(h['plot'])}, zahrada na {h['garden']}. Cena: {price_txt(h)}. Stav: {STATUS[h['status']]}.",
