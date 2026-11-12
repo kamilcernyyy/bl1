@@ -39,6 +39,7 @@ const setMenu = open => {
   hdr.classList.toggle('menu-open', open);
   if (open) hdr.classList.remove('is-float'); else onScroll();
   document.documentElement.style.overflow = open ? 'hidden' : '';
+  document.documentElement.classList.toggle('menu-on', open);
 };
 burger && burger.addEventListener('click', () => { setMenu(burger.getAttribute('aria-expanded') !== 'true'); const f = $('.callfab'); f && f.classList.toggle('is-on', !menu.classList.contains('is-open') && scrollY > 300); });
 $$('#menu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
