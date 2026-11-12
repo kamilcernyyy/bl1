@@ -64,6 +64,35 @@ document.addEventListener('click', e => {
   if (state.f === 'fav' && typeof render === 'function') { if (!favs.length) setFilter('all', state.t); else render(); }
 });
 
+
+/* ---------- in-page links: scroll reliably on the first tap ----------
+   Smooth anchor scrolling used to be cancelled on phones when images finished loading
+   and ScrollTrigger re-measured the page mid-scroll. We drive the scroll ourselves and
+   hold any re-measure until it has finished. */
+let progScroll = false, progT = 0;
+function goTo(id, push) {
+  const t = document.getElementById(id); if (!t) return false;
+  const off = id === 'top' ? 0 : (hdr ? 84 : 0);
+  const top = Math.max(0, t.getBoundingClientRect().top + scrollY - off);
+  progScroll = true; clearTimeout(progT);
+  const done = () => { progScroll = false; removeEventListener('scrollend', done); };
+  addEventListener('scrollend', done, { once: true }); progT = setTimeout(done, 1600);
+  window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+  if (push) { try { history.pushState(null, '', '#' + id); } catch {} }
+  return true;
+}
+document.addEventListener('click', e => {
+  if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return;
+  const url = new URL(a.getAttribute('href'), location.href);
+  if (url.origin !== location.origin || url.pathname.replace(/index\.html$/, '') !== location.pathname.replace(/index\.html$/, '') || url.hash.length < 2) return;
+  const id = decodeURIComponent(url.hash.slice(1));
+  if (id === 'komponenty' || !document.getElementById(id)) return; // hash-driven views and filters keep their default
+  e.preventDefault();
+  if (menu && menu.classList.contains('is-open')) setMenu(false);
+  goTo(id, true);
+});
+
 /* ---------- copy + placeholders ---------- */
 $$('[data-copy]').forEach(b => b.addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(b.dataset.copy); toast('Zkopírováno: ' + b.dataset.copy); }
@@ -549,6 +578,8 @@ if (dsIcons) {
 const startMotion = () => {
   if (reduce || !window.gsap) return;
   gsap.registerPlugin(ScrollTrigger);
+  // no automatic re-measure on load/resize: those run through our guarded refresh(), never mid-scroll
+  ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded' });
   const ease = 'power3.out';
   if ($('.hero')) {
     gsap.fromTo('[data-hero-media] img', { scale: 1.12 }, { scale: 1, duration: 2.2, ease: 'power2.out' });
@@ -583,9 +614,9 @@ const startMotion = () => {
     }
     if (svg && $('#plan').getBoundingClientRect().top > innerHeight * .98) gsap.from('#plan .plot', { opacity: 0, y: 8, duration: .45, ease, stagger: .025, scrollTrigger: { trigger: '#plan', start: ENTER, once: true }, clearProps: 'opacity,transform' });
     // keep trigger positions right when fonts, images or expanding content change the layout
-    let rt; const refresh = () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.refresh(), 150); };
+    let rt; const refresh = () => { clearTimeout(rt); rt = setTimeout(() => { if (progScroll || ScrollTrigger.isScrolling()) return refresh(); ScrollTrigger.refresh(); }, 200); };
     document.fonts && document.fonts.ready.then(refresh);
-    addEventListener('load', refresh);
+    addEventListener('load', refresh); addEventListener('resize', refresh);
     if ('ResizeObserver' in window) { let last = document.body.scrollHeight; new ResizeObserver(() => { const hgt = document.body.scrollHeight; if (Math.abs(hgt - last) > 40) { last = hgt; refresh(); } }).observe(document.body); }
   };
   ('requestIdleCallback' in window) ? requestIdleCallback(rest, { timeout: 400 }) : setTimeout(rest, 200);

@@ -894,3 +894,7 @@ html.menu-on .dock,html.menu-on .subnav,html.menu-on .callfab,html.menu-on .tray
 .menu__call svg{width:18px;height:18px;color:var(--hot)}
 @media (hover:hover){.menu .menu__call:hover{--bg:#fff;--fg:var(--ink);color:var(--ink);border-color:#fff;opacity:.9}}
 @media (min-width:1140px){.menu__act{max-width:420px}}
+
+/* ---------- touch: every tap is a click, no double-tap zoom delay ---------- */
+a,button,[role="button"],.plot,label,input,select,textarea,summary{touch-action:manipulation}
+section[id],[id].hd-sec,#hlidaci-pes{scroll-margin-top:84px}
