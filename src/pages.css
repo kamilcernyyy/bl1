@@ -883,3 +883,14 @@ html body .lead{font-size:var(--fs-lead)!important;font-weight:400;line-height:1
 .hdr.menu-open{z-index:96}
 html.menu-on .dock,html.menu-on .subnav,html.menu-on .callfab,html.menu-on .tray,html.menu-on .toast,html.menu-on .scrim{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transition:opacity .2s,visibility 0s .2s}
 .menu__foot{padding-bottom:4px}
+
+/* ---------- menu footer: seller + call button ---------- */
+.menu__foot{display:grid;gap:14px;justify-content:stretch}
+.menu__seller{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;font-size:var(--fs-small);color:rgba(255,255,255,.65)}
+.menu__seller b{color:#fff;font-weight:500;font-size:var(--fs-body)}
+.menu__act{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu__act .btn{justify-content:center;min-height:52px;padding:6px 18px}
+.menu__call{gap:10px}
+.menu__call svg{width:18px;height:18px;color:var(--hot)}
+@media (hover:hover){.menu .menu__call:hover{--bg:#fff;--fg:var(--ink);color:var(--ink);border-color:#fff;opacity:.9}}
+@media (min-width:1140px){.menu__act{max-width:420px}}
