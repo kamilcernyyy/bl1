@@ -509,6 +509,17 @@ for hid_, href, label in [("lok-h", "lokalita.html", "Lokalita"),
     m = re.search(r'(<h2 class="h2" id="%s"[^>]*>.*?</h2>)' % hid_, idx_main, re.S)
     idx_main = idx_main.replace(m.group(1), m.group(1) + f'<a class="sec-link" href="{href}">{label}<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>', 1)
 idx_main = idx_main.replace('<th scope="col">Karta domu</th>', '<th scope="col">Detail</th>')
+# house-type cards on the home page: photo + button lead to a house detail (first free house of that type)
+for _t in ("patrovy", "prizemni"):
+    _first = next(h for h in HOUSES if h["type"] == _t and h["status"] == "volny")
+    _n = len([h for h in HOUSES if h["type"] == _t and h["status"] == "volny"])
+    _anchor = "patrove" if _t == "patrovy" else "prizemni"
+    _m = re.search(r'<article class="type" data-reveal>\s*<div class="type__img">(<img[^>]*>)</div>(.*?data-type-free="%s".*?)</article>' % _t, idx_main, re.S)
+    _card = (f'<article class="type" data-reveal>\n          <a class="type__img" href="dum-{_first["id"]}.html" aria-label="Detail domu {_first["id"]}, {TYPES[_t]["label"].lower()} dům">{_m.group(1)}'
+             f'<span class="type__go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>{_m.group(2)}'
+             f'  <div class="type__act"><a class="btn btn--primary" href="dum-{_first["id"]}.html">Detail domu {_first["id"]} <span class="ic"><svg><use href="#i-arrow"/></svg></span></a>'
+             f'<a class="sec-link" href="nabidka.html#{_anchor}">Všech {_n} volných<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>\n        </article>')
+    idx_main = idx_main.replace(_m.group(0), _card, 1)
 idx_main = idx_main.replace('<a class="scroll-cue" href="#projekt"><i></i>Posunout dolů</a>', rating_button())
 idx_main = idx_main.replace("  <!-- FAQ (navíc oproti zadání) -->",
     f'  <!-- RECENZE -->\n  <section class="sec" id="recenze" style="padding-top:0"><div class="wrap">{reviews("full")}</div></section>\n\n  <!-- FAQ (navíc oproti zadání) -->')
@@ -530,7 +541,7 @@ def type_card(t):
              "prizemni": "Pro bydlení bez schodů, ať už s malými dětmi, nebo na celý život. Všechno na jednom podlaží."}[t]
     anchor = "patrove" if t == "patrovy" else "prizemni"
     return f'''<article class="tcard" data-reveal>
-  <div class="tcard__img">{img(T["img"], "Zástupná vizualizace – " + T["label"].lower() + " dům", "(min-width:860px) 50vw, 100vw")}</div>
+  <a class="tcard__img" href="dum-{next(h["id"] for h in hs if h["status"] == "volny")}.html" aria-label="Detail domu, {T["label"].lower()} dům">{img(T["img"], "Zástupná vizualizace – " + T["label"].lower() + " dům", "(min-width:860px) 50vw, 100vw")}<span class="type__go" aria-hidden="true"><svg><use href="#i-arrow"/></svg></span></a>
   <div class="tcard__body">
     <div class="tcard__row"><h3 class="h3">{T["label"]} dům</h3><span class="badge badge--volny">{nfree} volné z {len(hs)}</span></div>
     <p class="tcard__ideal">{ideal}</p>

@@ -898,3 +898,14 @@ html.menu-on .dock,html.menu-on .subnav,html.menu-on .callfab,html.menu-on .tray
 /* ---------- touch: every tap is a click, no double-tap zoom delay ---------- */
 a,button,[role="button"],.plot,label,input,select,textarea,summary{touch-action:manipulation}
 section[id],[id].hd-sec,#hlidaci-pes{scroll-margin-top:84px}
+
+/* ---------- house-type cards: photo + button open a house detail ---------- */
+a.type__img,a.tcard__img{display:block;position:relative;cursor:pointer}
+.type__go{position:absolute;right:14px;bottom:14px;width:46px;height:46px;border-radius:50%;background:var(--paper);color:var(--ink);display:grid;place-items:center;box-shadow:0 6px 18px -6px rgba(0,0,0,.25);transition:background-color .25s,color .25s,transform .35s var(--ease-out)}
+.type__go svg{width:16px;height:16px}
+@media (hover:hover){a.type__img:hover .type__go,a.tcard__img:hover .type__go{background:var(--hot);color:#fff;transform:rotate(-45deg)}}
+a.type__img:active .type__go,a.tcard__img:active .type__go{background:var(--hot);color:#fff}
+a.type__img:focus-visible,a.tcard__img:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+.type__act{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-top:2px}
+.type__act .sec-link{margin-top:0}
+@media (max-width:420px){.type__act .btn{flex:1 1 100%;justify-content:space-between}}
