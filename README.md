@@ -10,7 +10,7 @@ Statický web bez frameworku, připravený k nasazení na libovolný hosting.
 | `index.html` | One-pager se všemi sekcemi (úvod, o projektu, lokalita, nabídka, standardy, galerie, kontakt) |
 | `o-projektu.html` | Typy domů vedle sebe, co je v ceně, harmonogram, developer a jeho projekty |
 | `lokalita.html` | Dojezdové časy (auto / vlak / kolo), mapa, ověřená vybavenost obce |
-| `nabidka.html` | Situace propojená s tabulkou, filtry, porovnání až 3 domů, rychlý náhled |
+| `nabidka.html` | Úvodní fotka s počty, situace vedle seznamu domů (fotka, parametry, cena, stav), filtry stavu a typu, řazení, porovnání až 3 domů, rychlý náhled |
 | `dum-1.html` … `dum-14.html` | Detail domu: fotky, parametry, půdorys s místnostmi, orientace zahrady, kalkulačka splátky, podobné domy |
 | `standardy.html` | Standardy po oblastech s označením V ceně / Příprava / Za příplatek, klientské změny |
 | `galerie.html` | Galerie s filtry a lightboxem, průběh výstavby |

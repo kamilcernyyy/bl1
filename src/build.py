@@ -43,6 +43,7 @@ for hid, t, plot, price, st in RAW:
     HOUSES.append(dict(id=hid, type=t, plot=plot, price=price, status=st, label=T["label"], disp=T["disp"],
                        area=T["area"], img=T["img"], parking="2 stání u domu",
                        garden="sever" if GEO[hid]["north"] else "jih"))
+MINP = f"{min(h['price'] for h in HOUSES if h['price'] and h['status'] != 'prodany') / 1e6:.2f}".replace(".", ",").rstrip("0").rstrip(",")
 GALLERY = [
     dict(src="hero", title="Patrový dům od ulice", tags=["ext", "patrovy"]),
     dict(src="street", title="Ulice s novými domy", tags=["ext", "okoli"]),
@@ -262,7 +263,7 @@ def head(title, desc, preload_img=None, jsonld=None, main=False):
     if preload_img == "hero":
         pre = '<link rel="preload" as="image" href="img/hero-1200.webp" imagesrcset="img/hero-800.webp 800w, img/hero-1200.webp 1200w, img/hero-1920.webp 1920w" imagesizes="100vw" fetchpriority="high">\n'
     elif preload_img:
-        pre = f'<link rel="preload" as="image" href="img/{preload_img}-800.webp" imagesrcset="img/{preload_img}-800.webp 800w, img/{preload_img}-1600.webp 1600w" imagesizes="(min-width:860px) 66vw, 100vw" fetchpriority="high">\n'
+        pre = f'<link rel="preload" as="image" href="img/{preload_img}-800.webp" imagesrcset="img/{preload_img}-800.webp 800w, img/{preload_img}-1600.webp 1600w" imagesizes="{'100vw' if preload_img == 'street' else '(min-width:860px) 66vw, 100vw'}" fetchpriority="high">\n'
     else:
         pre = ""
     ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>\n' if jsonld else ""
@@ -375,6 +376,12 @@ PERSON = '''<div class="person">
     </div>
   </div>
 </div>'''
+
+
+def pstats(items):
+    """Number row under a page title: same grid and type as the home stat bar."""
+    return '<div class="statbar statbar--page" data-page-in>' + "".join(
+        f'<div class="stat"><span class="stat__n tnum">{n}</span><span class="stat__l">{l}</span></div>' for n, l in items) + '</div>'
 
 
 def crumbs(*items):
@@ -563,11 +570,11 @@ tl = "".join(f'<li class="{"is-now" if s == "now" else ""}"><b>{n}</b><span>{d}<
 body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "O projektu"))}
-    <div class="phero phero--split">
+    <div class="phero">
       <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Čtrnáct rodinných domů v Blatci</h1><p class="lead" data-page-in>Nová ulice s domy ve dvou typech. Ke každému patří vlastní pozemek se zahradou a dvě stání u domu.</p></div>
-      <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><b>14</b> domů</span><span class="fact"><b class="cnt-free-n">–</b> volných</span><span class="fact">od <b data-min-price>–</b></span><span class="fact"><svg><use href="#i-pin"/></svg>8 km od Olomouce</span></div></div>
+      {pstats([("14", "rodinných domů"), ('<span class="cnt-free-n">' + str(len(free)) + '</span>', "volných domů"), ("<small>od</small>" + MINP, "mil. Kč nejnižší cena"), ("8", "km do Olomouce")])}
     </div>
-    <figure class="pfig" data-reveal-img>{img("street", "Zástupná vizualizace ulice s novými domy v Blatci", eager=True)}</figure>
+    <figure class="pfig" data-reveal-img>{img("aerial", "Zástupná vizualizace nové ulice s domy v Blatci z ptačí perspektivy", eager=True)}</figure>
   </div>
   <section class="sub-sec"><div class="wrap">
     <div class="sub-head"><h2 class="h2">Patrový, nebo přízemní</h2><p class="lead">Stejný standard, jiný počet podlaží a pokojů.</p></div>
@@ -611,9 +618,9 @@ map_svg = map_svg[:map_svg.rindex("</div>")]  # strip the closing of .loc
 body = f'''<main class="page">
   <div class="wrap">
     {crumbs((None, "Lokalita"))}
-    <div class="phero phero--split">
+    <div class="phero">
       <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Do Olomouce 15 minut autem, 20 vlakem</h1><p class="lead" data-page-in>Blatec leží na Hané 8 km jižně od Olomouce. Cesta do města vede po rovině, takže dojedete i na kole.</p></div>
-      <div class="phero__aside" data-page-in><div class="facts"><span class="fact"><svg><use href="#a-city"/></svg><b>8 km</b> do centra</span><span class="fact"><svg><use href="#a-rail"/></svg>vlak v obci</span><span class="fact">cca <b>650</b> obyvatel</span></div></div>
+      {pstats([("8", "km do centra Olomouce"), ("6", "km k dálnici D46"), ("650", "obyvatel obce"), ("1131", "první písemná zmínka")])}
     </div>
   </div>
   <section class="sub-sec" style="padding-top:0"><div class="wrap">
@@ -637,7 +644,7 @@ body = f'''<main class="page">
       <div class="sub-head" style="margin:0"><h2 class="h2">Blatec od roku 1131</h2>
         <p style="color:var(--stone-600)">Blatec žije kolem 650 obyvatel a první písemná zmínka o obci pochází z roku 1131. Uprostřed návsi stojí kaple sv. Markéty a obecní dům. Obcí prochází železniční trať Olomouc – Nezamyslice a silnice, která ji spojuje s Olomoucí a Prostějovem.</p>
         <p style="color:var(--stone-600)">Nové domy vzniknou v klidné části obce s vlastní příjezdovou ulicí, takže kolem nebude projíždět tranzitní doprava.</p></div>
-      <figure class="pfig" style="aspect-ratio:4/3" data-reveal-img>{img("aerial", "Zástupná vizualizace nových domů z ptačí perspektivy", "(min-width:860px) 50vw, 100vw")}</figure>
+      <figure class="pfig" style="aspect-ratio:4/3" data-reveal-img>{img("garden", "Zástupná vizualizace terasy se zastíněním a zahradou", "(min-width:860px) 50vw, 100vw")}</figure>
     </div>
   </div></section>
   <section class="sub-sec" style="padding-top:0"><div class="wrap"><div class="route">
@@ -659,18 +666,26 @@ offer = offer.replace(' data-limit="5"', '')
 offer = offer.replace('<thead><tr>\n', '<thead><tr>\n                <th scope="col" class="cmp-cell"><span class="sr">Porovnat</span></th>\n')
 offer = offer.replace('<button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>',
                       '<button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>\n          <button class="chip" data-f="rezervace" aria-pressed="false">Rezervace <span class="cnt" data-cnt="rezervace"></span></button>')
-body = f'''<main class="page" data-compare>
-  <div class="wrap">
-    {crumbs((None, "Nabídka domů"))}
-    <div class="phero phero--split" style="padding-bottom:28px">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Pozemek vyberete v situaci, domy seřadíte v tabulce. Až tři domy porovnáte vedle sebe.</p></div>
-      <div class="ostats" data-page-in>
-        <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
-        <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
-        <div class="ostat"><b data-cnt="prodany">–</b><span>prodaných</span></div>
-        <div class="ostat"><b data-min-price>–</b><span>nejnižší cena</span></div>
+_free = [h for h in HOUSES if h["status"] == "volny"]
+_minp = min(h["price"] for h in HOUSES if h["price"] and h["status"] != "prodany")
+_minp_txt = f"{_minp / 1e6:.2f}".replace(".", ",").rstrip("0").rstrip(",")
+body = f'''<main class="page page--imghero" data-compare>
+  <section class="ihero" aria-labelledby="nab-title">
+    <div class="ihero__media"><img src="img/street-1600.webp" srcset="img/street-800.webp 800w, img/street-1600.webp 1600w" sizes="100vw" width="1600" height="900" alt="Zástupná vizualizace nové ulice s rodinnými domy v Blatci" fetchpriority="high" decoding="async"></div>
+    <div class="wrap ihero__in">
+      {crumbs((None, "Nabídka domů"))}
+      <div class="ihero__bottom">
+        <div class="ihero__txt"><h1 class="h1" id="nab-title" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Vyberte si pozemek v situaci a porovnejte až tři domy vedle sebe.</p></div>
+        <dl class="ihero__stats" data-page-in>
+          <div class="is-free"><dt>volných domů</dt><dd data-cnt="volny">{len(_free)}</dd></div>
+          <div><dt>v rezervaci</dt><dd data-cnt="rezervace">{len([h for h in HOUSES if h["status"] == "rezervace"])}</dd></div>
+          <div><dt>prodaných</dt><dd data-cnt="prodany">{len([h for h in HOUSES if h["status"] == "prodany"])}</dd></div>
+          <div><dt>mil. Kč nejnižší cena</dt><dd><small>od</small>{_minp_txt}</dd></div>
+        </dl>
       </div>
     </div>
+  </section>
+  <div class="wrap offer-page">
     {offer}
   </div>
   <section class="sub-sec" style="padding-bottom:0"><div class="wrap">{watchdog(["prodej", "dum"], "Hlídací pes", "Nechte nám e-mail a dáme vám vědět, až zveřejníme ceny, nebo když se uvolní rezervovaný dům.")}</div></section>
@@ -687,7 +702,7 @@ body = f'''<main class="page" data-compare>
 <div class="tray" id="tray" role="region" aria-label="Porovnání domů"><span class="tray__txt">Porovnat</span><div class="tray__chips" id="tray-chips"></div><button class="tray__clear" id="tray-clear" type="button">Zrušit</button><button class="btn btn--light btn--sm" id="tray-go" type="button" disabled>Porovnat <span class="ic" style="width:28px;height:28px"><svg><use href="#i-arrow"/></svg></span></button></div>
 <div class="modal" id="cmp-modal" role="dialog" aria-modal="true" aria-labelledby="cmp-h"><div class="modal__box"><div class="modal__head"><h2 class="h3" id="cmp-h">Porovnání domů</h2><button class="drawer__close" id="cmp-close" aria-label="Zavřít porovnání"><svg><use href="#i-close"/></svg></button></div><div id="cmp-body"></div></div></div>
 '''
-page("nabidka", "Nabídka domů · Blatec | HP DOMY", f"{len(free)} volných rodinných domů v Blatci. Situace, ceny, stavy a porovnání domů.", body, extra=DRAWER)
+page("nabidka", "Nabídka domů · Blatec | HP DOMY", f"{len(free)} volných rodinných domů v Blatci. Situace, ceny, stavy a porovnání domů.", body, extra=DRAWER, preload="street", hero=True)
 
 # ------------------------------------------------------------------ Standardy
 cats_nav = "".join(f'<a href="#{c[0]}">{c[2]}</a>' for c in STD_CATS)
@@ -738,9 +753,9 @@ page("standardy", "Standardy · Blatec | HP DOMY", "Standardy rodinných domů v
 body = f'''<main class="page gallery-page">
   <div class="wrap">
     {crumbs((None, "Galerie"))}
-    <div class="phero phero--split" style="padding-bottom:32px">
+    <div class="phero" style="padding-bottom:32px">
       <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Galerie</h1><p class="lead" data-page-in>Zástupné vizualizace obou typů domů. Finální exteriéry a interiéry doplníme po uvolnění.</p></div>
-      <div class="gal-tabs phero__aside" role="group" aria-label="Filtr galerie" data-page-in style="display:flex;flex-wrap:wrap;gap:8px">
+      <div class="gal-tabs" role="group" aria-label="Filtr galerie" data-page-in style="display:flex;flex-wrap:wrap;gap:8px">
         <button class="chip" aria-pressed="true" data-g="all">Vše</button><button class="chip" aria-pressed="false" data-g="patrovy">Patrový dům</button>
         <button class="chip" aria-pressed="false" data-g="prizemni">Přízemní dům</button><button class="chip" aria-pressed="false" data-g="okoli">Ulice a okolí</button>
         <button class="chip" aria-pressed="false" data-g="int">Interiér</button>

@@ -147,7 +147,7 @@
       <div class="statbar" data-reveal>
         <div class="stat"><span class="stat__n tnum" data-count="14">14</span><span class="stat__l">rodinných domů</span></div>
         <div class="stat"><span class="stat__n tnum" data-count="2">2</span><span class="stat__l">typy domů</span></div>
-        <div class="stat"><span class="stat__n tnum">529–728</span><span class="stat__l">m² pozemky</span></div>
+        <div class="stat"><span class="stat__n tnum"><small>od</small>529</span><span class="stat__l">m² pozemek, největší 728&nbsp;m²</span></div>
         <div class="stat"><span class="stat__n tnum" data-count="8">8</span><span class="stat__l">km do Olomouce</span></div>
       </div>
 
@@ -174,19 +174,14 @@
     <div class="wrap">
       <div class="sec__head sec__head--split">
         <div style="display:grid;gap:18px"><h2 class="h2" id="lok-h">Blatec, 8&nbsp;km jižně od&nbsp;Olomouce</h2><a class="sec-link" href="lokalita.html">Lokalita<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-        <p class="lead">Do centra Olomouce 15 minut autem, vlakem z obce za 20 minut.</p>
+        <p class="lead">Klidná obec na Hané s 650 obyvateli. Vlak do Olomouce staví přímo v obci, autem jste v centru za 15 minut.</p>
       </div>
       <div class="loc">
         <div class="loc__text">
-          <p>Blatec leží na Hané asi 8 km jižně od Olomouce a žije v něm kolem 650 obyvatel. První písemná zmínka o obci pochází z roku 1131. Uprostřed návsi stojí kaple sv. Markéty a obecní dům.</p>
-          <p>Obcí prochází železniční trať Olomouc – Nezamyslice a silnice, která ji spojuje s Olomoucí a Prostějovem. Nové domy vzniknou v klidné části obce s vlastní příjezdovou ulicí.</p>
-          <ul class="dist" aria-label="Vzdálenosti">
-            <li><b>Olomouc, centrum</b><span>cca 8 km</span></li>
-            <li><b>Olomouc, hlavní nádraží</b><span>cca 9 km*</span></li>
-            <li><b>Fakultní nemocnice Olomouc</b><span>cca 9 km*</span></li>
-            <li><b>Prostějov</b><span>cca 14 km*</span></li>
-          </ul>
-          <span class="placeholder-note"><svg><use href="#i-info"/></svg>* Orientační vzdálenosti. Před spuštěním webu je ověříme.</span>
+          <div class="loc__bar"><h3 class="h3">Dojezdy z Blatce</h3>
+            <div class="seg" role="group" aria-label="Způsob dopravy"><button data-mode="auto" aria-pressed="true"><svg><use href="#s-car"/></svg>Auto</button><button data-mode="vlak" aria-pressed="false"><svg><use href="#a-rail"/></svg>Vlak</button><button data-mode="kolo" aria-pressed="false"><svg><use href="#a-road"/></svg>Kolo</button></div></div>
+          <ul class="travel" id="travel" aria-live="polite"></ul>
+          <span class="placeholder-note"><svg><use href="#i-info"/></svg>Orientační časy ve špičce. Před spuštěním webu je ověříme.</span>
         </div>
         <div class="map" role="img" aria-label="Schematická mapa: Blatec leží asi 8 km jižně od Olomouce, mezi Olomoucí a Prostějovem">
           <svg viewBox="0 0 600 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -219,7 +214,7 @@
       </div>
 
       <div class="amen">
-        <h3 class="h3">Co najdete v obci a okolí</h3>
+        <div class="amen__head"><h3 class="h3">Co najdete v obci a okolí</h3><a class="link" href="https://www.blatec.cz/" target="_blank" rel="noopener">Web obce Blatec <svg><use href="#i-arrow"/></svg></a></div>
         <div class="amen__grid">
           <div class="amen__item"><svg><use href="#a-rail"/></svg><b>Vlak do Olomouce<small>trať Olomouc – Nezamyslice</small></b></div>
           <div class="amen__item"><svg><use href="#a-road"/></svg><b>Silnice do Olomouce<small>a do Prostějova</small></b></div>
@@ -230,7 +225,6 @@
         </div>
         <div class="amen__foot">
           <span class="placeholder-note"><svg><use href="#i-info"/></svg>Zobrazujeme jen ověřené služby. Školku, obchod a další doplníme po ověření s obcí.</span>
-          <a class="link" href="https://www.blatec.cz/" target="_blank" rel="noopener">Web obce Blatec <svg><use href="#i-arrow"/></svg></a>
         </div>
       </div>
     </div>
@@ -251,54 +245,45 @@
     <div class="wrap">
       <div class="sec__head sec__head--split">
         <div style="display:grid;gap:18px"><h2 class="h2" id="nab-h"><span class="cnt-free-n">10</span> volných domů ze&nbsp;14</h2><a class="sec-link" href="nabidka.html">Celá nabídka<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-        <p class="lead">Klikněte na pozemek nebo řádek a otevře se rychlý náhled domu. Modré domy jsou volné, oranžové rezervované.</p>
+        <p class="lead">Pozemek vyberete v situaci, v seznamu vedle najdete cenu a stav každého domu.</p>
       </div>
 
       <div class="offer-top">
         <div class="filters" role="group" aria-label="Filtr domů">
-          <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
-          <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
-          <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
-          <span class="filters__sep" aria-hidden="true"></span>
-          <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
-          <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
+          <div class="fgroup" role="group" aria-label="Stav domu"><span class="fgroup__l">Stav</span>
+            <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
+            <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
+            <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
+          </div>
+          <div class="fgroup" role="group" aria-label="Typ domu"><span class="fgroup__l">Typ</span>
+            <button class="chip" data-t="" aria-pressed="true">Oba typy</button>
+            <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
+            <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
+          </div>
         </div>
       </div>
 
       <div class="offer">
         <div class="plan">
           <div class="plan__head">
-            <b style="font-weight:500">Situace 14 domů</b>
-            <div class="legend"><span><i style="background:var(--accent-soft);border:1.5px solid var(--hot)"></i>Volný</span><span><i style="background:#f8eedb;border:1.5px solid #c9a36a"></i>Rezervace</span><span><i style="background:#efedea;border:1.5px solid #c9c5bd"></i>Prodaný</span></div>
+            <b>Situace</b>
+            <div class="legend"><span><i class="lg lg--volny"></i>Volný</span><span><i class="lg lg--rezervace"></i>Rezervace</span><span><i class="lg lg--prodany"></i>Prodaný</span></div>
           </div>
-          <div style="position:relative" id="plan-box">
-            <svg id="plan" viewBox="0 0 1000 560" role="group" aria-label="Situace domů, vyberte pozemek"></svg>
+          <div class="plan__box" id="plan-box">
+            <svg id="plan" viewBox="0 0 560 1000" role="group" aria-label="Situace domů, vyberte pozemek"></svg>
             <div class="plan__tip" id="tip" role="status" aria-live="polite"></div>
           </div>
-          <p class="plan__note">Ilustrační situace. Nahradíme ji podkladem od HP DOMY, jakmile bude uvolněný.</p>
+          <p class="plan__note">Ilustrační situace, nahradíme ji podkladem od HP DOMY.</p>
         </div>
 
-        <div class="only-desk">
-          <div class="tbl-wrap">
-            <table class="houses" id="tbl">
-              <caption class="sr">Přehled domů v projektu Blatec</caption>
-              <thead><tr>
-                <th scope="col" data-sort="id"><button>Dům <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" data-sort="type"><button>Typ <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Dispozice</th>
-                <th scope="col" class="num" data-sort="area"><button>Užitná plocha <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" class="num" data-sort="plot"><button>Pozemek <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Parkování</th>
-                <th scope="col" class="num" data-sort="price"><button>Cena <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" data-sort="status"><button>Stav <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Detail</th>
-              </tr></thead>
-              <tbody></tbody>
-            </table>
+        <div class="hlist">
+          <div class="hlist__head">
+            <b class="hlist__n"><span id="hl-n">14</span> domů<small> · každý se 2 stáními u domu</small></b>
+            <label class="sortsel"><span>Řadit</span><select id="hl-sort" aria-label="Řadit domy"><option value="id">podle čísla</option><option value="price">od nejlevnějšího</option><option value="plot">podle pozemku</option><option value="status">volné nejdřív</option></select><svg aria-hidden="true"><use href="#i-down"/></svg></label>
           </div>
+          <div class="hlist__rows" id="hlist" data-limit="5"></div>
+          <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" type="button" data-reset>Zobrazit všechny domy</button></div>
         </div>
-        <div class="only-mobile"><div class="cards" id="cards" data-limit="5"></div></div>
-        <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" style="background:none;border-left:0;border-right:0;border-top:0;cursor:pointer" data-reset>Zobrazit všechny domy</button></div>
       </div>
       <div class="offer-foot">
         <a class="link" href="nabidka.html#hlidaci-pes"><svg><use href="#i-bell"/></svg>Hlídací pes: dáme vědět, až se uvolní dům</a>

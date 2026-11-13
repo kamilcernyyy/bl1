@@ -157,7 +157,7 @@ if (gal) {
 }
 $$('[data-lb]').forEach(b => b.addEventListener('click', () => { const list = JSON.parse(b.closest('[data-lb-list]').dataset.lbList); lbOpen(list, +b.dataset.lb, b); }));
 
-/* ---------- site plan (situace) ---------- */
+/* ---------- site plan (situace): always a vertical strip, the whole street fits one screen ---------- */
 const svg = $('#plan'), NS = 'http://www.w3.org/2000/svg';
 const el = (t, a = {}, p) => { const n = document.createElementNS(NS, t); for (const k in a) n.setAttribute(k, a[k]); if (p) p.appendChild(n); return n; };
 const COL = { volny: ['#eceefc', '#2c3fd6'], rezervace: ['#f8eedb', '#c9a36a'], prodany: ['#efedea', '#c9c5bd'] };
@@ -165,24 +165,18 @@ const HOUSE = { volny: '#2c3fd6', rezervace: '#8f8a82', prodany: '#c9c5bd' };
 const geo = D.geo;
 const plots = {};
 const state = { f: 'all', t: null, sort: 'id', dir: 1, active: null, cmp: [], all: false };
-let vertical = null;
+const stacked = matchMedia('(max-width: 899px)'), canHover = matchMedia('(hover: hover)');
 function buildPlan() {
   if (!svg) return;
-  const v = matchMedia('(max-width: 700px)').matches;
-  if (v === vertical) return; vertical = v;
   svg.innerHTML = '';
-  svg.setAttribute('viewBox', v ? '0 0 560 1000' : '0 0 1000 560');
-  const root = v ? el('g', { transform: 'translate(560 0) rotate(90)' }, svg) : svg;
-  const up = (cx, cy) => v ? ` rotate(-90 ${cx} ${cy})` : '';
+  const root = el('g', { transform: 'translate(560 0) rotate(90)' }, svg);
+  const up = (cx, cy) => ` rotate(-90 ${cx} ${cy})`;
   el('rect', { x: 0, y: 0, width: 1000, height: 560, fill: '#f6f5f2' }, root);
   el('rect', { x: 30, y: 258, width: 940, height: 52, rx: 6, fill: '#dedbd4' }, root);
   el('line', { x1: 50, y1: 284, x2: 950, y2: 284, stroke: '#fff', 'stroke-width': 2, 'stroke-dasharray': '14 12' }, root);
   el('text', { x: 500, y: 289, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 12, fill: '#6c675f', 'letter-spacing': '2' }, root).textContent = 'NOVÁ PŘÍJEZDOVÁ ULICE';
   const cg = el('g', { transform: 'translate(952 30)' }, root); el('circle', { r: 16, fill: '#fff', stroke: '#dedbd4' }, cg); el('path', { d: 'M0 -10 L5 5 L0 2 L-5 5Z', fill: '#161616' }, cg);
   el('text', { x: 0, y: 30, 'text-anchor': 'middle', 'font-size': 10, 'font-family': 'Inter,system-ui', fill: '#6c675f', transform: up(0, 27) }, cg).textContent = 'S';
-  const sg = el('g', { transform: 'translate(60 540)', 'font-family': 'Inter,system-ui', 'font-size': 10, fill: '#6c675f' }, root);
-  el('rect', { x: 0, y: -6, width: 60, height: 5, fill: '#161616' }, sg); el('rect', { x: 60, y: -6, width: 60, height: 5, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, sg);
-  el('text', { x: 0, y: 10 }, sg).textContent = '0'; el('text', { x: 54, y: 10 }, sg).textContent = '10'; el('text', { x: 114, y: 10 }, sg).textContent = '20 m';
   H.forEach(h => {
     const g = geo[h.id], [fill, stroke] = COL[h.status];
     const grp = el('g', { class: 'plot', tabindex: 0, role: 'button', 'data-id': h.id, 'aria-label': `Dům ${h.id}, ${h.label.toLowerCase()}, ${STATUS[h.status]}, ${priceTxt(h)}` }, root);
@@ -201,79 +195,85 @@ function buildPlan() {
     el('text', { x: px, y: py + 20, 'text-anchor': 'middle', 'font-family': 'Inter,system-ui', 'font-size': 13, 'font-weight': 600, fill: stroke, transform: up(px, py + 15) }, grp).textContent = 'P';
     const gy = g.north ? g.y + 18 : g.y + g.h - 26;
     [0, 1, 2].forEach(k => el('circle', { cx: g.x + 22 + k * 22, cy: gy, r: 6, fill: stroke, opacity: .18 }, grp));
-    const nb = el('g', { transform: `translate(${g.x + 18} ${g.north ? g.y + g.h - 30 : g.y + 22})${v ? ' rotate(-90)' : ''}` }, grp);
-    el('circle', { r: v ? 16 : 13, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, nb);
-    el('text', { class: 'plot__num', 'text-anchor': 'middle', y: 5, style: v ? 'font-size:18px' : '' }, nb).textContent = h.id;
+    const nb = el('g', { transform: `translate(${g.x + 18} ${g.north ? g.y + g.h - 30 : g.y + 22}) rotate(-90)` }, grp);
+    el('circle', { r: 17, fill: '#fff', stroke: '#161616', 'stroke-width': 1 }, nb);
+    el('text', { class: 'plot__num', 'text-anchor': 'middle', y: 6, style: 'font-size:18px' }, nb).textContent = h.id;
     plots[h.id] = grp;
     grp.addEventListener('mouseenter', () => hover(h.id, true));
     grp.addEventListener('mouseleave', () => hover(h.id, false));
     grp.addEventListener('focus', () => hover(h.id, true));
     grp.addEventListener('blur', () => hover(h.id, false));
-    grp.addEventListener('click', () => openHouse(h.id, grp));
-    grp.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHouse(h.id, grp); } });
+    grp.addEventListener('click', () => pick(h.id, grp));
+    grp.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(h.id, grp); } });
     if (state.active === h.id) grp.classList.add('is-active');
   });
   applyDim();
 }
 const visible = h => (state.f === 'all' || (state.f === 'fav' ? favs.includes(h.id) : h.status === state.f)) && (!state.t || h.type === state.t);
 const applyDim = () => Object.entries(plots).forEach(([id, g]) => g.classList.toggle('is-dim', !visible(byId(id))));
+/* plot click: quick view beside the list on desktop, jump to the house row on phones */
+function pick(id, from) {
+  if (!stacked.matches || !hlist) { openHouse(id, from); return; }
+  let r = $(`.hrow[data-id="${id}"]`);
+  if (!r || r.hidden) { if (!visible(byId(id))) setFilter('all', null); state.all = true; render(); r = $(`.hrow[data-id="${id}"]`); }
+  if (!r) return;
+  scrollToEl(r);
+  r.classList.remove('is-flash'); void r.offsetWidth; r.classList.add('is-flash');
+}
 
-/* ---------- table + cards ---------- */
-const tbody = $('#tbl tbody'), cards = $('#cards');
+/* ---------- house list ---------- */
+const hlist = $('#hlist');
 const withCmp = !!$('[data-compare]');
 const statusRank = { volny: 0, rezervace: 1, prodany: 2 };
+const plural = n => n === 1 ? 'dům' : n > 1 && n < 5 ? 'domy' : 'domů';
 function render() {
-  if (!tbody) return;
+  if (!hlist) return;
   const list = H.filter(visible).sort((a, b) => {
     const k = state.sort; let va = a[k], vb = b[k];
     if (k === 'status') { va = statusRank[va]; vb = statusRank[vb]; }
-    if (k === 'price') { va = va ?? Infinity; vb = vb ?? Infinity; }
-    if (k === 'type') { va = a.label; vb = b.label; }
+    if (k === 'price') { va = a.status === 'prodany' ? 2e12 : va ?? 1e12; vb = b.status === 'prodany' ? 2e12 : vb ?? 1e12; }
     return (va > vb ? 1 : va < vb ? -1 : a.id - b.id) * state.dir;
   });
   const favBtn = h => `<button class="fav" type="button" data-fav="${h.id}" aria-pressed="${favs.includes(h.id)}" aria-label="${favs.includes(h.id) ? 'Odebrat' : 'Uložit'} dům ${h.id}"><svg aria-hidden="true"><use href="#i-heart"/></svg></button>`;
-  const cmpBtn = h => `<button class="cmp" type="button" data-cmp="${h.id}" aria-pressed="${state.cmp.includes(h.id)}" aria-label="Porovnat dům ${h.id}"></button>`;
-  tbody.innerHTML = list.map(h => `
-    <tr data-id="${h.id}" class="${h.status === 'prodany' ? 'is-sold' : ''} ${state.active === h.id ? 'is-active' : ''}" tabindex="0">
-      ${withCmp ? `<td class="cmp-cell">${cmpBtn(h)}</td>` : ''}
-      <td class="house-no">${h.id}</td><td>${h.label}</td><td>${h.disp}</td>
-      <td class="num">${fmtArea(h.area)}</td><td class="num">${fmtArea(h.plot)}</td><td>${h.parking}</td>
-      <td class="num price ${h.price ? '' : 'ask'}">${priceTxt(h)}</td>
-      <td class="st"><span class="badge badge--${h.status}">${STATUS[h.status]}</span></td>
-      <td class="card-col"><span class="row-act">${favBtn(h)}<a class="pdf-btn" href="dum-${h.id}.html" data-nodrawer>Detail domu</a></span></td>
-    </tr>`).join('');
-  cards.innerHTML = list.map(h => `
-    <article class="hcard ${h.status === 'prodany' ? 'is-sold' : ''} ${state.active === h.id ? 'is-active' : ''}" data-id="${h.id}">
-      <div class="hcard__top"><div class="hcard__title"><b>Dům ${h.id}</b><span>${h.label} · ${h.parking}</span></div><span class="hcard__tr"><span class="badge badge--${h.status}">${STATUS[h.status]}</span>${favBtn(h)}</span></div>
-      <dl><div><dt>Dispozice</dt><dd>${h.disp}</dd></div><div><dt>Užitná plocha</dt><dd>${fmtArea(h.area)}</dd></div><div><dt>Pozemek</dt><dd>${fmtArea(h.plot)}</dd></div></dl>
-      <div class="hcard__bottom"><span class="hcard__price ${h.price ? '' : 'ask'}">${priceTxt(h)}</span>
-      <div class="hcard__actions" style="display:flex;gap:8px;align-items:center">${withCmp ? `<label class="cmp-lbl">${cmpBtn(h)}Porovnat</label>` : ''}<a class="btn btn--ghost btn--sm" href="dum-${h.id}.html">Detail domu</a></div></div>
+  const cmpBtn = h => `<label class="cmp-lbl"><button class="cmp" type="button" data-cmp="${h.id}" aria-pressed="${state.cmp.includes(h.id)}" aria-label="Porovnat dům ${h.id}"></button><span>Porovnat</span></label>`;
+  hlist.innerHTML = list.map(h => `
+    <article class="hrow hrow--${h.status}${state.active === h.id ? ' is-active' : ''}" data-id="${h.id}" tabindex="0">
+      <a class="hrow__img" href="dum-${h.id}.html" data-nodrawer tabindex="-1" aria-hidden="true"><img src="img/${h.img}-thumb.webp" alt="" width="320" height="240" loading="lazy" decoding="async"><span class="hrow__no">${h.id}</span></a>
+      <div class="hrow__main">
+        <div class="hrow__t"><b class="hrow__name">Dům ${h.id}</b><span class="badge badge--${h.status}">${STATUS[h.status]}</span></div>
+        <p class="hrow__type">${h.label} · ${h.disp} · ${fmtArea(h.area)}</p>
+        <dl class="hrow__kv"><div><dt>Pozemek</dt><dd>${fmtArea(h.plot)}</dd></div><div><dt>Zahrada</dt><dd>na ${h.garden}</dd></div></dl>
+      </div>
+      <div class="hrow__side">
+        <b class="hrow__price${h.price ? '' : ' ask'}">${priceTxt(h)}</b>
+        <div class="hrow__act">${withCmp ? cmpBtn(h) : ''}${favBtn(h)}<a class="hrow__go" href="dum-${h.id}.html" data-nodrawer>Detail<span class="sr"> domu ${h.id}</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      </div>
     </article>`).join('');
-  // one-pager on phones: show the first houses, the rest on request
-  const lim = +(cards.dataset.limit || 0);
-  if (lim && !state.all && list.length > lim) {
-    $$('.hcard', cards).slice(lim).forEach(c => c.hidden = true);
-    cards.insertAdjacentHTML('beforeend', `<div class="cards-more"><button class="btn btn--ghost" type="button" data-allcards>Zobrazit všech ${list.length} domů</button></div>`);
+  // home on phones: the first houses, the rest on request
+  const lim = +(hlist.dataset.limit || 0);
+  if (lim && stacked.matches && !state.all && list.length > lim) {
+    $$('.hrow', hlist).slice(lim).forEach(c => c.hidden = true);
+    hlist.insertAdjacentHTML('beforeend', `<div class="cards-more"><button class="btn btn--ghost" type="button" data-allcards>Zobrazit všech ${list.length} domů</button></div>`);
   }
+  const n = $('#hl-n'); if (n) n.parentElement.innerHTML = `<span id="hl-n">${list.length}</span> ${plural(list.length)}<small> · každý se 2 stáními u domu</small>`;
   $('#empty').hidden = list.length > 0;
   applyDim(); paintFavs();
-  $$('#tbl th[data-sort]').forEach(th => { if (th.dataset.sort === state.sort) th.setAttribute('aria-sort', state.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
 }
 function setFilter(f, t) {
   state.f = f; state.t = t;
   $$('[data-f]').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === state.f));
-  $$('[data-t]').forEach(x => x.setAttribute('aria-pressed', x.dataset.t === state.t));
+  $$('[data-t]').forEach(x => x.setAttribute('aria-pressed', x.dataset.t === (state.t || '')));
   render(); applyDim();
 }
-if (svg || tbody) {
+if (svg || hlist) {
   buildPlan(); render();
-  matchMedia('(max-width: 700px)').addEventListener('change', () => { buildPlan(); render(); });
+  stacked.addEventListener('change', render);
   $$('.filters .chip').forEach(c => c.addEventListener('click', () => {
     if (c.dataset.f) setFilter(c.dataset.f, state.t);
-    if (c.dataset.t) setFilter(state.f, state.t === c.dataset.t ? null : c.dataset.t);
+    if (c.dataset.t !== undefined) setFilter(state.f, c.dataset.t || null);
   }));
   const rs = $('[data-reset]'); rs && rs.addEventListener('click', () => setFilter('all', null));
-  $$('#tbl th[data-sort] button').forEach(b => b.addEventListener('click', () => { const k = b.parentElement.dataset.sort; state.dir = state.sort === k ? -state.dir : 1; state.sort = k; render(); }));
+  const so = $('#hl-sort'); so && so.addEventListener('change', () => { state.sort = so.value; state.dir = 1; render(); });
   // filters from the URL hash (#volne, #patrove, #prizemni)
   const hashFilter = () => { const m = { volne: ['volny', null], patrove: ['all', 'patrovy'], prizemni: ['all', 'prizemni'], oblibene: ['fav', null] }[location.hash.slice(1)]; if (m) setFilter(m[0], m[1]); };
   hashFilter(); addEventListener('hashchange', hashFilter);
@@ -281,22 +281,26 @@ if (svg || tbody) {
 const tip = $('#tip'), box = $('#plan-box');
 function hover(id, on) {
   plots[id]?.classList.toggle('is-hover', on);
-  $$(`#tbl tr[data-id="${id}"]`).forEach(r => r.classList.toggle('is-hover', on));
+  $$(`.hrow[data-id="${id}"]`).forEach(r => r.classList.toggle('is-hover', on));
   if (!tip) return;
-  if (on) {
-    if (vertical || !plots[id]) return;
+  if (on && canHover.matches && plots[id]) {
     const h = byId(id), b = box.getBoundingClientRect(), r = plots[id].querySelector('.plot__bg').getBoundingClientRect();
-    tip.innerHTML = `<b>Dům ${h.id}</b> · ${h.label} ${h.disp}<br>${fmtArea(h.plot)} pozemek · ${priceTxt(h)} · ${STATUS[h.status]}`;
-    tip.style.left = (r.left - b.left + r.width / 2) + 'px'; tip.style.top = (r.top - b.top + 8) + 'px';
+    tip.innerHTML = `<b>Dům ${h.id}</b> · ${h.label} ${h.disp}<br>${fmtArea(h.plot)} pozemek · ${priceTxt(h)}`;
+    tip.style.left = (r.left - b.left + r.width / 2) + 'px'; tip.style.top = (r.top - b.top + 6) + 'px';
     tip.classList.add('is-on');
   } else tip.classList.remove('is-on');
 }
-if (cards) cards.addEventListener('click', e => { if (e.target.closest('[data-allcards]')) { state.all = true; render(); } });
-if (tbody) {
-  tbody.addEventListener('mouseover', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.add('is-hover'); });
-  tbody.addEventListener('mouseout', e => { const r = e.target.closest('tr'); if (r) plots[+r.dataset.id]?.classList.remove('is-hover'); });
-  tbody.addEventListener('click', e => { if (e.target.closest('[data-nodrawer],[data-cmp],[data-fav]')) return; const r = e.target.closest('tr'); if (r) openHouse(+r.dataset.id, r); });
-  tbody.addEventListener('keydown', e => { const r = e.target.closest('tr'); if (r && e.key === 'Enter' && e.target === r) openHouse(+r.dataset.id, r); });
+if (hlist) {
+  let cur = null;
+  const set = id => { if (id === cur) return; if (cur) plots[cur]?.classList.remove('is-hover'); cur = id; if (id) plots[id]?.classList.add('is-hover'); };
+  hlist.addEventListener('mouseover', e => { const r = e.target.closest('.hrow'); set(r ? +r.dataset.id : null); });
+  hlist.addEventListener('mouseleave', () => set(null));
+  hlist.addEventListener('click', e => {
+    if (e.target.closest('[data-allcards]')) { state.all = true; render(); return; }
+    if (e.target.closest('a,button,label')) return;
+    const r = e.target.closest('.hrow'); if (r) openHouse(+r.dataset.id, r);
+  });
+  hlist.addEventListener('keydown', e => { const r = e.target.closest('.hrow'); if (r && e.target === r && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openHouse(+r.dataset.id, r); } });
 }
 
 /* ---------- compare (nabídka) ---------- */
@@ -352,7 +356,7 @@ function openHouse(id, from) {
   if (!drawer) { location.href = `dum-${id}.html`; return; }
   const h = byId(id); state.active = id; lastFocus = from || document.activeElement;
   Object.entries(plots).forEach(([k, g]) => g.classList.toggle('is-active', +k === id));
-  $$('#tbl tr, .hcard').forEach(r => r.classList.toggle('is-active', +r.dataset.id === id));
+  $$('.hrow').forEach(r => r.classList.toggle('is-active', +r.dataset.id === id));
   $('#dr-body').innerHTML = `
     <div class="drawer__img"><img src="img/${h.img}-800.webp" alt="Zástupná vizualizace – ${h.label.toLowerCase()} dům" width="800" height="450"></div>
     <div class="drawer__title"><h2 class="h2" id="dr-title">Dům ${h.id}</h2><span class="badge badge--${h.status}">${STATUS[h.status]}</span></div>
@@ -602,7 +606,7 @@ const startMotion = () => {
     if (h) {
       const nodes = [...h.childNodes]; h.innerHTML = '';
       nodes.forEach(n => { if (n.nodeType === 3) n.textContent.split(/(\s+)/).forEach(w => { if (!w.trim()) h.append(w); else { const s = document.createElement('span'); s.className = 'word'; s.textContent = w; h.append(s); } }); else h.append(n); });
-      gsap.fromTo(h.querySelectorAll('.word'), { opacity: .25 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: h, start: 'top 96%', end: 'top 45%', scrub: .2 } });
+      if (h.getBoundingClientRect().top > innerHeight * .98) gsap.fromTo(h.querySelectorAll('.word'), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .6, stagger: .05, ease, scrollTrigger: { trigger: h, start: ENTER, once: true }, clearProps: 'transform' });
       gsap.from(h.querySelector('.pill-img'), { width: 0, marginLeft: 0, marginRight: 0, duration: .8, ease, scrollTrigger: { trigger: h, start: ENTER, once: true } });
     }
     $$('[data-count]').forEach(n => { const end = +n.dataset.count, o = { v: 0 }; gsap.to(o, { v: end, duration: 1, ease: 'power2.out', scrollTrigger: { trigger: n, start: ENTER, once: true }, onUpdate: () => n.textContent = Math.round(o.v) }); });

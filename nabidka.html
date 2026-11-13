@@ -7,6 +7,7 @@
 <meta name="description" content="10 volných rodinných domů v Blatci. Situace, ceny, stavy a porovnání domů.">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:type" content="website"><meta property="og:title" content="Nabídka domů · Blatec | HP DOMY"><meta property="og:description" content="10 volných rodinných domů v Blatci. Situace, ceny, stavy a porovnání domů."><meta property="og:image" content="img/og-1200x630.jpg"><meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" href="img/street-800.webp" imagesrcset="img/street-800.webp 800w, img/street-1600.webp 1600w" imagesizes="100vw" fetchpriority="high">
 <link rel="preload" as="font" type="font/woff2" href="fonts/michroma-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/inter-latin-400-normal.woff2" crossorigin>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -70,7 +71,7 @@
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6.5 8 6.5M6.5 9.5V19.5h11V9.5M10 19.5v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></symbol>
   </defs>
 </svg>
-<header class="hdr hdr--light" id="hdr">
+<header class="hdr hdr--hero" id="hdr">
   <div class="wrap hdr__in">
     <a class="logo" href="index.html" aria-label="Blatec HP DOMY DEVELOPMENT, úvodní stránka">
       <span class="logo__name">Blatec</span>
@@ -109,65 +110,60 @@
     </div>
   </div>
 </div>
-<main class="page" data-compare>
-  <div class="wrap">
-    <nav class="crumbs" aria-label="Drobečková navigace" data-page-in><a href="index.html">Blatec</a><span aria-hidden="true">/</span><span aria-current="page">Nabídka domů</span></nav>
-    <div class="phero phero--split" style="padding-bottom:28px">
-      <div style="display:grid;gap:20px"><h1 class="h1" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Pozemek vyberete v situaci, domy seřadíte v tabulce. Až tři domy porovnáte vedle sebe.</p></div>
-      <div class="ostats" data-page-in>
-        <div class="ostat ostat--free"><b data-cnt="volny">–</b><span>volných domů</span></div>
-        <div class="ostat"><b data-cnt="rezervace">–</b><span>v rezervaci</span></div>
-        <div class="ostat"><b data-cnt="prodany">–</b><span>prodaných</span></div>
-        <div class="ostat"><b data-min-price>–</b><span>nejnižší cena</span></div>
+<main class="page page--imghero" data-compare>
+  <section class="ihero" aria-labelledby="nab-title">
+    <div class="ihero__media"><img src="img/street-1600.webp" srcset="img/street-800.webp 800w, img/street-1600.webp 1600w" sizes="100vw" width="1600" height="900" alt="Zástupná vizualizace nové ulice s rodinnými domy v Blatci" fetchpriority="high" decoding="async"></div>
+    <div class="wrap ihero__in">
+      <nav class="crumbs" aria-label="Drobečková navigace" data-page-in><a href="index.html">Blatec</a><span aria-hidden="true">/</span><span aria-current="page">Nabídka domů</span></nav>
+      <div class="ihero__bottom">
+        <div class="ihero__txt"><h1 class="h1" id="nab-title" data-page-in>Nabídka domů</h1><p class="lead" data-page-in>Vyberte si pozemek v situaci a porovnejte až tři domy vedle sebe.</p></div>
+        <dl class="ihero__stats" data-page-in>
+          <div class="is-free"><dt>volných domů</dt><dd data-cnt="volny">10</dd></div>
+          <div><dt>v rezervaci</dt><dd data-cnt="rezervace">2</dd></div>
+          <div><dt>prodaných</dt><dd data-cnt="prodany">2</dd></div>
+          <div><dt>mil. Kč nejnižší cena</dt><dd><small>od</small>8,79</dd></div>
+        </dl>
       </div>
     </div>
+  </section>
+  <div class="wrap offer-page">
     <div class="offer-top">
         <div class="filters" role="group" aria-label="Filtr domů">
-          <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
-          <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
+          <div class="fgroup" role="group" aria-label="Stav domu"><span class="fgroup__l">Stav</span>
+            <button class="chip" data-f="all" aria-pressed="true">Všechny <span class="cnt" data-cnt="all"></span></button>
+            <button class="chip" data-f="volny" aria-pressed="false">Volné <span class="cnt" data-cnt="volny"></span></button>
           <button class="chip" data-f="rezervace" aria-pressed="false">Rezervace <span class="cnt" data-cnt="rezervace"></span></button>
-          <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
-          <span class="filters__sep" aria-hidden="true"></span>
-          <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
-          <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
+            <button class="chip chip--fav" data-f="fav" aria-pressed="false" hidden><svg aria-hidden="true"><use href="#i-heart"/></svg>Uložené <span class="cnt fav-n">0</span></button>
+          </div>
+          <div class="fgroup" role="group" aria-label="Typ domu"><span class="fgroup__l">Typ</span>
+            <button class="chip" data-t="" aria-pressed="true">Oba typy</button>
+            <button class="chip" data-t="prizemni" aria-pressed="false">Přízemní <span class="cnt" data-cnt="prizemni"></span></button>
+            <button class="chip" data-t="patrovy" aria-pressed="false">Patrové <span class="cnt" data-cnt="patrovy"></span></button>
+          </div>
         </div>
       </div>
 
       <div class="offer">
         <div class="plan">
           <div class="plan__head">
-            <b style="font-weight:500">Situace 14 domů</b>
-            <div class="legend"><span><i style="background:var(--accent-soft);border:1.5px solid var(--hot)"></i>Volný</span><span><i style="background:#f8eedb;border:1.5px solid #c9a36a"></i>Rezervace</span><span><i style="background:#efedea;border:1.5px solid #c9c5bd"></i>Prodaný</span></div>
+            <b>Situace</b>
+            <div class="legend"><span><i class="lg lg--volny"></i>Volný</span><span><i class="lg lg--rezervace"></i>Rezervace</span><span><i class="lg lg--prodany"></i>Prodaný</span></div>
           </div>
-          <div style="position:relative" id="plan-box">
-            <svg id="plan" viewBox="0 0 1000 560" role="group" aria-label="Situace domů, vyberte pozemek"></svg>
+          <div class="plan__box" id="plan-box">
+            <svg id="plan" viewBox="0 0 560 1000" role="group" aria-label="Situace domů, vyberte pozemek"></svg>
             <div class="plan__tip" id="tip" role="status" aria-live="polite"></div>
           </div>
-          <p class="plan__note">Ilustrační situace. Nahradíme ji podkladem od HP DOMY, jakmile bude uvolněný.</p>
+          <p class="plan__note">Ilustrační situace, nahradíme ji podkladem od HP DOMY.</p>
         </div>
 
-        <div class="only-desk">
-          <div class="tbl-wrap">
-            <table class="houses" id="tbl">
-              <caption class="sr">Přehled domů v projektu Blatec</caption>
-              <thead><tr>
-                <th scope="col" class="cmp-cell"><span class="sr">Porovnat</span></th>
-                <th scope="col" data-sort="id"><button>Dům <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" data-sort="type"><button>Typ <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Dispozice</th>
-                <th scope="col" class="num" data-sort="area"><button>Užitná plocha <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" class="num" data-sort="plot"><button>Pozemek <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Parkování</th>
-                <th scope="col" class="num" data-sort="price"><button>Cena <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col" data-sort="status"><button>Stav <svg><use href="#i-sort"/></svg></button></th>
-                <th scope="col">Detail</th>
-              </tr></thead>
-              <tbody></tbody>
-            </table>
+        <div class="hlist">
+          <div class="hlist__head">
+            <b class="hlist__n"><span id="hl-n">14</span> domů<small> · každý se 2 stáními u domu</small></b>
+            <label class="sortsel"><span>Řadit</span><select id="hl-sort" aria-label="Řadit domy"><option value="id">podle čísla</option><option value="price">od nejlevnějšího</option><option value="plot">podle pozemku</option><option value="status">volné nejdřív</option></select><svg aria-hidden="true"><use href="#i-down"/></svg></label>
           </div>
+          <div class="hlist__rows" id="hlist"></div>
+          <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" type="button" data-reset>Zobrazit všechny domy</button></div>
         </div>
-        <div class="only-mobile"><div class="cards" id="cards"></div></div>
-        <div class="offer-empty" id="empty" hidden>Žádný dům neodpovídá filtru. <button class="link" style="background:none;border-left:0;border-right:0;border-top:0;cursor:pointer" data-reset>Zobrazit všechny domy</button></div>
       </div>
       <div class="offer-foot">
         <a class="link" href="nabidka.html#hlidaci-pes"><svg><use href="#i-bell"/></svg>Hlídací pes: dáme vědět, až se uvolní dům</a>
