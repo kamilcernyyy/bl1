@@ -18,6 +18,16 @@ Statický web bez frameworku, připravený k nasazení na libovolný hosting.
 
 Design systém návrhu je na `index.html#komponenty`.
 
+## Směr B (`v2/`)
+
+Druhý designový směr inspirovaný Era Residence: velká didotová písma verzálkami, psací akcenty, střídání krémové, nebeské modré, okrové a tmavé „ornice“, plynulé rolování a přechody mezi stránkami. Data domů bere ze stejného `src/build.py`, takže čísla jsou v obou směrech vždy stejná.
+
+- `v2/index.html` úvod, `v2/nabidka.html` situace + seznam, `v2/dum-1.html` … `v2/dum-14.html` detaily
+- Sestavení: `python3 src/v2/build.py` (zdroje v `src/v2/`: `build.py`, `style.css`, `app.js`)
+- Písma: Instrument Serif, Pinyon Script, Archivo Expanded (lokálně v `v2/fonts/`, s češtinou)
+- Pohyb: GSAP 3.13 + ScrollTrigger + SplitText, Lenis (jen kolečko myši, dotyk zůstává nativní)
+- Stránky mají `noindex`, aby se v Googlu nepletly se směrem A. Po výběru směru `noindex` odstranit.
+
 ## Funkce pro kupce
 
 - **Uložené domy** – srdíčko u domu (tabulka, karty, detail), počet v plovoucí hlavičce, filtr `nabidka.html#oblibene`. Ukládá se jen v prohlížeči kupce.
