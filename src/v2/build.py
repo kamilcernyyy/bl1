@@ -496,7 +496,7 @@ home = f'''
   </div>
 </section>
 
-<section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="stmt-t">
+<section class="sec sec--intro t-cream wrap" data-hdr="ink" aria-labelledby="stmt-t">
   <div class="stmt">
     <p class="label" data-r>Projekt</p>
     <h2 class="serif h4 js-split" data-split="lines" id="stmt-t">Nová ulice čtrnácti rodinných domů v&nbsp;klidné části Blatce, osm kilometrů od Olomouce</h2>
@@ -588,7 +588,7 @@ offer = phead("Nabídka domů", "domů", "Nabídka", extra=f'''
       <div class="offer__legend"><span class="st st--volny">volný</span><span class="st st--rezervace">rezervace</span><span class="st st--prodany">prodaný</span></div>
     </div>
     <div>
-      <div class="otools"><span class="label label--reg muted" data-count>{len(HOUSES)} domů</span><label class="osort"><span class="label label--reg">Řadit</span><select data-sort aria-label="Řadit domy"><option value="id">Podle čísla domu</option><option value="price">Od nejlevnějšího</option><option value="price-d">Od nejdražšího</option><option value="plot">Největší pozemek</option></select></label></div>
+      <div class="otools"><span class="label label--reg muted" data-count>{len(HOUSES)} domů</span></div>
       <div class="hl hl--rich" data-hl data-offer>{"".join(hrow(h, rich=True) for h in HOUSES)}</div>
       <p class="label label--reg muted" style="margin-top:22px">Každý dům má 2 stání u&nbsp;domu. Situace je ilustrační. Ikonou {ICON["cmp"]} přidáte dům do porovnání, srdíčkem si ho uložíte.</p>
     </div>

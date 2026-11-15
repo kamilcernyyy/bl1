@@ -886,3 +886,7 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 .on-photo>.script{-webkit-text-stroke:0!important}
 .modal .ttl>.script,.ttl--s>.script{margin-bottom:0}
 .serif.mega{line-height:1.02}.serif.h1{line-height:1.06}.serif.h2{line-height:1.08}.serif.h3{line-height:1.08}
+
+/* intro flows straight into the clouds (no empty gap) */
+.sec--intro{padding-bottom:clamp(28px,4vw,56px)}
+.sky__fade{background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 4%,rgba(244,238,229,0) 34%)}
