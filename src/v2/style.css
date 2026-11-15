@@ -377,3 +377,4 @@ html.motion .js-split{visibility:hidden}
 .line-mask,.char-mask,[class*="-mask"]{padding-top:.22em;margin-top:-.22em;padding-bottom:.06em;margin-bottom:-.06em}
 @media (min-width:861px) and (max-width:1280px){.hl--rich .hl__row{grid-template-columns:84px minmax(84px,.8fr) minmax(0,1.1fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,.8fr) 18px;gap:12px}.hl--rich .hl__plot+.hl__plot{display:none}.offer{grid-template-columns:minmax(220px,.62fr) minmax(0,2fr)}}
 .cue.is-off{opacity:0}
+.ftr>div{min-width:0}.ftr a{overflow-wrap:anywhere}@media (max-width:420px){.ftr{grid-template-columns:1fr}}
