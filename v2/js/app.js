@@ -50,9 +50,11 @@
   /* ---------- header: colour by section underneath, hide on scroll down ---------- */
   const hdr = $('#hdr');
   let lastY = scrollY, ticking = false;
+  const cue = $('.cue');
   const paintHdr = () => {
     ticking = false;
     const y = scrollY;
+    cue && cue.classList.toggle('is-off', y > innerHeight * .4);
     const under = document.elementsFromPoint(innerWidth / 2, 34).map(el => el.closest('[data-hdr]')).find(Boolean);
     hdr.classList.toggle('is-ink', !!under && under.dataset.hdr === 'ink');
     hdr.classList.toggle('is-hidden', y > 260 && y > lastY + 2 && !root.classList.contains('menu-on'));

@@ -103,7 +103,6 @@ def header():
     <button class="burger" type="button" data-menu aria-expanded="false" aria-controls="menu" aria-label="Otevřít menu"><i></i></button>
   </div>
 </header>
-<div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>
 '''
 
 
@@ -176,7 +175,7 @@ def scripts(extra=""):
 
 
 def page(name, title, desc, body, preload=None, jsonld=None):
-    out = head(title, desc, preload, jsonld) + header() + menu() + f'<main id="main">\n{body}\n</main>\n' + modal() + '<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts()
+    out = head(title, desc, preload, jsonld) + header() + ('<div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>\n' if name == 'index.html' else '') + menu() + f'<main id="main">\n{body}\n</main>\n' + modal() + '<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts()
     open(os.path.join(OUT, name), "w", encoding="utf-8").write(cz_typo(out))
 
 

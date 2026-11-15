@@ -111,7 +111,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @media (max-width:760px){.hdr__pick,.hdr__links{display:none}.burger{display:grid}}
 
 /* scroll cue (desktop) */
-.cue{position:fixed;left:max(var(--gut),env(safe-area-inset-left,0px));bottom:32px;z-index:50;display:grid;justify-items:center;gap:14px;color:var(--cream);mix-blend-mode:difference;pointer-events:none}
+.cue{position:fixed;left:max(var(--gut),env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%);transition:opacity .6s var(--out);z-index:50;display:grid;justify-items:center;gap:14px;color:var(--cream);mix-blend-mode:difference;pointer-events:none}
 .cue span{writing-mode:vertical-rl;transform:rotate(180deg);font:600 11px/1 var(--f-sans);letter-spacing:.24em;text-transform:uppercase}
 .cue i{display:block;width:1px;height:56px;background:currentColor;transform-origin:top;animation:cue 2.4s var(--io) infinite}
 @keyframes cue{0%{transform:scaleY(0)}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
@@ -376,3 +376,4 @@ html.motion .js-split{visibility:hidden}
 
 .line-mask,.char-mask,[class*="-mask"]{padding-top:.22em;margin-top:-.22em;padding-bottom:.06em;margin-bottom:-.06em}
 @media (min-width:861px) and (max-width:1280px){.hl--rich .hl__row{grid-template-columns:84px minmax(84px,.8fr) minmax(0,1.1fr) minmax(0,.8fr) minmax(0,1fr) minmax(0,.8fr) 18px;gap:12px}.hl--rich .hl__plot+.hl__plot{display:none}.offer{grid-template-columns:minmax(220px,.62fr) minmax(0,2fr)}}
+.cue.is-off{opacity:0}
