@@ -810,42 +810,33 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 .amen2 .is-pending{opacity:1}.amen2 .is-pending>*{color:#5f4e4f}
 
 /* =====================================================================
-   MENU · photo + list
+   MENU · centred, calm
    ===================================================================== */
-.menu{position:fixed;inset:0;z-index:80;background:var(--soil);color:var(--cream);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:0 clamp(30px,5vw,90px);padding:max(18px,env(safe-area-inset-top,0px)) max(var(--gut),env(safe-area-inset-right,0px)) max(18px,env(safe-area-inset-bottom,0px)) max(var(--gut),env(safe-area-inset-left,0px));overflow:hidden;clip-path:inset(0 0 100% 0);visibility:hidden;transition:clip-path .9s var(--io),visibility 0s .9s}
+.menu{position:fixed;inset:0;z-index:80;background:var(--soil);color:var(--cream);display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:max(18px,env(safe-area-inset-top,0px)) max(var(--gut),env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom,0px)) max(var(--gut),env(safe-area-inset-left,0px));overflow:hidden;clip-path:inset(0 0 100% 0);visibility:hidden;transition:clip-path .9s var(--io),visibility 0s .9s}
 .menu.is-open{clip-path:inset(0 0 0 0);visibility:visible;transition:clip-path .9s var(--io),visibility 0s}
-.menu__close{position:absolute;right:max(var(--gut),env(safe-area-inset-right,0px));top:max(18px,env(safe-area-inset-top,0px));z-index:2;width:46px;height:46px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;color:var(--cream)}
+.menu__top{display:flex;justify-content:space-between;align-items:center}
+.menu__close{width:46px;height:46px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;color:var(--cream)}
 .menu__close svg{width:14px;height:14px}
-.menu__media{position:relative;overflow:hidden;margin-top:clamp(60px,8vh,90px);min-height:0}
-.menu__media figure{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .7s var(--out)}
-.menu__media figure.is-on{opacity:1}
-.menu__media img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 1.6s var(--out)}
-.menu__media figure.is-on img{transform:none}
-.menu__media figure::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,8,16,0) 45%,rgba(30,8,16,.7))}
-.menu__media figcaption{position:absolute;left:clamp(16px,2vw,30px);right:clamp(16px,2vw,30px);bottom:clamp(14px,2vw,28px);z-index:1;display:grid;gap:6px}
-.menu__media figcaption .serif{font-size:clamp(26px,2.6vw,46px);line-height:1}
-.menu__nav{display:grid;align-content:center;gap:0;min-height:0;padding-top:clamp(60px,8vh,90px)}
-.menu__nav a{display:flex;align-items:baseline;gap:clamp(12px,1.4vw,22px);padding:.12em 0;font:400 clamp(34px,min(4.6vw,7.2vh),84px)/1.12 var(--f-serif);text-transform:uppercase;letter-spacing:-.01em;color:rgba(244,238,229,.62);transition:color .35s,transform .6s var(--out)}
-.menu__nav a.is-on,.menu__nav a[aria-current="page"]{color:var(--cream)}
-.menu__nav a[aria-current="page"] .menu__t::after{content:"";display:inline-block;width:.16em;height:.16em;border-radius:50%;background:var(--gold);margin-left:.25em;vertical-align:.5em}
-@media (hover:hover){.menu__nav a:hover{transform:translateX(10px)}}
-.menu__n{font:600 11px/1 var(--f-sans);letter-spacing:.1em;color:var(--gold);min-width:2.2em}
-.menu__bar{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px solid rgba(201,162,101,.45);padding-top:16px;margin-top:clamp(16px,3vh,30px)}
-.menu__tel{display:inline-flex;align-items:center;gap:12px;font:400 clamp(22px,1.8vw,32px)/1 var(--f-serif)}
-.menu__tel svg{width:18px;height:18px;color:var(--gold)}
+.menu__mid{display:grid;align-content:center;justify-items:center;gap:clamp(16px,2.6vh,30px);text-align:center;min-height:0}
+.menu__lab{margin:0;font:600 11px/1 var(--f-sans);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.menu__nav{display:grid;justify-items:center;gap:clamp(2px,.6vh,8px)}
+.menu__nav a{position:relative;font:400 clamp(30px,min(4.4vw,7.2vh),76px)/1.1 var(--f-serif);text-transform:uppercase;letter-spacing:-.005em;color:rgba(244,238,229,.62);transition:color .35s}
+.menu__nav a[aria-current="page"]{color:var(--cream)}
+.menu__nav a[aria-current="page"]::after{content:"";position:absolute;left:50%;bottom:-.06em;width:28px;height:1px;margin-left:-14px;background:var(--gold)}
+@media (hover:hover){.menu__nav a:hover{color:var(--cream)}}
+.menu__bar{display:flex;justify-content:space-between;align-items:center;gap:14px;border-top:1px solid rgba(201,162,101,.45);padding-top:16px}
+.menu__tel{display:inline-flex;align-items:center;gap:10px;font:400 clamp(20px,1.8vw,30px)/1 var(--f-serif);white-space:nowrap}
+.menu__tel svg{width:17px;height:17px;color:var(--gold)}
 .menu .btn,.menu .btn--solid{--c:var(--cream);--on:var(--soil)}
 .menu .btn--solid::before{background:var(--gold)}
+.m-short{display:none}
 @media (max-width:760px){
-  .menu{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto}
-  .menu__media{margin-top:64px;height:min(22svh,180px)}
-  .menu__media figcaption .serif{font-size:22px}
-  .menu__nav{padding-top:10px;align-content:center}
-  .menu__nav a{font-size:min(9.6vw,5.1svh);line-height:1.14;padding:.06em 0}
-  .menu__bar{margin-top:10px;padding-top:12px;flex-wrap:nowrap}
-  .menu__tel{font-size:20px;gap:8px;white-space:nowrap}
-  .menu__bar .btn{height:44px;padding:0 18px;white-space:nowrap}
+  .menu__top .seal--logo{width:58px}
+  .menu__nav a{font-size:min(9.4vw,5.4svh)}
+  .menu__bar .btn{height:44px;padding:0 20px;white-space:nowrap}
+  .menu .m-long{display:none}.menu .m-short{display:inline}
 }
-@media (max-width:360px){.menu__tel span{display:none}}
+@media (max-width:340px){.menu__tel span{display:none}}
 /* booking sheet fits a phone screen */
 @media (max-width:760px){
   .modal{padding:10px;align-items:end}
@@ -862,6 +853,4 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
   .modal .bookf .p--s{font-size:11.5px;line-height:1.35}
   .modal .bookf .btn{width:100%;height:48px}
 }
-.m-short{display:none}
-@media (max-width:760px){.menu .m-long{display:none}.menu .m-short{display:inline}}
 @media (min-width:761px) and (max-height:780px){.modal__box{padding:30px 40px}.modal .bookf>div{gap:12px!important}.modal .field input,.modal .field select,.modal .field textarea{padding:6px 0}.modal .field textarea{min-height:0;height:54px}}

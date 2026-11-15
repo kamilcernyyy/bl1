@@ -179,24 +179,12 @@ NAV = [("index.html", "Úvod"), ("o-projektu.html", "O projektu"), ("lokalita.ht
        ("standardy.html", "Standardy"), ("galerie.html", "Galerie"), ("kontakt.html", "Kontakt")]
 
 
-MENU_MEDIA = {"index.html": ("hero", "Blatec u Olomouce", "14 rodinných domů"), "o-projektu.html": ("street", "O projektu", "Dva typy domů, jedna ulice"),
-              "lokalita.html": ("hana", "Lokalita", "8 km od Olomouce"), "nabidka.html": ("aerial", "Nabídka domů", f"{len(FREE)} volných"),
-              "standardy.html": ("entry", "Standardy", "Zděné, s tepelným čerpadlem"), "galerie.html": ("garden", "Galerie", "Vizualizace domů a okolí"),
-              "kontakt.html": ("bungalow", "Kontakt", "Prohlídka s prodejcem")}
-
-
 def menu(cur=""):
-    cur = cur if cur in MENU_MEDIA else ("nabidka.html" if cur.startswith("dum-") else "index.html")
-    links = "".join(f'<a href="{u}" data-mi="{k}"{" aria-current=\"page\"" if u == cur else ""}><span class="menu__n">{k + 1:02d}</span><span class="menu__t">{t}</span></a>' for k, (u, t) in enumerate(NAV))
-    figs = ""
-    for k, (u, t) in enumerate(NAV):
-        pic, cap, sub = MENU_MEDIA[u]; base, have = _src(pic)
-        figs += (f'<figure data-mi="{k}"{" class=\"is-on\"" if u == cur else ""}><img src="{base}/{pic}-800.webp" alt="" width="800" height="450" loading="lazy" decoding="async">'
-                 f'<figcaption><span class="serif">{cap}</span><span class="label label--reg">{sub}</span></figcaption></figure>')
+    cur = cur if cur in [u for u, _ in NAV] else ("nabidka.html" if cur.startswith("dum-") else "index.html")
+    links = "".join(f'<a href="{u}"{" aria-current=\"page\"" if u == cur else ""}>{t}</a>' for u, t in NAV)
     return f'''<nav class="menu" id="menu" aria-label="Hlavní menu" aria-hidden="true">
-  <button class="menu__close" type="button" data-menu-close aria-label="Zavřít menu">{ICON["x"]}</button>
-  <div class="menu__media" aria-hidden="true">{figs}</div>
-  <div class="menu__nav">{links}</div>
+  <div class="menu__top"><a class="logo logo--seal" href="index.html" tabindex="-1" aria-hidden="true">{seal("mnu", "seal--logo")}</a><button class="menu__close" type="button" data-menu-close aria-label="Zavřít menu">{ICON["x"]}</button></div>
+  <div class="menu__mid"><p class="menu__lab">Menu</p><div class="menu__nav">{links}</div></div>
   <div class="menu__bar">
     <a class="menu__tel" href="tel:{TEL}">{ICON["phone"]}<span>{TEL_TXT}</span></a>
     <button class="btn btn--solid" type="button" data-book><span class="m-long">Domluvit prohlídku</span><span class="m-short">Prohlídka</span></button>
