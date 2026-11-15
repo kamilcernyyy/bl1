@@ -1,4 +1,4 @@
-/* Blatec · směr B — motion & interactions (GSAP 3.13 + ScrollTrigger + SplitText, Lenis) */
+/* Blatec · směr B — motion & interactions (GSAP 3.13 + ScrollTrigger, Lenis) */
 (() => {
   const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const root = document.documentElement;
@@ -7,7 +7,7 @@
   const IO = 'power4.inOut', OUT = 'expo.out';
   let favs = (() => { try { return JSON.parse(localStorage.getItem('blatec-favs') || '[]').filter(id => D.houses.some(h => h.id === id)); } catch (_) { return []; } })();
   let offerF = null;
-  if (window.gsap) { gsap.registerPlugin(ScrollTrigger, SplitText); ScrollTrigger.config({ ignoreMobileResize: true }); }
+  if (window.gsap) { gsap.registerPlugin(ScrollTrigger); ScrollTrigger.config({ ignoreMobileResize: true }); }
 
   /* ---------- smooth scroll (wheel only; touch stays native) ---------- */
   let lenis = null;
@@ -52,11 +52,13 @@
   /* ---------- header: colour by section underneath, hide on scroll down ---------- */
   const hdr = $('#hdr');
   let lastY = scrollY, ticking = false;
+  const ring = $('.seal--logo .seal__ring');
   const cue = $('.cue'), fab = $('.callfab'), dock = $('.dock');
   const paintHdr = () => {
     ticking = false;
     const y = scrollY;
     cue && cue.classList.toggle('is-off', y > innerHeight * .4);
+    if (ring && !root.classList.contains('rm')) ring.style.transform = `rotate(${(y * .12) % 360}deg)`;
     const under = document.elementsFromPoint(innerWidth / 2, 34).map(el => el.closest('[data-hdr]')).find(Boolean);
     hdr.classList.toggle('is-ink', !!under && under.dataset.hdr === 'ink');
     hdr.classList.toggle('is-bar', y > 24 && innerWidth <= 760);
@@ -223,6 +225,21 @@
     });
   }
 
+  /* ---------- clouds: exact tile width so the drift loops without a seam ---------- */
+  const tiles = () => $$('.sky__drift').forEach(d => { const tw = Math.round(d.offsetHeight * 1100 / 504); d.style.setProperty('--tw', tw + 'px'); d.style.backgroundSize = tw + 'px 100%'; });
+  tiles(); addEventListener('resize', tiles);
+
+  /* ---------- free houses: swipeable cards ---------- */
+  $$('[data-hc]').forEach(hc => {
+    const tr = $('[data-hc-track]', hc), bar = $('.hc__bar i', hc);
+    const step = () => { const c = tr.firstElementChild; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(tr).columnGap || 16) : 300; };
+    const paint = () => { const w = tr.clientWidth / tr.scrollWidth; bar.style.width = (w * 100) + '%'; bar.style.left = (tr.scrollLeft / tr.scrollWidth * 100) + '%';
+      $('[data-hc-prev]', hc).disabled = tr.scrollLeft < 4; $('[data-hc-next]', hc).disabled = tr.scrollLeft + tr.clientWidth > tr.scrollWidth - 4; };
+    $('[data-hc-prev]', hc).addEventListener('click', () => tr.scrollBy({ left: -step(), behavior: 'smooth' }));
+    $('[data-hc-next]', hc).addEventListener('click', () => tr.scrollBy({ left: step(), behavior: 'smooth' }));
+    tr.addEventListener('scroll', paint, { passive: true }); addEventListener('resize', paint); paint();
+  });
+
   /* ---------- toast ---------- */
   const toastEl = $('#toast'); let tt;
   function toast(msg) { if (!toastEl) return; toastEl.textContent = msg; toastEl.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('is-on'), 3200); }
@@ -307,25 +324,12 @@
 
   /* ---------- motion ---------- */
   if (!motion) return;
+  // photos open up as they arrive; text is never hidden or moved by scrolling
+  const zfs = $$('.zf').filter(f => f.getBoundingClientRect().top > innerHeight);
+  zfs.forEach(f => f.classList.add('is-pre'));
+  const zio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting || e.boundingClientRect.top < 0) { e.target.classList.remove('is-pre'); zio.unobserve(e.target); } }), { rootMargin: '0px 0px 8% 0px' });
+  zfs.forEach(f => zio.observe(f));
   const go = () => {
-    // Reveals use IntersectionObserver: reliable on iOS, and anything already scrolled past is shown at once.
-    const anim = (el, instant) => {
-      const kind = el.dataset.split;
-      el.style.visibility = 'visible';
-      if (instant) { gsap.set(el, { opacity: 1, y: 0, clearProps: 'transform' }); return; }
-      if (kind === 'chars') { const s = SplitText.create(el, { type: 'chars', mask: 'chars', charsClass: 'char', aria: 'none' });
-        gsap.from(s.chars, { yPercent: 115, duration: 1.4, ease: OUT, stagger: .05, delay: .1, onComplete: () => s.revert() }); }
-      else if (kind === 'script') gsap.from(el, { clipPath: 'inset(0 100% 0 0)', duration: 1.6, ease: 'power3.inOut', delay: .35, clearProps: 'clipPath' });
-      else if (kind === 'lines') { const s = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'line', aria: 'none' });
-        gsap.from(s.lines, { yPercent: 115, duration: 1.2, ease: OUT, stagger: .08, onComplete: () => s.revert() }); }
-      else gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: OUT, delay: (el.__q || 0) * .08, overwrite: true, clearProps: 'transform' });
-    };
-    const io = new IntersectionObserver(es => { let q = 0;
-      es.forEach(e => { const r = e.boundingClientRect; if (!e.isIntersecting && r.top > 0) return;
-        io.unobserve(e.target); e.target.__q = q++; anim(e.target, r.bottom < 0); }); }, { rootMargin: '0px 0px -5% 0px' });
-    $$('.js-split, [data-r]').forEach(el => io.observe(el));
-    // last resort: whatever is above the fold after scrolling stops is visible
-    let idle; addEventListener('scroll', () => { clearTimeout(idle); idle = setTimeout(() => $$('.js-split, [data-r]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && getComputedStyle(el).opacity === '0') anim(el, true); }), 700); }, { passive: true });
     // hero photo settles
     $$('.hero__media img').forEach(i => gsap.to(i, { scale: 1, duration: 2.2, ease: 'power3.out' }));
     $$('.hero, .dhero').forEach(h => gsap.to($('.hero__media', h), { yPercent: 18, ease: 'none', scrollTrigger: { trigger: h, start: 'top top', end: 'bottom top', scrub: true } }));
@@ -344,7 +348,6 @@
         .fromTo($('.sky__cl--a', sec), { opacity: .95, yPercent: 0 }, { opacity: .55, yPercent: -40, duration: .9, ease: 'none' }, 0)
         .fromTo($('.sky__photo img', sec), { scale: 1.25 }, { scale: 1, duration: 1, ease: 'none' }, 0)
         .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .5);
-      $$('.sky__drift', sec).forEach((d, k) => gsap.to(d, { xPercent: -50, duration: k ? 90 : 140, ease: 'none', repeat: -1 }));
     });
     // pull-in photo: framed card opens to full screen
     $$('.zin').forEach(sec => {
@@ -371,8 +374,6 @@
   };
   // fonts first so split lines are measured right; never wait longer than 1.2 s
   Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then(go);
-  // safety: never leave text hidden
-  setTimeout(() => $$('.js-split').forEach(el => el.style.visibility = 'visible'), 2500);
   // if GSAP failed to load, never leave content hidden
   setTimeout(() => { if (!window.ScrollTrigger) root.classList.remove('motion'); }, 3000);
 })();

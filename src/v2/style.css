@@ -364,9 +364,9 @@ html.pt-in .pt{transform:none}
 .v2note{display:inline-flex;gap:10px;align-items:center;border:1px dashed currentColor;border-radius:999px;padding:8px 16px;opacity:.75}
 
 /* reveal states (only when JS + motion are on) */
-html.motion [data-r]{opacity:0;transform:translateY(40px)}
+
 html.motion [data-r="fade"]{transform:none}
-html.motion .js-split{visibility:hidden}
+
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation:none!important}}
 @media (max-width:760px){
   :root{--t-mega:23vw;--t-h1:15.5vw;--t-h2:12vw;--t-script:13vw;--t-script-l:17vw}
@@ -426,8 +426,8 @@ body{letter-spacing:.012em}
 .sky__cl{position:absolute;left:-15%;right:-15%;pointer-events:none;will-change:transform,opacity}
 .sky__cl--b{top:-10%;bottom:-10%}
 .sky__cl--a{top:-20%;height:90%}
-.sky__drift{position:absolute;inset:0;width:200%;display:flex}
-.sky__drift img{width:50%;height:100%;object-fit:cover;flex:none}
+.sky__drift{position:absolute;top:0;bottom:0;left:0;width:calc(100% + var(--tw,2400px));background-repeat:repeat-x;background-size:auto 100%;background-position:0 0;will-change:transform}
+.sky__drift--a{background-image:url(img/cloud-a.webp)}.sky__drift--b{background-image:url(img/cloud-b.webp)}
 .sky__fade{position:absolute;inset:0;background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 30%,rgba(244,238,229,0) 75%);pointer-events:none}
 .sky__txt{position:absolute;inset:auto 0 0;padding-bottom:clamp(40px,8vh,90px);display:grid;justify-items:center;gap:18px;text-align:center}
 .sky__txt .label{opacity:.9}
@@ -614,7 +614,7 @@ body::after{content:"";position:fixed;inset:0;z-index:120;pointer-events:none;op
 /* rotating seal */
 .seal{width:clamp(96px,8vw,138px);aspect-ratio:1;position:relative;display:grid;place-items:center;color:currentColor}
 .seal svg.seal__ring{position:absolute;inset:0;width:100%;height:100%;animation:spin 26s linear infinite}
-.seal svg.seal__ring text{font:600 11px var(--f-sans);letter-spacing:.32em;text-transform:uppercase;fill:currentColor}
+.seal svg.seal__ring text{font:600 12.5px var(--f-sans);letter-spacing:.2em;text-transform:uppercase;fill:currentColor}
 .seal .emblem{width:26%}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hero__seal{position:absolute;right:max(var(--gut),env(safe-area-inset-right,0px));top:42%;color:var(--cream)}
@@ -757,3 +757,69 @@ html.menu-on .callfab,html.menu-on .dock{opacity:0;pointer-events:none}
 html.motion .rise{animation:rise 1.6s cubic-bezier(.16,1,.3,1) .12s both}
 @keyframes rise{from{clip-path:inset(0 0 100% 0);transform:translateY(.32em)}to{clip-path:inset(-30% -5% -30% -5%);transform:none}}
 .dock,.callfab,.tray{border:1px solid rgba(201,162,101,.45)}
+
+/* =====================================================================
+   ROUND 4 · seal logo, static text, seamless clouds, cards, icon grid
+   ===================================================================== */
+/* clouds: soft edges, endless drift */
+.sky__cl{-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 20%,#000 68%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 20%,#000 68%,transparent 100%)}
+@keyframes drift{to{transform:translate3d(calc(-1 * var(--tw,2400px)),0,0)}}
+html.motion .sky__drift--a{animation:drift 140s linear infinite}
+html.motion .sky__drift--b{animation:drift 90s linear infinite}
+/* logo: the seal */
+.logo--seal{display:block;line-height:0}
+.seal--logo{width:clamp(66px,5.4vw,90px)}
+.seal--logo svg.seal__ring{animation:none;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.seal--logo svg.seal__ring text{font-size:12.5px}
+.seal--logo .emblem{width:24%}
+@media (max-width:760px){.seal--logo{width:58px}.hdr{padding-top:max(12px,env(safe-area-inset-top,0px));padding-bottom:10px;align-items:center}.burger{margin-top:0}}
+.logo--ftr{display:inline-grid;justify-items:start;gap:12px}
+.seal--ftr{width:112px;color:var(--gold)}
+.seal--ftr .seal__ring{animation-duration:40s}
+/* title load animation for the script accent */
+html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
+@keyframes wipe{from{clip-path:inset(-40% 100% -40% -8%)}to{clip-path:inset(-40% -8% -40% -8%)}}
+/* photos open up when they arrive (clip only, never invisible) */
+.zf{transition:clip-path 1.3s cubic-bezier(.16,1,.3,1)}
+.zf.is-pre{clip-path:inset(9% 7% 0 7%)}
+/* hero text stays readable over the photo on phones */
+.hero .label,.hero .grate span{text-shadow:0 1px 14px rgba(46,14,24,.55)}
+@media (max-width:760px){.hero__media::after{background:linear-gradient(180deg,rgba(46,14,24,.5) 0%,rgba(46,14,24,.12) 26%,rgba(46,14,24,.08) 42%,rgba(46,14,24,.6) 66%,rgba(46,14,24,.86) 100%)}}
+/* call button: a quiet round button */
+.callfab{width:58px;height:58px;padding:0;justify-content:center;border-radius:50%}
+.callfab span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.callfab svg{width:21px;height:21px}
+/* free houses as swipeable photo cards */
+.hc__lead{margin:18px auto 0;max-width:48ch}
+.hc{margin-top:clamp(34px,4vw,64px)}
+.hc__track{display:flex;gap:clamp(14px,1.6vw,26px);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:calc(-1 * var(--gut));padding:0 var(--gut) 4px;scroll-padding-inline:var(--gut);overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.hc__track::-webkit-scrollbar{display:none}
+.hc__card{flex:0 0 clamp(280px,29vw,470px);scroll-snap-align:start;display:grid;gap:12px;align-content:start}
+@media (max-width:760px){.hc__card{flex-basis:80vw}}
+.hc__img{display:block;aspect-ratio:4/3;overflow:hidden;background:var(--cream-2)}
+.hc__img img{width:100%;height:100%;object-fit:cover;transition:transform var(--d-l) var(--out)}
+.hc__row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hc__row .h4{white-space:nowrap}
+.hc__price{border-top:1px solid var(--line);padding-top:14px;margin-top:2px}
+.hc__go{width:42px;height:42px;flex:none;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;transition:background-color .4s,color .4s,transform .6s var(--io)}
+.hc__go svg{width:13px;height:13px}
+@media (hover:hover){.hc__card:hover .hc__img img{transform:scale(1.06)}.hc__card:hover .hc__go{background:var(--soil);border-color:var(--soil);color:var(--cream);transform:rotate(45deg)}}
+.hc__nav{display:flex;align-items:center;gap:18px;margin-top:26px}
+.hc__nav button{width:46px;height:46px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;transition:opacity .3s}
+.hc__nav button svg{width:14px;height:14px}
+.hc__nav button:disabled{opacity:.3}
+.hc__bar{position:relative;flex:1;height:1px;background:var(--line)}
+.hc__bar i{position:absolute;top:-1px;bottom:-1px;left:0;width:20%;background:var(--ink);transition:left .2s linear}
+@media (hover:none){.hc__nav button{display:none}}
+/* equipment: icon grid */
+.kit{list-style:none;margin:clamp(50px,6vw,100px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid currentColor}
+.kit li{display:grid;gap:10px;align-content:start;padding:clamp(24px,2.6vw,44px) clamp(14px,2vw,34px) clamp(24px,2.6vw,44px) 0;border-bottom:1px solid var(--line);min-width:0}
+.kit li:not(:nth-child(3n+1)){padding-left:clamp(14px,2vw,34px);border-left:1px solid var(--line)}
+.kit svg{width:36px;height:36px;fill:none;stroke:var(--wine);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px}
+.kit b{font:400 var(--t-h5)/1.04 var(--f-serif);text-transform:uppercase}
+@media (max-width:760px){.kit{grid-template-columns:1fr 1fr}.kit li,.kit li:not(:nth-child(3n+1)){padding:22px 14px 22px 0;border-left:0}.kit li:nth-child(even){padding-left:14px;padding-right:0;border-left:1px solid var(--line)}.kit b{font-size:19px}.kit svg{width:30px;height:30px}}
+/* soften the render's hard horizon with a band of haze */
+.sky__photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(236,230,224,0) 16%,rgba(236,230,224,.5) 27%,rgba(236,230,224,.82) 34%,rgba(236,230,224,.5) 39%,rgba(236,230,224,0) 50%)}
+.sky__fade{background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 16%,rgba(244,238,229,0) 62%)}
+.t-wheat .chips button{opacity:.86}
+.amen2 .is-pending{opacity:1}.amen2 .is-pending>*{color:#5f4e4f}

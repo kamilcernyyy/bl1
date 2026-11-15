@@ -30,6 +30,8 @@ Druhý designový směr inspirovaný Era Residence: velká didotová písma verz
 - Pohyb: GSAP 3.13 + ScrollTrigger + SplitText, Lenis (jen kolečko myši, dotyk zůstává nativní)
 - Funkčně stejný jako směr A: uložené domy (srdíčko, filtr `#oblibene`), porovnání až 3 domů, řazení, hlídací pes, kalkulačka splátky, podobné volné domy, orientace zahrady, schematická mapa, recenze, tlačítko Zavolat na mobilu a spodní lišta s cenou na detailu domu
 - Na mobilu je hlavička po odrolování plná lišta (krémová nad světlými sekcemi, bordó nad tmavými)
+- Logo je otáčivá pečeť (točí se podle rolování), text se při rolování nikdy neskrývá ani neposouvá – animují se jen fotky (ořez při příchodu, paralaxa, mraky)
+- Mraky jsou opakující se dlaždice (`v2/img/cloud-a/b.webp`, 1100 × 504 px), JS dopočítá šířku dlaždice, takže smyčka nemá šev
 - Nadpisy stránek naskakují čistě přes CSS, takže se vykreslí hned (LCP kolem 1 s i na pomalém 4G)
 - Stránky mají `noindex`, aby se v Googlu nepletly se směrem A. Po výběru směru `noindex` odstranit.
 

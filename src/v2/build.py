@@ -162,7 +162,7 @@ def watchdog(preset, script, words, text, house=None, theme="t-wheat"):
 
 def header():
     return f'''<header class="hdr" id="hdr">
-  <a class="logo" href="index.html">{LOGO}</a>
+  <a class="logo logo--seal" href="index.html">{seal("hdr", "seal--logo")}<span class="sr">Blatec · HP DOMY Development, úvod</span></a>
   <div class="hdr__r">
     <a class="hdr__pick" href="nabidka.html">{roll("Vybrat<br>volný dům")}</a>
     <div class="hdr__links">
@@ -236,7 +236,7 @@ def modal():
 def footer():
     links = "".join(f'<a class="p--s" href="{u}">{t}</a>' for u, t in NAV)
     return f'''<footer class="ftr">
-      <div><a class="logo" href="index.html">{LOGO}</a><p class="p p--s" style="margin-top:14px">14 rodinných domů v&nbsp;Blatci u&nbsp;Olomouce.</p></div>
+      <div><a class="logo logo--ftr" href="index.html">{seal("ftr", "seal--ftr")}<span class="sr">Blatec</span><span class="logo__s">HP DOMY Development</span></a><p class="p p--s" style="margin-top:14px">14 rodinných domů v&nbsp;Blatci u&nbsp;Olomouce.</p></div>
       <div><span class="label">Stránky</span>{links}</div>
       <div><span class="label">Prodej</span><span class="p--s">Pavel Čundrla, Impuls Reality</span><a class="p--s ulink" style="justify-self:start" href="tel:{TEL}">{TEL_TXT}</a><a class="p--s ulink" style="justify-self:start" href="mailto:{MAIL}">{MAIL}</a></div>
       <div><span class="label">Developer</span><span class="p--s">HP DOMY s.r.o.</span><span class="p--s">I. P. Pavlova 692/143, Olomouc</span><span class="p--s muted">Vizualizace jsou ilustrační.</span></div>
@@ -247,7 +247,6 @@ def footer():
 def scripts():
     return '''<script src="js/gsap.min.js" defer></script>
 <script src="js/ScrollTrigger.min.js" defer></script>
-<script src="js/SplitText.min.js" defer></script>
 <script src="js/lenis.min.js" defer></script>
 <script src="js/data.js" defer></script>
 <script src="js/app.js" defer></script>
@@ -260,6 +259,8 @@ def page(name, title, desc, body, preload=None, jsonld=None, dock=None, extra=""
     fab = dock or f'<a class="callfab is-off" href="tel:{TEL}" aria-label="Zavolat prodejci {TEL_TXT}">{ICON["phone"]}<span>Zavolat</span></a>\n'
     out = (head(title, desc, preload, jsonld) + header() + cue + menu() + f'<main id="main">\n{body}\n</main>\n'
            + modal() + extra + fab + '<div class="toast" id="toast" role="status" aria-live="polite"></div>\n<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts())
+    out = re.sub(r' data-r(?=[\s>=])(="[^"]*")?', '', out)
+    out = re.sub(r' data-split="[^"]*"', '', out).replace(" js-split", "")
     open(os.path.join(OUT, name), "w", encoding="utf-8").write(cz_typo(out))
 
 
@@ -275,7 +276,7 @@ def phead(crumb, script, words, lead=None, extra=""):
     return f'''<section class="t-cream wrap" data-hdr="ink">
   <div class="phead">
     <nav class="crumbs label label--reg" aria-label="Drobečková navigace"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><span>{crumb}</span></nav>
-    <h1 class="ttl ttl--rev"><span class="serif mega rise">{words}</span><span class="script js-split" data-split="script">{script}</span></h1>
+    <h1 class="ttl ttl--rev"><span class="serif mega rise">{words}</span><span class="script rise rise--s">{script}</span></h1>
     {f'<p class="p center" style="margin-top:clamp(24px,3vw,44px)" data-r>{lead}</p>' if lead else ""}
     {extra}
   </div>
@@ -322,6 +323,15 @@ def hrow_rich(h):
             f'<span class="hl__act"><button class="cmpb" type="button" data-cmp="{h["id"]}" aria-pressed="false" aria-label="Porovnat dům {h["id"]}">{ICON["cmp"]}</button>{fav_btn(h["id"])}</span></div>')
 
 
+def hcard_house(h):
+    T = TYPES[h["type"]]
+    pic = T["gal"][h["id"] % len(T["gal"])]
+    return (f'<a class="hc__card" href="dum-{h["id"]}.html"><span class="hc__img">{img(pic, f"Zástupná vizualizace: dům {h['id']}, {T['label'].lower()}", "(min-width:860px) 30vw, 80vw")}</span>'
+            f'<span class="hc__row"><span class="serif h4">Dům {h["id"]:02d}</span><span class="st st--{h["status"]}">{STATUS[h["status"]]}</span></span>'
+            f'<span class="label label--reg">{h["label"]} {h["disp"]} · {area(h["area"])} · pozemek {area(h["plot"])}</span>'
+            f'<span class="hc__row hc__price"><span class="serif h5">{price(h)}</span><span class="hc__go">{ICON["arrow"]}</span></span></a>')
+
+
 def plan_svg(hl=None):
     """Situation drawn as a vertical strip (fits one screen), Hanák palette."""
     fills = {"volny": ("#f4eee5", "#3b0f1e"), "rezervace": ("#ead9cf", "#8d8576"), "prodany": ("#ded3c8", "#b3ab9b")}
@@ -359,8 +369,8 @@ def sky(script, words, label, img_name="hana", eager=False):
     return f'''<section class="sky" data-hdr="light" aria-label="{esc(label)}">
   <div class="sky__stick">
     <div class="sky__photo">{img(img_name, CAPTION.get(img_name, "") + " – zástupná vizualizace", "100vw", eager=eager)}</div>
-    <div class="sky__cl sky__cl--b"><div class="sky__drift"><img src="img/cloud-b.webp" alt="" width="2400" height="1100" loading="lazy" decoding="async"><img src="img/cloud-b.webp" alt="" width="2400" height="1100" loading="lazy" decoding="async"></div></div>
-    <div class="sky__cl sky__cl--a"><div class="sky__drift"><img src="img/cloud-a.webp" alt="" width="2400" height="1100" loading="lazy" decoding="async"><img src="img/cloud-a.webp" alt="" width="2400" height="1100" loading="lazy" decoding="async"></div></div>
+    <div class="sky__cl sky__cl--b" aria-hidden="true"><div class="sky__drift sky__drift--b"></div></div>
+    <div class="sky__cl sky__cl--a" aria-hidden="true"><div class="sky__drift sky__drift--a"></div></div>
     <div class="sky__fade" aria-hidden="true"></div>
     <div class="sky__txt wrap">
       <p class="label">{label}</p>
@@ -460,15 +470,22 @@ def reviews(sid="recenze"):
 
 
 loc_line = " <span aria-hidden=\"true\">·</span> ".join(f'<span><b>{t["place"].replace("Olomouc, hlavní nádraží", "Hlavní nádraží")}</b> {t["auto"]}&nbsp;min</span>' for t in TRAVEL)
+KIT = [
+    ("Zděná stavba", "Porotherm, drží teplo a&nbsp;tlumí hluk", "M3 6h18v12H3zM3 10h18M3 14h18M8 6v4M15 6v4M11.5 10v4M6 14v4M17 14v4"),
+    ("Železobetonový strop", "Nevrže, patra jsou zvukově oddělená", "M3 9l9-4 9 4-9 4zM3 13l9 4 9-4M3 17l9 4 9-4"),
+    ("Plochá střecha", "Připravená na fotovoltaiku", "M4 20V11h16v9M2 11h20M6 8l2-3h8l2 3M10 5l-.6 3M14 5l.6 3M10 20v-5h4v5"),
+    ("Tepelné čerpadlo", "Teplo i&nbsp;teplá voda, bez plynu a&nbsp;komína", "M3 6h18v12H3zM15 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 1 0 0-7M15 9v6M12 12h6M5.5 9h3M5.5 12h3M5.5 15h3"),
+    ("Podlahové topení", "V&nbsp;celém domě, bez radiátorů", "M3 19h18M4 15c2-2 4 2 6 0s4 2 6 0 3 1 4 0M4 10.5c2-2 4 2 6 0s4 2 6 0 3 1 4 0M4 6c2-2 4 2 6 0s4 2 6 0 3 1 4 0"),
+    ("Okna s&nbsp;trojsklem", "Tichá, úsporná, venkovní žaluzie připravené", "M5 3h14v18H5zM5 12h14M12 3v18M7.5 5.5l2.5-.01M14.5 14.5h2.5"),
+]
 std_items = [(n, d) for _, _, _, _, items in STD_CATS for n, d, tag in items if tag == "in"][:6]
 GAL = ["hero", "street", "garden", "bungalow", "entry", "aerial", "hana"]
 
 home = f'''
 <section class="hero" data-hdr="light" aria-labelledby="hero-t">
   <div class="hero__media">{img("hero", "Zástupná vizualizace patrového domu v Blatci", "100vw", eager=True)}</div>
-  {seal("h", "hero__seal")}
   <div class="hero__in wrap">
-    <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega rise">Blatec</span><span class="script js-split" data-split="script">u&nbsp;Olomouce</span></h1>
+    <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega rise">Blatec</span><span class="script rise rise--s">u&nbsp;Olomouce</span></h1>
     <div class="hero__row">
       <p class="serif h5" data-r="fade">Nový domov</p>
       <div class="hero__mid on-dark">
@@ -518,8 +535,12 @@ home = f'''
 
 <section class="sec t-sky wrap" id="domy" data-hdr="ink" aria-labelledby="domy-t">
   <div class="types__head">{title("Právě teď", f"{len(FREE)} volných domů", hid="domy-t")}</div>
-  <div class="hl" data-hl>{"".join(hrow(h) for h in HOUSES)}</div>
-  <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,80px)" data-r><a class="btn btn--solid" href="nabidka.html"><span>Situace a&nbsp;celá nabídka</span>{ICON["arrow"]}</a></div>
+  <p class="p center hc__lead">Dům si otevřete klepnutím. Rezervované a&nbsp;prodané najdete v&nbsp;celé nabídce.</p>
+  <div class="hc" data-hc>
+    <div class="hc__track" data-hc-track>{"".join(hcard_house(h) for h in FREE)}</div>
+    <div class="hc__nav"><button type="button" data-hc-prev aria-label="Předchozí domy">{ICON["left"]}</button><span class="hc__bar" aria-hidden="true"><i></i></span><button type="button" data-hc-next aria-label="Další domy">{ICON["right"]}</button></div>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:clamp(36px,4vw,64px)"><a class="btn btn--solid" href="nabidka.html"><span>Celá nabídka a&nbsp;situace</span>{ICON["arrow"]}</a></div>
 </section>
 
 <section class="sec t-soil wrap" id="lokalita" data-hdr="light" aria-labelledby="lok-t">
@@ -536,7 +557,7 @@ home = f'''
 <section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="space-t">
   <div class="space__head">{title("pro život", "Prostor", hid="space-t", rev=True)}</div>
   <div class="space__grid">{"".join(zoom(n, "space") for n in ("garden", "bungalow", "entry", "street"))}</div>
-  <div class="space__list">{"".join(f'<div data-r><b>{n}</b><p class="p p--s muted">{d}</p></div>' for n, d in std_items)}</div>
+  <ul class="kit">{"".join(f'<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{ic}"/></svg><b>{n}</b><span class="p p--s">{d}</span></li>' for n, d, ic in KIT)}</ul>
   <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="standardy.html"><span>Všechny standardy</span>{ICON["arrow"]}</a></div>
 </section>
 
@@ -735,7 +756,7 @@ buy = [("Výběr a prohlídka", "Vyberete volný dům a prohlédnete si pozemek.
 faq = "".join(f'<div class="acc__i"><button type="button" class="acc__b" aria-expanded="false"><span class="serif h5">{q}</span><span class="acc__ic">{ICON["plus"]}</span></button><div class="acc__p" hidden><p class="p">{a}</p></div></div>' for q, a in FAQ)
 contact = f'''<section class="t-cream wrap" data-hdr="ink">
   <div class="phead"><nav class="crumbs label label--reg" aria-label="Drobečková navigace"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><span>Kontakt</span></nav>
-    <h1 class="ttl ttl--rev"><span class="serif mega rise">Kontakt</span><span class="script js-split" data-split="script">prohlídka</span></h1></div>
+    <h1 class="ttl ttl--rev"><span class="serif mega rise">Kontakt</span><span class="script rise rise--s">prohlídka</span></h1></div>
   <div class="ct">
     <div class="ct__people">
       <div class="person" data-r><span class="label label--reg">Výhradní prodejce · Impuls Reality</span><span class="serif h3">Pavel Čundrla</span><a class="serif h4" href="tel:{TEL}">{TEL_TXT}</a><a class="ulink p" style="justify-self:start" href="mailto:{MAIL}">{MAIL}</a></div>
@@ -755,7 +776,8 @@ contact = f'''<section class="t-cream wrap" data-hdr="ink">
 {reviews()}
 <section class="sec t-soil wrap" data-hdr="light">{footer()}</section>'''
 contact = contact.replace('<section class="sec t-soil wrap" data-hdr="light"><footer class="ftr">', '<section class="t-soil wrap" style="padding-bottom:40px" data-hdr="light"><footer class="ftr" style="margin-top:0">')
-page("kontakt.html", "Kontakt · Blatec | HP DOMY", "Domluvte si prohlídku rodinného domu v Blatci. Prodejce Pavel Čundrla, Impuls Reality, +420 776 294 498.", contact)
+faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": re.sub("<[^>]+>|&nbsp;", " ", q), "acceptedAnswer": {"@type": "Answer", "text": re.sub("<[^>]+>", "", a).replace("&nbsp;", " ")}} for q, a in FAQ]}
+page("kontakt.html", "Kontakt · Blatec | HP DOMY", "Domluvte si prohlídku rodinného domu v Blatci. Prodejce Pavel Čundrla, Impuls Reality, +420 776 294 498.", contact, jsonld=faq_ld)
 
 # ======================================================================= HOUSE PAGES
 def garden_dial(dirn):
@@ -798,7 +820,7 @@ for h in HOUSES:
   <div class="hero__media">{img(T["gal"][0], f"Zástupná vizualizace: {T['label'].lower()} dům", "100vw", eager=True)}</div>
   <div class="dhero__in wrap">
     <nav class="crumbs label label--reg" aria-label="Drobečková navigace" style="margin:0"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><a class="ulink" href="nabidka.html">Nabídka</a><span aria-hidden="true">/</span><span>Dům {hid}</span></nav>
-    <h1 class="dhero__title ttl ttl--rev on-photo" id="d-t"><span class="serif mega rise">Dům {hid}</span><span class="script js-split" data-split="script">{T["label"].lower()}</span></h1>
+    <h1 class="dhero__title ttl ttl--rev on-photo" id="d-t"><span class="serif mega rise">Dům {hid}</span><span class="script rise rise--s">{T["label"].lower()}</span></h1>
     <dl class="dfacts" data-r>
       <div><dt class="label label--reg">Stav</dt><dd>{STATUS[h["status"]]}</dd></div>
       <div><dt class="label label--reg">Cena</dt><dd>{price(h)}</dd></div>
