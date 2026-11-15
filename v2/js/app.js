@@ -354,7 +354,10 @@
     // pull-in photo: framed card opens to full screen
     $$('.zin').forEach(sec => {
       const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true } });
-      tl.fromTo($('.zin__media', sec), { clipPath: 'inset(16% 28% 16% 28%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: .7, ease: 'none' }, 0)
+      // starts as an upside-down arch (flat top, round bottom) and opens to full screen
+      const sx = innerWidth < 761 ? 9 : 27, sy = innerWidth < 761 ? 17 : 13;
+      const r = 50 - sx;  // bottom radius = half the card width, so the bottom is a true semicircle
+      tl.fromTo($('.zin__media', sec), { clipPath: `inset(${sy}% ${sx}% ${sy}% ${sx}% round 0vw 0vw ${r}vw ${r}vw)` }, { clipPath: 'inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)', duration: .7, ease: 'none' }, 0)
         .fromTo($('.zin__media img', sec), { scale: 1.35 }, { scale: 1, duration: 1, ease: 'none' }, 0)
         .fromTo($('.zin__txt', sec), { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .6);
     });

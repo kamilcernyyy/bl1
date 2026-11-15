@@ -488,7 +488,6 @@ home = f'''
     <div class="hero__row">
       <p class="serif h5" data-r="fade">Nový domov</p>
       <div class="hero__mid on-dark">
-        <a class="grate" href="o-projektu.html#recenze" data-r="fade"><b>{str(GOOGLE["rating"]).replace(".", ",")}</b><i aria-hidden="true">★★★★★</i><span>Google · {GOOGLE["count"]} recenzí</span></a>
         <p class="label" data-r="fade">14 rodinných domů · {len(FREE)} volných · od {MINP_TXT} mil. Kč</p>
         <div class="hero__cta" data-r="fade"><a class="btn btn--solid" href="nabidka.html"><span>Vybrat volný dům</span>{ICON["arrow"]}</a><button class="btn" type="button" data-book><span>Domluvit prohlídku</span></button></div>
       </div>
@@ -505,6 +504,12 @@ home = f'''
       <p class="p p--s center" data-r>Přízemní i&nbsp;patrové domy od HP DOMY. Každý s&nbsp;vlastní zahradou a&nbsp;dvěma stáními u&nbsp;domu. Zděné, s&nbsp;tepelným čerpadlem a&nbsp;podlahovým topením.</p>
       <span data-r>{EMBLEM}</span>
     </div>
+    <a class="rate" href="#recenze">
+      <span class="rate__line" aria-hidden="true"></span>
+      <span class="rate__head"><span class="script">Hodnocení</span><span class="rate__num"><b class="serif">{str(GOOGLE["rating"]).replace(".", ",")}</b><span class="rate__stars" aria-hidden="true">★★★★★</span></span></span>
+      <span class="rate__q serif">„{esc(rv[0][3][:110].rsplit(" ", 1)[0] + "…" if len(rv[0][3]) > 110 else rv[0][3])}“</span>
+      <span class="rate__foot"><span class="label label--reg">HP DOMY na Googlu · {GOOGLE["count"]} recenzí</span><span class="label rate__go">Přečíst {ICON["arrow"]}</span></span>
+    </a>
   </div>
 </section>
 
