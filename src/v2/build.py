@@ -234,13 +234,16 @@ def modal():
 
 
 def footer():
-    links = "".join(f'<a class="p--s" href="{u}">{t}</a>' for u, t in NAV)
+    links = '<span aria-hidden="true">·</span>'.join(f'<a href="{u}">{t}</a>' for u, t in NAV)
     return f'''<footer class="ftr">
-      <div><a class="logo" href="index.html">{LOGO}</a><p class="p p--s" style="margin-top:14px">14 rodinných domů v&nbsp;Blatci u&nbsp;Olomouce.</p></div>
-      <div><span class="label">Stránky</span>{links}</div>
-      <div><span class="label">Prodej</span><span class="p--s">Pavel Čundrla, Impuls Reality</span><a class="p--s ulink" style="justify-self:start" href="tel:{TEL}">{TEL_TXT}</a><a class="p--s ulink" style="justify-self:start" href="mailto:{MAIL}">{MAIL}</a></div>
-      <div><span class="label">Developer</span><span class="p--s">HP DOMY s.r.o.</span><span class="p--s">I. P. Pavlova 692/143, Olomouc</span><span class="p--s muted">Vizualizace jsou ilustrační.</span></div>
-      <div class="ftr__legal"><span class="label label--reg muted">© 2026 HP DOMY · Blatec (pracovní název)</span><a class="label label--reg ulink" href="../index.html">Zobrazit směr A</a></div>
+      <nav class="ftr__nav" aria-label="Stránky webu">{links}</nav>
+      <div class="ftr__cols">
+        <div><span class="label">Prodej</span><b class="serif">Pavel Čundrla</b><span class="p--s">Impuls Reality</span><a class="p--s ulink" href="tel:{TEL}">{TEL_TXT}</a><a class="p--s ulink" href="mailto:{MAIL}">{MAIL}</a></div>
+        <div><span class="label">Developer</span><b class="serif">HP DOMY s.r.o.</b><span class="p--s">I. P. Pavlova 692/143</span><span class="p--s">783 01 Olomouc</span></div>
+        <div><span class="label">Místo</span><b class="serif">Blatec na Hané</b><span class="p--s">okres Olomouc</span><span class="p--s">8 km jižně od Olomouce</span></div>
+      </div>
+      <div class="ftr__legal"><span class="label label--reg">© 2026 HP DOMY · Vizualizace jsou ilustrační</span><a class="label label--reg ulink" href="../index.html">Zobrazit směr A</a></div>
+      <div class="ftr__mark" aria-hidden="true"><span>Blatec</span></div>
     </footer>'''
 
 
@@ -285,7 +288,7 @@ def phead(crumb, script, words, lead=None, extra=""):
 
 def final(script="Domluvte si", words="Prohlídku", text=None, cta=None, after=""):
     cta = cta or '<button class="btn btn--solid" type="button" data-book>Napsat prodejci</button>'
-    return f'''<section class="sec t-soil wrap" id="prohlidka" data-hdr="light" aria-labelledby="fin-t">
+    return f'''<section class="sec sec--end t-soil wrap" id="prohlidka" data-hdr="light" aria-labelledby="fin-t">
   <div class="final">
     {title(script, words, hid="fin-t")}
     {f'<p class="p center" data-r>{text}</p>' if text else ""}
@@ -760,7 +763,7 @@ contact = f'''<section class="t-cream wrap" data-hdr="ink">
 </section>
 {reviews()}
 <section class="sec t-soil wrap" data-hdr="light">{footer()}</section>'''
-contact = contact.replace('<section class="sec t-soil wrap" data-hdr="light"><footer class="ftr">', '<section class="t-soil wrap" style="padding-bottom:40px" data-hdr="light"><footer class="ftr" style="margin-top:0">')
+contact = contact.replace('<section class="sec t-soil wrap" data-hdr="light"><footer class="ftr">', '<section class="sec--end t-soil wrap" data-hdr="light"><footer class="ftr" style="margin-top:0">')
 faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": re.sub("<[^>]+>|&nbsp;", " ", q), "acceptedAnswer": {"@type": "Answer", "text": re.sub("<[^>]+>", "", a).replace("&nbsp;", " ")}} for q, a in FAQ]}
 page("kontakt.html", "Kontakt · Blatec | HP DOMY", "Domluvte si prohlídku rodinného domu v Blatci. Prodejce Pavel Čundrla, Impuls Reality, +420 776 294 498.", contact, jsonld=faq_ld)
 

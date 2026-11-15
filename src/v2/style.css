@@ -890,3 +890,34 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 /* intro flows straight into the clouds (no empty gap) */
 .sec--intro{padding-bottom:clamp(28px,4vw,56px)}
 .sky__fade{background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 4%,rgba(244,238,229,0) 34%)}
+
+/* =====================================================================
+   FOOTER · part of the page, ends with BLATEC rising out of the fields
+   ===================================================================== */
+.sec--end{padding-bottom:0!important;overflow:hidden}
+.ftr{display:grid;grid-template-columns:1fr;gap:0;margin-top:clamp(70px,9vw,140px);padding-top:0;border-top:1px solid rgba(201,162,101,.45);text-align:center}
+.ftr>div{min-width:0}
+.ftr__nav{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:6px clamp(12px,1.6vw,24px);padding:clamp(28px,3.4vw,48px) 0;border-bottom:1px solid rgba(201,162,101,.45)}
+.ftr__nav a{font:400 clamp(20px,2vw,34px)/1.1 var(--f-serif);text-transform:uppercase;color:rgba(244,238,229,.78);transition:color .3s}
+.ftr__nav span{color:var(--gold)}
+@media (hover:hover){.ftr__nav a:hover{color:var(--cream)}}
+.ftr__cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid rgba(201,162,101,.45)}
+.ftr__cols>div{display:grid;justify-items:center;align-content:start;gap:8px;padding:clamp(26px,3vw,44px) 14px}
+.ftr__cols>div+div{border-left:1px solid rgba(201,162,101,.45)}
+.ftr__cols .label{color:var(--gold);margin-bottom:4px}
+.ftr__cols b{font-weight:400;font-size:clamp(22px,1.9vw,32px);line-height:1.05}
+.ftr__cols .p--s{opacity:.75}
+.ftr__cols a{overflow-wrap:anywhere}
+.ftr__legal{display:flex;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;padding:20px 0;margin:0;border-top:0!important;opacity:.7}
+.ftr__mark{margin:0 calc(-1 * var(--gut));overflow:hidden;line-height:0;padding-top:1vw}
+.ftr__mark span{display:block;font:400 37vw/1 var(--f-serif);text-transform:uppercase;letter-spacing:-.035em;padding-top:.02em;margin-bottom:-.04em;
+  color:var(--gold);background:url(img/hana-1920.webp) 50% 80%/cover no-repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;will-change:transform}
+@media (max-width:760px){
+  .ftr__nav{gap:4px 10px}.ftr__nav a{font-size:19px}
+  .ftr__cols{grid-template-columns:1fr}
+  .ftr__cols>div+div{border-left:0;border-top:1px solid rgba(201,162,101,.45)}
+  .ftr__cols>div{padding:22px 0}
+  .ftr__legal{justify-content:center;text-align:center}
+}
+.ftr>.ftr__legal{display:flex;justify-content:space-between;align-items:center}
+@media (max-width:760px){.ftr>.ftr__legal{justify-content:center;flex-direction:column;gap:8px}}

@@ -361,6 +361,12 @@
         .fromTo($('.zin__media img', sec), { scale: 1.35 }, { scale: 1, duration: 1, ease: 'none' }, 0)
         .fromTo($('.zin__txt', sec), { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .6);
     });
+    // footer: BLATEC rises out of the page, the fields drift inside the letters
+    $$('.ftr__mark span').forEach(w => {
+      const st = { trigger: w.parentElement, start: 'top bottom', end: 'bottom bottom', scrub: true };
+      gsap.fromTo(w, { yPercent: 55 }, { yPercent: 0, ease: 'none', scrollTrigger: st });
+      gsap.fromTo(w, { backgroundPosition: '50% 55%' }, { backgroundPosition: '50% 100%', ease: 'none', scrollTrigger: { ...st, start: 'top bottom' } });
+    });
     // horizontal tracks (desktop): vertical scroll drives the track sideways
     const mm = gsap.matchMedia();
     mm.add('(min-width: 761px)', () => {
