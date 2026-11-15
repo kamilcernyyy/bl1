@@ -869,3 +869,20 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 .rate__go svg{width:11px;height:11px;transition:transform .5s var(--out)}
 @media (hover:hover){.rate:hover .rate__go svg{transform:rotate(45deg)}}
 @media (max-width:760px){.zin__media{clip-path:inset(17% 9% 17% 9% round 0vw 0vw 41vw 41vw)}}
+
+/* =====================================================================
+   ROUND 5 · Czech diacritics never collide: every multi-line serif line
+   gets room for Ů, Č, Ř, Í above the capitals
+   ===================================================================== */
+.serif.mega{line-height:.98}.serif.h1{line-height:1}.serif.h2{line-height:1.02}.serif.h3{line-height:1.04}.serif.h4,.h4{line-height:1.1}.serif.h5,.h5{line-height:1.1}
+.serif.mega,.serif.h1,.serif.h2,.serif.h3{padding-top:.06em}
+/* script accents never cover the diacritics of the capitals below them:
+   the accent sits just above the word and passes behind it */
+.ttl>.serif{z-index:1}
+.ttl:not(.ttl--rev)>.script{z-index:0;margin-bottom:-.04em;transform:rotate(-2.5deg);-webkit-text-stroke:0;text-shadow:none}
+.ttl>.script{white-space:normal;text-wrap:balance;line-height:.98;max-width:100%}
+.ttl--rev>.script{z-index:2;margin-top:-.3em;-webkit-text-stroke:.1em var(--halo,var(--cream));paint-order:stroke fill}
+.phead .ttl>.script{margin-top:-.3em}
+.on-photo>.script{-webkit-text-stroke:0!important}
+.modal .ttl>.script,.ttl--s>.script{margin-bottom:0}
+.serif.mega{line-height:1.02}.serif.h1{line-height:1.06}.serif.h2{line-height:1.08}.serif.h3{line-height:1.08}

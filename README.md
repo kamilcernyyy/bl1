@@ -32,6 +32,8 @@ Druhý designový směr inspirovaný Era Residence: velká didotová písma verz
 - Na mobilu je hlavička po odrolování plná lišta (krémová nad světlými sekcemi, bordó nad tmavými)
 - Logo je otáčivá pečeť (točí se podle rolování), text se při rolování nikdy neskrývá ani neposouvá – animují se jen fotky (ořez při příchodu, paralaxa, mraky)
 - Mraky jsou opakující se dlaždice (`v2/img/cloud-a/b.webp`, 1100 × 504 px), JS dopočítá šířku dlaždice, takže smyčka nemá šev
+- Menu: vycentrovaný seznam, dole telefon a prohlídka; vejde se bez rolování od 375 × 560 px
+- Psací akcenty nad nadpisy nikdy nezakrývají háčky, čárky a kroužky (akcent leží za verzálkami), řádkování velkých nadpisů má místo na Ů, Č, Ř
 - Nadpisy stránek naskakují čistě přes CSS, takže se vykreslí hned (LCP kolem 1 s i na pomalém 4G)
 - Stránky mají `noindex`, aby se v Googlu nepletly se směrem A. Po výběru směru `noindex` odstranit.
 

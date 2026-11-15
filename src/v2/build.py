@@ -504,12 +504,6 @@ home = f'''
       <p class="p p--s center" data-r>Přízemní i&nbsp;patrové domy od HP DOMY. Každý s&nbsp;vlastní zahradou a&nbsp;dvěma stáními u&nbsp;domu. Zděné, s&nbsp;tepelným čerpadlem a&nbsp;podlahovým topením.</p>
       <span data-r>{EMBLEM}</span>
     </div>
-    <a class="rate" href="#recenze">
-      <span class="rate__line" aria-hidden="true"></span>
-      <span class="rate__head"><span class="script">Hodnocení</span><span class="rate__num"><b class="serif">{str(GOOGLE["rating"]).replace(".", ",")}</b><span class="rate__stars" aria-hidden="true">★★★★★</span></span></span>
-      <span class="rate__q serif">„{esc(rv[0][3][:110].rsplit(" ", 1)[0] + "…" if len(rv[0][3]) > 110 else rv[0][3])}“</span>
-      <span class="rate__foot"><span class="label label--reg">HP DOMY na Googlu · {GOOGLE["count"]} recenzí</span><span class="label rate__go">Přečíst {ICON["arrow"]}</span></span>
-    </a>
   </div>
 </section>
 
@@ -569,19 +563,6 @@ home = f'''
 
 {reviews()}
 
-<section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="dev-t">
-  <div class="stmt">
-    <h2 class="serif h1 js-split" data-split="lines" id="dev-t">HP DOMY</h2>
-    <p class="p center" data-r>Stavitel rodinných domů s&nbsp;dlouholetou praxí. Blatec je jeho nový projekt u&nbsp;Olomouce.</p>
-  </div>
-  <dl class="facts">
-    <div data-r><dt class="label label--reg">Developer</dt><dd class="serif h5">HP DOMY</dd></div>
-    <div data-r><dt class="label label--reg">Prodej</dt><dd class="serif h5">Impuls Reality</dd></div>
-    <div data-r><dt class="label label--reg">Domů v&nbsp;projektu</dt><dd class="serif h5">14</dd></div>
-    <div data-r><dt class="label label--reg">Lokalita</dt><dd class="serif h5">Blatec, okres Olomouc</dd></div>
-  </dl>
-  <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="o-projektu.html"><span>O projektu</span>{ICON["arrow"]}</a></div>
-</section>
 
 {final(text="Prodejce vám ukáže pozemek na místě, projde s&nbsp;vámi půdorysy a&nbsp;poradí s&nbsp;financováním.")}
 '''
