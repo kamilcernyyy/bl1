@@ -2,7 +2,7 @@
 Usage: python3 scene.py <shot> <out.png> [samples] [width] [height]
 Shots: hero, street, bungalow, garden, aerial
 """
-import sys, math, random
+import sys, math, random, os
 import bpy
 from mathutils import Vector
 
@@ -99,7 +99,18 @@ M = {
     "white": mat("white", (0.82, 0.82, 0.80), 0.4),
 }
 
-CLAY = True
+LOOK = os.environ.get("LOOK", "clay")
+CLAY = LOOK == "clay"
+if LOOK == "color":
+    # Hanák palette: warm plaster, oak, lush lawn, olive trees, warm paving
+    M["plaster"] = noise_mat("plaster_w", (0.80, 0.765, 0.70), (0.86, 0.83, 0.765), 40, 0.85, 0.03)
+    M["grass"] = noise_mat("grass_w", (0.045, 0.13, 0.02), (0.11, 0.23, 0.035), 3, 0.95, 0.1)
+    M["leaf"] = noise_mat("leaf_w", (0.06, 0.15, 0.04), (0.17, 0.28, 0.07), 4, 0.8, 0.2)
+    M["leaf2"] = noise_mat("leaf2_w", (0.17, 0.19, 0.05), (0.32, 0.32, 0.10), 4, 0.8, 0.2)
+    M["paving"] = noise_mat("paving_w", (0.42, 0.39, 0.34), (0.55, 0.51, 0.45), 25, 0.8, 0.1)
+    M["gravel"] = noise_mat("gravel_w", (0.50, 0.45, 0.38), (0.66, 0.60, 0.51), 80, 0.9, 0.3)
+    M["car"] = mat("car_w", (0.03, 0.05, 0.09), 0.25, 0.8, coat=1.0)
+    M["white"] = mat("white_w", (0.86, 0.83, 0.77), 0.4)
 if CLAY:
     def _c(name, rgb, rough=0.8):
         M[name] = noise_mat(name + "_c", tuple(v * 0.97 for v in rgb), rgb, 30, rough, 0.04)
@@ -319,7 +330,13 @@ def world(strength=1.0, sun_elev=18, sun_rot=210, az=-35):
         sky.sun_rotation = math.radians(sun_rot)
         sky.altitude = 200
         sky.air_density = 1.2
-        sky.dust_density = 1.5
+        sky.dust_density = 0.25 if LOOK == 'color' else 1.5
+        if LOOK == 'color':
+            sky.air_density = 1.0
+            try:
+                sky.ozone_density = 3.0
+            except Exception:
+                pass
         sky.sun_intensity = 0.4
     except Exception as ex:
         print("sky props", ex)
@@ -342,6 +359,7 @@ def camera(loc, target, lens=35, shift_y=0.0):
     c.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler()
     c.data.lens = lens
     c.data.shift_y = shift_y
+    c.data.clip_end = 100000
     scene.camera = c
 
 def rng_trees(n, xr, yr, avoid):
@@ -447,6 +465,38 @@ elif shot == "aerial":
     rng_trees(24, (-100, 100), (22, 70), [])
     camera((30, -60, 48), (0, 0, 0), 40)
 
+elif shot == "hana":
+    world(1.1, 16, 215)
+    ground("grass", 80000)
+    box("road", (0, -18, 0.0), (300, 6.5, 0.02), M["asphalt"])
+    for i, x in enumerate(range(-63, 70, 21)):
+        plot(x, 0)
+        (house_bungalow if i % 2 else house_two_storey)(x, 1.5, mirror=(i % 2 == 0))
+    rng_trees(30, (-140, 140), (24, 55), [])
+    camera((-20, -150, 46), (10, 420, 0), 30)
+
+# ---------- Hanák fields around the street (colour look only) ----------
+if LOOK == "color":
+    wheat = noise_mat("wheat", (0.55, 0.40, 0.13), (0.70, 0.54, 0.20), 2, 0.95, 0.15)
+    young = noise_mat("young", (0.20, 0.32, 0.06), (0.30, 0.42, 0.09), 2, 0.95, 0.1)
+    rape = noise_mat("rape", (0.75, 0.62, 0.08), (0.85, 0.72, 0.12), 2, 0.9, 0.1)
+    soilf = noise_mat("soilf", (0.16, 0.10, 0.06), (0.24, 0.16, 0.09), 3, 0.95, 0.2)
+    pal = [wheat, young, wheat, soilf, young, rape, wheat, young]
+    random.seed(11)
+    for row, y0 in enumerate(range(60, 1500 if shot == "hana" else 700, 70)):
+        xmax = 1500 if shot == "hana" else 700
+        x = -xmax
+        while x < xmax:
+            w = random.choice([80, 110, 140, 170])
+            box("field", (x + w / 2, y0 + 30, 0.015), (w - 2, 66, 0.02), random.choice(pal))
+            x += w
+    for row, y0 in enumerate(range(-90, -700, -70)):
+        x = -700
+        while x < 700:
+            w = random.choice([80, 110, 140, 170])
+            box("field", (x + w / 2, y0 - 30, 0.015), (w - 2, 66, 0.02), random.choice(pal))
+            x += w
+
 # ---------- render ----------
 r = scene.render
 r.engine = 'CYCLES'
@@ -466,8 +516,9 @@ r.resolution_y = H
 r.resolution_percentage = 100
 r.image_settings.file_format = 'PNG'
 try:
-    scene.view_settings.view_transform = 'AgX'
-    scene.view_settings.look = 'AgX - Medium High Contrast'
+    scene.view_settings.view_transform = 'Standard' if LOOK == 'color' else 'AgX'
+    if LOOK != 'color':
+        scene.view_settings.look = 'AgX - Medium High Contrast'
 except Exception:
     try:
         scene.view_settings.look = 'Medium High Contrast'

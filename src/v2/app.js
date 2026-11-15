@@ -78,20 +78,57 @@
   let lastFocus = null;
   const openBook = house => { closeMenu(); lastFocus = document.activeElement; modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); lock(true);
     form.hidden = false; thanks.hidden = true; if (house) form.house.value = house; setTimeout(() => form.name.focus(), 60); };
-  const closeBook = () => { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); lock(false); lastFocus && lastFocus.focus(); };
+  const closeBook = () => { if (!modal.classList.contains('is-open')) return; modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); lock(false); lastFocus && lastFocus.focus(); };
   document.addEventListener('click', e => { const b = e.target.closest('[data-book]'); if (b) { e.preventDefault(); openBook(b.dataset.house); } });
   $$('[data-close]', modal).forEach(b => b.addEventListener('click', closeBook));
-  form.addEventListener('submit', e => {
+  $$('.bookf').forEach(f0 => f0.addEventListener('submit', e => {
     e.preventDefault();
-    let ok = true;
+    const fm = e.currentTarget; let ok = true;
     [['name', v => v.trim().length > 1, 'Vyplňte jméno'], ['tel', v => v.replace(/\D/g, '').length >= 9, 'Zadejte telefon']].forEach(([n, test, msg]) => {
-      const f = form[n].closest('.field'); const good = test(form[n].value);
-      f.classList.toggle('is-err', !good); let s = $('small', f);
-      if (!good) { if (!s) { s = document.createElement('small'); f.appendChild(s); } s.textContent = msg; ok = false; } else s && s.remove();
+      const f = fm[n].closest('.field'); const good = test(fm[n].value);
+      f.classList.toggle('is-err', !good); let sm = $('small', f);
+      if (!good) { if (!sm) { sm = document.createElement('small'); f.appendChild(sm); } sm.textContent = msg; ok = false; } else sm && sm.remove();
     });
-    if (!ok) { $('.is-err input', form).focus(); return; }
-    form.hidden = true; thanks.hidden = false;
-  });
+    if (!ok) { $('.is-err input', fm).focus(); return; }
+    fm.hidden = true; fm.parentElement.querySelector('.thanks').hidden = false;
+  }));
+  // contact page: #dum-4 preselects the house
+  const cf = $('.ct .bookf'); const hm = location.hash.match(/^#dum-(\d+)$/); if (cf && hm) cf.house.value = hm[1];
+
+  /* ---------- lightbox: every zoomable photo ---------- */
+  const lbx = $('#lbx'), lImg = $('img', lbx); let lGroup = [], lIdx = 0, lFrom = null;
+  const lShow = i => { lIdx = (i + lGroup.length) % lGroup.length; const b = lGroup[lIdx];
+    lImg.src = b.dataset.src; lImg.alt = b.dataset.cap || ''; $('.lbx__cap', lbx).textContent = b.dataset.cap || '';
+    $('.lbx__n', lbx).textContent = String(lIdx + 1).padStart(2, '0') + ' / ' + String(lGroup.length).padStart(2, '0');
+    $$('.lbx__nav', lbx).forEach(n => n.hidden = lGroup.length < 2);
+    if (motion) gsap.fromTo(lImg, { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .7, ease: OUT }); };
+  const lOpen = b => { lFrom = b; lGroup = $$(`[data-zoom="${b.dataset.zoom}"]`).filter(x => x.offsetParent !== null || x.closest('.hs')); lShow(lGroup.indexOf(b)); lbx.classList.add('is-open'); lbx.setAttribute('aria-hidden', 'false'); lock(true); setTimeout(() => $('.lbx__x', lbx).focus(), 50); };
+  const lClose = () => { if (!lbx.classList.contains('is-open')) return; lbx.classList.remove('is-open'); lbx.setAttribute('aria-hidden', 'true'); lock(false); lFrom && lFrom.focus(); };
+  document.addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (b) { e.preventDefault(); lOpen(b); } });
+  $('[data-lbx-close]', lbx).addEventListener('click', lClose);
+  $('[data-lbx-prev]', lbx).addEventListener('click', () => lShow(lIdx - 1));
+  $('[data-lbx-next]', lbx).addEventListener('click', () => lShow(lIdx + 1));
+  lbx.addEventListener('click', e => { if (e.target === lbx) lClose(); });
+  addEventListener('keydown', e => { if (!lbx.classList.contains('is-open')) return; if (e.key === 'Escape') lClose(); if (e.key === 'ArrowRight') lShow(lIdx + 1); if (e.key === 'ArrowLeft') lShow(lIdx - 1); });
+  let tx = null; lbx.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  lbx.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) lShow(lIdx + (d < 0 ? 1 : -1)); tx = null; });
+
+  /* ---------- FAQ ---------- */
+  $$('.acc__b').forEach(b => b.addEventListener('click', () => { const open = b.getAttribute('aria-expanded') === 'true'; b.setAttribute('aria-expanded', !open); b.nextElementSibling.hidden = open; if (motion && !open) gsap.from(b.nextElementSibling, { opacity: 0, y: -10, duration: .5, ease: OUT }); ScrollTrigger && ScrollTrigger.refresh(); }));
+
+  /* ---------- gallery filter ---------- */
+  $$('[data-g]').forEach(b => b.addEventListener('click', () => { const g = b.dataset.g;
+    $$('[data-g]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    $$('.gal__i').forEach(i => { const v = g === 'all' || i.dataset.tags.split(' ').includes(g); i.hidden = !v; });
+    if (motion) { gsap.fromTo($$('.gal__i:not([hidden]) .zf'), { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .8, ease: OUT, stagger: .05 }); ScrollTrigger.refresh(); } }));
+
+  /* ---------- travel modes ---------- */
+  const tv = $('[data-travel]');
+  if (tv) $$('[data-mode]', tv).forEach(b => b.addEventListener('click', () => { const m = b.dataset.mode;
+    $$('[data-mode]', tv).forEach(x => x.setAttribute('aria-pressed', x === b));
+    $$('[data-t]', tv).forEach(li => { const v = D.travel[li.dataset.t][m]; const el = $('[data-min]', li); li.classList.toggle('is-na', v == null);
+      if (motion && v != null) gsap.fromTo(el, { innerText: +el.textContent || 0 }, { innerText: v, duration: .8, ease: 'power2.out', snap: { innerText: 1 } }); else el.textContent = v == null ? '–' : v; }); }));
+
   addEventListener('keydown', e => { if (e.key === 'Escape') { closeBook(); closeMenu(); } });
 
   /* ---------- house type slider ---------- */
@@ -109,10 +146,13 @@
           ScrollTrigger.refresh(); } });
       } else { a.classList.remove('is-on'); b.classList.add('is-on'); }
       cur = next; $('[data-tcur]', ts).textContent = cur + 1;
+      $$('[data-ttab]', ts).forEach(t => t.setAttribute('aria-selected', +t.dataset.ttab === cur));
       $('.tpag__bar i', ts).style.inset = cur ? '0 0 0 50%' : '0 50% 0 0';
     };
     $('[data-tprev]', ts).addEventListener('click', () => show(cur - 1));
     $('[data-tnext]', ts).addEventListener('click', () => show(cur + 1));
+    $$('[data-ttab]', ts).forEach(t => t.addEventListener('click', () => show(+t.dataset.ttab)));
+    $('.ttabs', ts).addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { show(cur + (e.key === 'ArrowRight' ? 1 : -1)); $$('[data-ttab]', ts)[cur].focus(); } });
   }
 
   /* ---------- reviews slider ---------- */
@@ -204,6 +244,34 @@
     // arch opens up as it rises
     const arch = $('.arch__bg');
     if (arch) gsap.fromTo(arch, { scaleX: .72 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: arch, start: 'top 95%', end: 'top 25%', scrub: true } });
+    // clouds: cream -> drifting clouds -> landscape
+    $$('.sky').forEach(sec => {
+      const st = { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true };
+      const tl = gsap.timeline({ scrollTrigger: st });
+      tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .25, ease: 'none' }, 0)
+        .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1, yPercent: 0 }, { opacity: 0, scale: 1.7, yPercent: -10, duration: .6, ease: 'power1.in' }, .05)
+        .fromTo($('.sky__cl--a', sec), { opacity: .95, yPercent: 0 }, { opacity: .55, yPercent: -40, duration: .9, ease: 'none' }, 0)
+        .fromTo($('.sky__photo img', sec), { scale: 1.25 }, { scale: 1, duration: 1, ease: 'none' }, 0)
+        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .5);
+      $$('.sky__drift', sec).forEach((d, k) => gsap.to(d, { xPercent: -50, duration: k ? 90 : 140, ease: 'none', repeat: -1 }));
+    });
+    // pull-in photo: framed card opens to full screen
+    $$('.zin').forEach(sec => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true } });
+      tl.fromTo($('.zin__media', sec), { clipPath: 'inset(16% 28% 16% 28%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: .7, ease: 'none' }, 0)
+        .fromTo($('.zin__media img', sec), { scale: 1.35 }, { scale: 1, duration: 1, ease: 'none' }, 0)
+        .fromTo($('.zin__txt', sec), { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .6);
+    });
+    // horizontal tracks (desktop): vertical scroll drives the track sideways
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 761px)', () => {
+      $$('.hs').forEach(sec => {
+        const track = $('[data-hs]', sec), bar = $('.hs__bar i', sec);
+        const dist = () => Math.max(0, track.scrollWidth - innerWidth + parseFloat(getComputedStyle(track).paddingLeft));
+        const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: $('.hs__stick', sec), scrub: .6, invalidateOnRefresh: true, anticipatePin: 1 } });
+        tl.to(track, { x: () => -dist(), ease: 'none' }, 0).fromTo(bar, { scaleX: 0 }, { scaleX: 1, ease: 'none' }, 0);
+      });
+    });
     ScrollTrigger.refresh();
   };
   // fonts first so split lines are measured right; never wait longer than 1.2 s

@@ -22,7 +22,9 @@ Design systém návrhu je na `index.html#komponenty`.
 
 Druhý designový směr inspirovaný Era Residence: velká didotová písma verzálkami, psací akcenty, střídání krémové, nebeské modré, okrové a tmavé „ornice“, plynulé rolování a přechody mezi stránkami. Data domů bere ze stejného `src/build.py`, takže čísla jsou v obou směrech vždy stejná.
 
-- `v2/index.html` úvod, `v2/nabidka.html` situace + seznam, `v2/dum-1.html` … `v2/dum-14.html` detaily
+- Celý web: `v2/index.html`, `o-projektu`, `lokalita`, `nabidka`, `standardy`, `galerie`, `kontakt` a `dum-1` … `dum-14`
+- Efekty: mraky při rolování (krémová → mraky → krajina), vtažení do fotky, vodorovně rolované galerie a kroky, zvětšení každé fotky (lightbox)
+- Barevné vizualizace v `v2/img/` (render `LOOK=color python3 tools/scene.py <záběr> …`, záběr `hana` = krajina s poli), mraky jsou procedurální
 - Sestavení: `python3 src/v2/build.py` (zdroje v `src/v2/`: `build.py`, `style.css`, `app.js`)
 - Písma: Instrument Serif, Pinyon Script, Archivo Expanded (lokálně v `v2/fonts/`, s češtinou)
 - Pohyb: GSAP 3.13 + ScrollTrigger + SplitText, Lenis (jen kolečko myši, dotyk zůstává nativní)
