@@ -74,10 +74,17 @@
   /* ---------- menu ---------- */
   const menu = $('#menu');
   function openMenu() { menu.classList.add('is-open'); menu.setAttribute('aria-hidden', 'false'); root.classList.add('menu-on'); $$('[data-menu]').forEach(b => b.setAttribute('aria-expanded', 'true')); lock(true);
-    if (motion) gsap.fromTo($$('.menu__nav a, .menu__claims p, .menu__foot', menu), { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1, ease: OUT, stagger: .05, delay: .35 });
+    if (motion) { gsap.fromTo($$('.menu__nav a', menu), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: .9, ease: OUT, stagger: .045, delay: .35, clearProps: 'transform,opacity' });
+      gsap.fromTo($$('.menu__media, .menu__bar', menu), { opacity: 0 }, { opacity: 1, duration: .9, ease: OUT, delay: .45, clearProps: 'opacity' }); }
     setTimeout(() => $('.menu__close', menu).focus(), 50); }
   function closeMenu() { if (!menu.classList.contains('is-open')) return; menu.classList.remove('is-open'); menu.setAttribute('aria-hidden', 'true'); root.classList.remove('menu-on'); $$('[data-menu]').forEach(b => b.setAttribute('aria-expanded', 'false')); lock(false); }
   $$('[data-menu]').forEach(b => b.addEventListener('click', openMenu));
+  // the photo follows the link under the pointer or focus
+  const mFigs = $$('.menu__media figure', menu), mLinks = $$('.menu__nav a', menu);
+  const mShow = k => { mFigs.forEach(f => f.classList.toggle('is-on', f.dataset.mi === k)); mLinks.forEach(a => a.classList.toggle('is-on', a.dataset.mi === k)); };
+  const mCur = (mLinks.find(a => a.hasAttribute('aria-current')) || mLinks[0]).dataset.mi;
+  mLinks.forEach(a => { a.addEventListener('mouseenter', () => mShow(a.dataset.mi)); a.addEventListener('focus', () => mShow(a.dataset.mi)); });
+  $('.menu__nav', menu).addEventListener('mouseleave', () => mShow(mCur));
   $('[data-menu-close]').addEventListener('click', closeMenu);
 
   /* ---------- booking modal ---------- */

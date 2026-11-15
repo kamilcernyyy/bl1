@@ -179,15 +179,27 @@ NAV = [("index.html", "Úvod"), ("o-projektu.html", "O projektu"), ("lokalita.ht
        ("standardy.html", "Standardy"), ("galerie.html", "Galerie"), ("kontakt.html", "Kontakt")]
 
 
-def menu():
-    links = "".join(f'<a href="{u}"><span class="menu__n">{k + 1:02d}</span>{roll(t)}</a>' for k, (u, t) in enumerate(NAV))
+MENU_MEDIA = {"index.html": ("hero", "Blatec u Olomouce", "14 rodinných domů"), "o-projektu.html": ("street", "O projektu", "Dva typy domů, jedna ulice"),
+              "lokalita.html": ("hana", "Lokalita", "8 km od Olomouce"), "nabidka.html": ("aerial", "Nabídka domů", f"{len(FREE)} volných"),
+              "standardy.html": ("entry", "Standardy", "Zděné, s tepelným čerpadlem"), "galerie.html": ("garden", "Galerie", "Vizualizace domů a okolí"),
+              "kontakt.html": ("bungalow", "Kontakt", "Prohlídka s prodejcem")}
+
+
+def menu(cur=""):
+    cur = cur if cur in MENU_MEDIA else ("nabidka.html" if cur.startswith("dum-") else "index.html")
+    links = "".join(f'<a href="{u}" data-mi="{k}"{" aria-current=\"page\"" if u == cur else ""}><span class="menu__n">{k + 1:02d}</span><span class="menu__t">{t}</span></a>' for k, (u, t) in enumerate(NAV))
+    figs = ""
+    for k, (u, t) in enumerate(NAV):
+        pic, cap, sub = MENU_MEDIA[u]; base, have = _src(pic)
+        figs += (f'<figure data-mi="{k}"{" class=\"is-on\"" if u == cur else ""}><img src="{base}/{pic}-800.webp" alt="" width="800" height="450" loading="lazy" decoding="async">'
+                 f'<figcaption><span class="serif">{cap}</span><span class="label label--reg">{sub}</span></figcaption></figure>')
     return f'''<nav class="menu" id="menu" aria-label="Hlavní menu" aria-hidden="true">
   <button class="menu__close" type="button" data-menu-close aria-label="Zavřít menu">{ICON["x"]}</button>
-  <div class="menu__claims">{seal("m")}<p>Postaveno, aby vydrželo</p><p>Světlo a vlastní zahrada</p><p>Klid na Hané</p></div>
+  <div class="menu__media" aria-hidden="true">{figs}</div>
   <div class="menu__nav">{links}</div>
-  <div class="menu__foot">
-    <div style="display:grid;gap:8px"><span class="label label--reg muted">Prodejce Pavel Čundrla · Impuls Reality</span><a class="h5 serif" href="tel:{TEL}">{TEL_TXT}</a></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="tel:{TEL}">Zavolat</a><button class="btn btn--solid" type="button" data-book>Domluvit prohlídku</button></div>
+  <div class="menu__bar">
+    <a class="menu__tel" href="tel:{TEL}">{ICON["phone"]}<span>{TEL_TXT}</span></a>
+    <button class="btn btn--solid" type="button" data-book><span class="m-long">Domluvit prohlídku</span><span class="m-short">Prohlídka</span></button>
   </div>
 </nav>
 '''
@@ -236,7 +248,7 @@ def modal():
 def footer():
     links = "".join(f'<a class="p--s" href="{u}">{t}</a>' for u, t in NAV)
     return f'''<footer class="ftr">
-      <div><a class="logo logo--ftr" href="index.html">{seal("ftr", "seal--ftr")}<span class="sr">Blatec</span><span class="logo__s">HP DOMY Development</span></a><p class="p p--s" style="margin-top:14px">14 rodinných domů v&nbsp;Blatci u&nbsp;Olomouce.</p></div>
+      <div><a class="logo" href="index.html">{LOGO}</a><p class="p p--s" style="margin-top:14px">14 rodinných domů v&nbsp;Blatci u&nbsp;Olomouce.</p></div>
       <div><span class="label">Stránky</span>{links}</div>
       <div><span class="label">Prodej</span><span class="p--s">Pavel Čundrla, Impuls Reality</span><a class="p--s ulink" style="justify-self:start" href="tel:{TEL}">{TEL_TXT}</a><a class="p--s ulink" style="justify-self:start" href="mailto:{MAIL}">{MAIL}</a></div>
       <div><span class="label">Developer</span><span class="p--s">HP DOMY s.r.o.</span><span class="p--s">I. P. Pavlova 692/143, Olomouc</span><span class="p--s muted">Vizualizace jsou ilustrační.</span></div>
@@ -257,7 +269,7 @@ def scripts():
 def page(name, title, desc, body, preload=None, jsonld=None, dock=None, extra=""):
     cue = '<div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>\n' if name == "index.html" else ""
     fab = dock or f'<a class="callfab is-off" href="tel:{TEL}" aria-label="Zavolat prodejci {TEL_TXT}">{ICON["phone"]}<span>Zavolat</span></a>\n'
-    out = (head(title, desc, preload, jsonld) + header() + cue + menu() + f'<main id="main">\n{body}\n</main>\n'
+    out = (head(title, desc, preload, jsonld) + header() + cue + menu(name) + f'<main id="main">\n{body}\n</main>\n'
            + modal() + extra + fab + '<div class="toast" id="toast" role="status" aria-live="polite"></div>\n<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts())
     out = re.sub(r' data-r(?=[\s>=])(="[^"]*")?', '', out)
     out = re.sub(r' data-split="[^"]*"', '', out).replace(" js-split", "")
@@ -287,7 +299,6 @@ def final(script="Domluvte si", words="Prohlídku", text=None, cta=None, after="
     cta = cta or '<button class="btn btn--solid" type="button" data-book>Napsat prodejci</button>'
     return f'''<section class="sec t-soil wrap" id="prohlidka" data-hdr="light" aria-labelledby="fin-t">
   <div class="final">
-    {seal("f")}
     {title(script, words, hid="fin-t")}
     {f'<p class="p center" data-r>{text}</p>' if text else ""}
     <a class="final__tel" href="tel:{TEL}" data-r>{TEL_TXT}</a>
