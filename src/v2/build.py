@@ -101,7 +101,8 @@ def head(title, desc, preload=None, jsonld=None):
         base, have = _src(preload)
         pre = (f'<link rel="preload" as="image" href="{base}/{preload}-{have[-1]}.webp" imagesrcset="'
                + ", ".join(f"{base}/{preload}-{s}.webp {s}w" for s in have) + '" imagesizes="100vw" fetchpriority="high">\n')
-    ld = f'<script type="application/ld+json">{json.dumps(jsonld, ensure_ascii=False)}</script>\n' if jsonld else ""
+    lds = jsonld if isinstance(jsonld, list) else ([jsonld] if jsonld else [])
+    ld = "".join(f'<script type="application/ld+json">{json.dumps(j, ensure_ascii=False)}</script>\n' for j in lds)
     return f'''<!doctype html>
 <html lang="cs">
 <head>
@@ -111,7 +112,7 @@ def head(title, desc, preload=None, jsonld=None):
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#3b0f1e">
-<meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:image" content="../img/og-1200x630.jpg">
+<meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:image" content="https://bl1.vercel.app/v2/img/og-1200x630.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b0f1e'/%3E%3Cpath d='M32 54V20M32 20c-4-4-4-11 0-15 4 4 4 11 0 15zM32 30c-8 0-12-5-12-11 8 0 12 5 12 11zM32 30c8 0 12-5 12-11-8 0-12 5-12 11zM32 42c-8 0-12-5-12-11 8 0 12 5 12 11zM32 42c8 0 12-5 12-11-8 0-12 5-12 11z' fill='none' stroke='%23f4eee5' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="preload" as="font" type="font/woff2" href="fonts/instrument-serif-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/archivo-x-latin-400.woff2" crossorigin>
@@ -257,7 +258,29 @@ def scripts():
 </html>'''
 
 
+BASE = "https://bl1.vercel.app/v2/"   # change to the final domain at launch
+ORG = {"@type": "Organization", "@id": BASE + "#hpdomy", "name": "HP DOMY s.r.o.", "url": "https://www.hpdomy.cz",
+       "address": {"@type": "PostalAddress", "streetAddress": "I. P. Pavlova 692/143", "addressLocality": "Olomouc", "postalCode": "783 01", "addressCountry": "CZ"},
+       "aggregateRating": {"@type": "AggregateRating", "ratingValue": GOOGLE["rating"], "reviewCount": GOOGLE["count"]}}
+
+
+def crumbs_ld(name, title):
+    items = [("Blatec", "index.html")]
+    if name.startswith("dum-"):
+        items += [("Nabídka domů", "nabidka.html"), (title.split(" · ")[0], name)]
+    elif name != "index.html":
+        items += [(dict(NAV).get(name, title.split(" · ")[0]), name)]
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList",
+            "itemListElement": [{"@type": "ListItem", "position": k + 1, "name": n, "item": BASE + u} for k, (n, u) in enumerate(items)]}
+
+
 def page(name, title, desc, body, preload=None, jsonld=None, dock=None, extra=""):
+    lds = jsonld if isinstance(jsonld, list) else ([jsonld] if jsonld else [])
+    if name == "index.html":
+        lds = lds + [{"@context": "https://schema.org", **ORG}, {"@context": "https://schema.org", "@type": "WebSite", "name": "Blatec · HP DOMY", "url": BASE, "inLanguage": "cs"}]
+    else:
+        lds = lds + [crumbs_ld(name, title)]
+    jsonld = lds
     cue = '<div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>\n' if name == "index.html" else ""
     fab = dock or f'<a class="callfab is-off" href="tel:{TEL}" aria-label="Zavolat prodejci {TEL_TXT}">{ICON["phone"]}<span>Zavolat</span></a>\n'
     out = (head(title, desc, preload, jsonld) + header() + cue + menu(name) + f'<main id="main">\n{body}\n</main>\n'
@@ -608,7 +631,9 @@ CMP_UI = f'''<div class="tray" id="tray" aria-live="polite"><span class="label">
   </div>
 </div>
 '''
-page("nabidka.html", "Nabídka domů · Blatec | HP DOMY", f"{len(FREE)} volných rodinných domů v Blatci. Situace, ceny a stavy všech 14 domů.", offer, extra=CMP_UI)
+page("nabidka.html", "Nabídka domů · Blatec | HP DOMY", f"{len(FREE)} volných rodinných domů v Blatci u Olomouce. Situace ulice, ceny, plochy a stavy všech 14 domů.", offer, extra=CMP_UI,
+     jsonld={"@context": "https://schema.org", "@type": "ItemList", "name": "Rodinné domy Blatec", "numberOfItems": len(HOUSES),
+             "itemListElement": [{"@type": "ListItem", "position": k + 1, "url": BASE + f"dum-{h['id']}.html", "name": f"Dům {h['id']} · {h['label']} {h['disp']}"} for k, h in enumerate(HOUSES)]})
 
 # ======================================================================= ABOUT
 milestones = [("Příprava projektu", "Projektová dokumentace a povolení", "probíhá"), ("Spuštění prodeje", "Zveřejnění cen a rezervace", "připravujeme"),
@@ -707,7 +732,8 @@ loc = phead("Lokalita", "Haná", "Lokalita", "Blatec leží na Hané 8 km jižn�
   </div>
 </section>
 {final()}'''
-page("lokalita.html", "Lokalita · Blatec u Olomouce | HP DOMY", "Blatec leží 8 km jižně od Olomouce. Dojezdy autem, vlakem a na kole, vybavenost obce.", loc)
+page("lokalita.html", "Lokalita · Blatec u Olomouce | HP DOMY", "Blatec leží 8 km jižně od Olomouce. Dojezdy autem, vlakem a na kole, vybavenost obce a historie od roku 1131.", loc,
+     jsonld={"@context": "https://schema.org", "@type": "Place", "name": "Blatec", "address": {"@type": "PostalAddress", "addressLocality": "Blatec", "postalCode": "783 75", "addressRegion": "Olomoucký kraj", "addressCountry": "CZ"}})
 
 # ======================================================================= STANDARDS
 TAGS = {"in": ("V ceně", "st--volny"), "prep": ("Příprava v ceně", "st--rezervace"), "plus": ("Za příplatek", "st--plus")}
@@ -736,7 +762,8 @@ GITEMS = GALLERY + [dict(src="hana", title="Blatec a hanácká pole", tags=["oko
 gal = phead("Galerie", "z Blatce", "Galerie", "Zástupné vizualizace. Skutečné vizualizace a fotky ze stavby doplníme.", extra=
             '<div class="chips" role="group" aria-label="Filtr galerie" data-r>' + "".join(f'<button type="button" data-g="{v}" aria-pressed="{str(k == 0).lower()}">{t}</button>' for k, (v, t) in enumerate(gtabs)) + "</div>").replace(
     '</section>', '<div class="gal">' + "".join(f'<div class="gal__i" data-tags="{" ".join(g["tags"])}">{zoom(g["src"], "gal", sizes="(min-width:860px) 33vw, 100vw")}<p class="label label--reg">{g["title"]}</p></div>' for g in GITEMS) + '</div>\n</section>', 1) + final()
-page("galerie.html", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci u Olomouce.", gal)
+page("galerie.html", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci u Olomouce: patrové a přízemní domy, zahrady, nová ulice a krajina Hané.", gal,
+     jsonld={"@context": "https://schema.org", "@type": "ImageGallery", "name": "Galerie Blatec", "description": "Zástupné vizualizace rodinných domů v Blatci."})
 
 # ======================================================================= CONTACT
 buy = [("Výběr a prohlídka", "Vyberete volný dům a prohlédnete si pozemek."), ("Rezervace", "Rezervační smlouvou si dům podržíte, v nabídce se označí jako rezervovaný."),
@@ -888,4 +915,6 @@ for h in HOUSES:
          f"Dům {hid} v Blatci: {T['label'].lower()} {T['disp']}, {re.sub('&nbsp;', ' ', area(h['area']))} užitné plochy, pozemek {h['plot']} m², {STATUS[h['status']]}.",
          body, preload=T["gal"][0], jsonld=jsonld, dock=dock)
 
+urls = sorted(f for f in os.listdir(OUT) if f.endswith(".html") and not f.startswith("_"))
+open(os.path.join(OUT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{BASE}{'' if u == 'index.html' else u}</loc></url>\n" for u in urls) + "</urlset>\n")
 print("v2 built:", sorted(f for f in os.listdir(OUT) if f.endswith(".html")).__len__(), "pages")
