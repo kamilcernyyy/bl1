@@ -50,6 +50,11 @@ ICON = {
     "left": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M14 8H2M7 3 2 8l5 5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     "x": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 3 10 10M13 3 3 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
     "plus": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+    "heart": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6S2 10 2 5.9A3 3 0 0 1 8 4.4a3 3 0 0 1 6 1.5C14 10 8 13.6 8 13.6z" fill="var(--hf,none)" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    "cmp": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.5h4.5v9H2.5zM9 3.5h4.5v9H9z" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>',
+    "phone": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.6 2.2 3.7 2.6c-.8.3-1.3 1.1-1.1 2 1 4.4 4.4 7.8 8.8 8.8.9.2 1.7-.3 2-1.1l.4-1.9-2.8-1.3-1.3 1.3a7 7 0 0 1-3.7-3.7L7.3 5.4z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    "doc": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.8h5.5L12.5 5v9.2H4zM9.3 2v3.2h3.2M6.3 8.5h4M6.3 11h4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+    "bell": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 11.5V7a4 4 0 0 1 8 0v4.5l1.2 1.2H2.8zM6.5 14.2a1.6 1.6 0 0 0 3 0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>',
     "zoom": '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
 }
 EMBLEM = ('<svg class="emblem" viewBox="0 0 40 60" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.15" stroke-linejoin="round">'
@@ -105,9 +110,9 @@ def head(title, desc, preload=None, jsonld=None):
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#2b221a">
+<meta name="theme-color" content="#3b0f1e">
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="cs_CZ"><meta property="og:image" content="../img/og-1200x630.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b221a'/%3E%3Cpath d='M32 54V20M32 20c-4-4-4-11 0-15 4 4 4 11 0 15zM32 30c-8 0-12-5-12-11 8 0 12 5 12 11zM32 30c8 0 12-5 12-11-8 0-12 5-12 11zM32 42c-8 0-12-5-12-11 8 0 12 5 12 11zM32 42c8 0 12-5 12-11-8 0-12 5-12 11z' fill='none' stroke='%23f3f0e6' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b0f1e'/%3E%3Cpath d='M32 54V20M32 20c-4-4-4-11 0-15 4 4 4 11 0 15zM32 30c-8 0-12-5-12-11 8 0 12 5 12 11zM32 30c8 0 12-5 12-11-8 0-12 5-12 11zM32 42c-8 0-12-5-12-11 8 0 12 5 12 11zM32 42c8 0 12-5 12-11-8 0-12 5-12 11z' fill='none' stroke='%23f4eee5' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="preload" as="font" type="font/woff2" href="fonts/instrument-serif-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/archivo-x-latin-400.woff2" crossorigin>
 {pre}<script>(function(d){{var r=d.documentElement;r.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches?'rm':'motion');try{{if(sessionStorage.getItem('pt')){{r.classList.add('pt-in');sessionStorage.removeItem('pt')}}}}catch(e){{}}}})(document)</script>
@@ -124,6 +129,35 @@ def roll(t):
 
 
 LOGO = '<span class="logo__n">Blatec</span><span class="logo__s">HP DOMY Development</span>'
+
+
+def seal(k, cls=""):
+    """Rotating seal: the project in one ring of letters."""
+    return (f'<div class="seal {cls}" aria-hidden="true"><svg class="seal__ring" viewBox="0 0 120 120"><defs><path id="seal-{k}" d="M60 60m-47 0a47 47 0 1 1 94 0a47 47 0 1 1-94 0"/></defs>'
+            f'<text><textPath href="#seal-{k}" textLength="292" lengthAdjust="spacing">Blatec · Haná · HP DOMY · 14 domů ·</textPath></text></svg>{EMBLEM}</div>')
+
+
+def fav_btn(hid, big=False):
+    return (f'<button class="fav{" fav--big" if big else ""}" type="button" data-fav="{hid}" aria-pressed="false" aria-label="Uložit dům {hid}">{ICON["heart"]}'
+            + ('<span>Uložit dům</span>' if big else '') + '</button>')
+
+
+WD_TOPICS = [("prodej", "Spuštění prodeje a ceny"), ("dum", "Uvolnění rezervovaného domu"), ("stavba", "Novinky ze stavby")]
+
+
+def watchdog(preset, script, words, text, house=None, theme="t-wheat"):
+    chips = "".join(f'<button type="button" data-wd-topic="{k}" aria-pressed="{str(k in preset).lower()}">{n if not (house and k == "dum") else f"Uvolnění domu {house}"}</button>' for k, n in WD_TOPICS)
+    return f'''<section class="sec {theme} wrap" id="hlidaci-pes" data-hdr="ink" aria-labelledby="wd-t">
+  <form class="wd" novalidate data-wd>
+    <div class="wd__head">{ICON["bell"]}{title(script, words, hid="wd-t", size="h2")}<p class="p center" data-r>{text}</p></div>
+    <div class="wd__body" data-r>
+      <div class="chips wd__chips" role="group" aria-label="Co chcete hlídat">{chips}</div>
+      <div class="wd__row"><label class="field"><span class="label">E-mail</span><input name="email" type="email" autocomplete="email" placeholder="vas@email.cz" required></label><button class="btn btn--solid" type="submit"><span>Hlídat</span>{ICON["arrow"]}</button></div>
+      <label class="consent"><input type="checkbox" name="ok" required><span class="p p--s">Souhlasím se zasíláním upozornění k&nbsp;projektu Blatec. Odhlásit se můžete jedním klikem v&nbsp;každém e-mailu.</span></label>
+    </div>
+    <div class="wd__done" hidden role="status"><p class="script">Hlídáme</p><p class="p" data-wd-msg></p><p class="label muted">Ukázka: formulář zatím nikam neodesílá</p></div>
+  </form>
+</section>'''
 
 
 def header():
@@ -149,7 +183,7 @@ def menu():
     links = "".join(f'<a href="{u}"><span class="menu__n">{k + 1:02d}</span>{roll(t)}</a>' for k, (u, t) in enumerate(NAV))
     return f'''<nav class="menu" id="menu" aria-label="Hlavní menu" aria-hidden="true">
   <button class="menu__close" type="button" data-menu-close aria-label="Zavřít menu">{ICON["x"]}</button>
-  <div class="menu__claims"><p>Postaveno, aby vydrželo</p><p>Světlo a vlastní zahrada</p><p>Klid na Hané</p></div>
+  <div class="menu__claims">{seal("m")}<p>Postaveno, aby vydrželo</p><p>Světlo a vlastní zahrada</p><p>Klid na Hané</p></div>
   <div class="menu__nav">{links}</div>
   <div class="menu__foot">
     <div style="display:grid;gap:8px"><span class="label label--reg muted">Prodejce Pavel Čundrla · Impuls Reality</span><a class="h5 serif" href="tel:{TEL}">{TEL_TXT}</a></div>
@@ -221,10 +255,11 @@ def scripts():
 </html>'''
 
 
-def page(name, title, desc, body, preload=None, jsonld=None):
+def page(name, title, desc, body, preload=None, jsonld=None, dock=None, extra=""):
     cue = '<div class="cue" aria-hidden="true"><span>Scroll</span><i></i></div>\n' if name == "index.html" else ""
+    fab = dock or f'<a class="callfab is-off" href="tel:{TEL}" aria-label="Zavolat prodejci {TEL_TXT}">{ICON["phone"]}<span>Zavolat</span></a>\n'
     out = (head(title, desc, preload, jsonld) + header() + cue + menu() + f'<main id="main">\n{body}\n</main>\n'
-           + modal() + '<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts())
+           + modal() + extra + fab + '<div class="toast" id="toast" role="status" aria-live="polite"></div>\n<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts())
     open(os.path.join(OUT, name), "w", encoding="utf-8").write(cz_typo(out))
 
 
@@ -240,7 +275,7 @@ def phead(crumb, script, words, lead=None, extra=""):
     return f'''<section class="t-cream wrap" data-hdr="ink">
   <div class="phead">
     <nav class="crumbs label label--reg" aria-label="Drobečková navigace"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><span>{crumb}</span></nav>
-    <h1 class="ttl ttl--rev"><span class="serif mega js-split" data-split="chars">{words}</span><span class="script js-split" data-split="script">{script}</span></h1>
+    <h1 class="ttl ttl--rev"><span class="serif mega rise">{words}</span><span class="script js-split" data-split="script">{script}</span></h1>
     {f'<p class="p center" style="margin-top:clamp(24px,3vw,44px)" data-r>{lead}</p>' if lead else ""}
     {extra}
   </div>
@@ -251,6 +286,7 @@ def final(script="Domluvte si", words="Prohlídku", text=None, cta=None, after="
     cta = cta or '<button class="btn btn--solid" type="button" data-book>Napsat prodejci</button>'
     return f'''<section class="sec t-soil wrap" id="prohlidka" data-hdr="light" aria-labelledby="fin-t">
   <div class="final">
+    {seal("f")}
     {title(script, words, hid="fin-t")}
     {f'<p class="p center" data-r>{text}</p>' if text else ""}
     <a class="final__tel" href="tel:{TEL}" data-r>{TEL_TXT}</a>
@@ -262,6 +298,8 @@ def final(script="Domluvte si", words="Prohlídku", text=None, cta=None, after="
 
 
 def hrow(h, rich=False):
+    if rich:
+        return hrow_rich(h)
     sold = h["status"] == "prodany"
     th = f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></div>' if rich else ""
     base, have = _src(h["img"])
@@ -273,20 +311,31 @@ def hrow(h, rich=False):
             f'<span class="hl__go">{ICON["arrow"]}</span></a>')
 
 
+def hrow_rich(h):
+    sold = h["status"] == "prodany"
+    base, have = _src(h["img"])
+    return (f'<div class="hl__row{" is-sold" if sold else ""}" data-id="{h["id"]}" data-img="{base}/{h["img"]}-800.webp" data-type="{h["type"]}" data-status="{h["status"]}" data-price="{h["price"] or 0}" data-plot="{h["plot"]}">'
+            f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></div>'
+            f'<a class="hl__name hl__link" href="dum-{h["id"]}.html">Dům {h["id"]:02d}</a><span class="hl__type label label--reg">{h["label"]} · {h["disp"]} · {area(h["area"])}</span>'
+            f'<span class="hl__plot label label--reg">Pozemek {area(h["plot"])}</span><span class="hl__plot label label--reg">Zahrada na {h["garden"]}</span>'
+            f'<span class="hl__price">{price(h)}</span><span class="hl__st"><span class="st st--{h["status"]}">{STATUS[h["status"]]}</span></span>'
+            f'<span class="hl__act"><button class="cmpb" type="button" data-cmp="{h["id"]}" aria-pressed="false" aria-label="Porovnat dům {h["id"]}">{ICON["cmp"]}</button>{fav_btn(h["id"])}</span></div>')
+
+
 def plan_svg(hl=None):
     """Situation drawn as a vertical strip (fits one screen), Hanák palette."""
-    fills = {"volny": ("#f3f0e6", "#1c2230"), "rezervace": ("#e5ddc9", "#8d8576"), "prodany": ("#dcd6c8", "#b3ab9b")}
+    fills = {"volny": ("#f4eee5", "#3b0f1e"), "rezervace": ("#ead9cf", "#8d8576"), "prodany": ("#ded3c8", "#b3ab9b")}
     s = '<svg viewBox="0 0 560 1000" role="group" aria-label="Situace domů"><g transform="translate(560 0) rotate(90)">'
-    s += '<rect width="1000" height="560" fill="#ebe6d8"/><rect x="30" y="258" width="940" height="52" fill="#d9d2c1"/><line x1="50" y1="284" x2="950" y2="284" stroke="#f3f0e6" stroke-width="2" stroke-dasharray="14 12"/>'
+    s += '<rect width="1000" height="560" fill="#ece3d6"/><rect x="30" y="258" width="940" height="52" fill="#d9d2c1"/><line x1="50" y1="284" x2="950" y2="284" stroke="#f4eee5" stroke-width="2" stroke-dasharray="14 12"/>'
     s += '<text x="500" y="289" text-anchor="middle" font-family="Archivo X,Arial" font-size="12" font-weight="600" letter-spacing="3" fill="#6f6758">NOVÁ ULICE</text>'
     for h in HOUSES:
         g = GEO[h["id"]]; f, st = fills[h["status"]]
         on = hl == h["id"]
         cx, cy = g["x"] + g["w"] / 2, g["y"] + (52 if g["north"] else g["h"] - 52)
         s += (f'<g class="plot" data-id="{h["id"]}" tabindex="0" role="button" aria-label="Dům {h["id"]}, {STATUS[h["status"]]}, {re.sub("&nbsp;", " ", price(h))}">'
-              f'<rect class="pbg" x="{g["x"]}" y="{g["y"]}" width="{g["w"]}" height="{g["h"]}" fill="{"#d8be86" if on else f}" stroke="{st}" stroke-width="{2.5 if on else 1}"/>'
+              f'<rect class="pbg" x="{g["x"]}" y="{g["y"]}" width="{g["w"]}" height="{g["h"]}" fill="{"#d4b37c" if on else f}" stroke="{st}" stroke-width="{2.5 if on else 1}"/>'
               f'<rect x="{g["x"] + 18}" y="{g["y"] + (g["h"] - 120 if g["north"] else 40)}" width="{g["w"] - 36}" height="{64 if h["type"] == "patrovy" else 52}" fill="{st}" opacity="{.88 if h["status"] == "volny" else .45}"/>'
-              f'<text x="{cx}" y="{cy}" transform="rotate(-90 {cx} {cy})" text-anchor="middle" dominant-baseline="central" font-family="Instrument Serif,serif" font-size="40" fill="{"#1c2230" if h["status"] != "prodany" else "#9a9282"}">{h["id"]}</text></g>')
+              f'<text x="{cx}" y="{cy}" transform="rotate(-90 {cx} {cy})" text-anchor="middle" dominant-baseline="central" font-family="Instrument Serif,serif" font-size="40" fill="{"#3b0f1e" if h["status"] != "prodany" else "#9a9282"}">{h["id"]}</text></g>')
     return s + "</g></svg>"
 
 
@@ -296,12 +345,12 @@ def floor_svg(fl, k):
     for i, r in enumerate(fl["rooms"], 1):
         if "r" in r:
             x, y, w, h = r["r"]; cx, cy = x + w / 2, y + h / 2
-            s += f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#f3f0e6" stroke="#1c2230" stroke-width=".9"/>'
+            s += f'<rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#f4eee5" stroke="#3b0f1e" stroke-width=".9"/>'
         else:
             pts = " ".join(f"{a},{b}" for a, b in r["pts"]); cx, cy = r["c"]
-            s += f'<polygon points="{pts}" fill="#f3f0e6" stroke="#1c2230" stroke-width=".9"/>'
-        s += f'<text x="{cx}" y="{cy}" text-anchor="middle" dominant-baseline="central" font-family="Instrument Serif,serif" font-size="6.4" fill="#1c2230">{i}</text>'
-    return s + f'<rect x="0" y="0" width="{W}" height="{H}" fill="none" stroke="#1c2230" stroke-width="2.6"/></svg>'
+            s += f'<polygon points="{pts}" fill="#f4eee5" stroke="#3b0f1e" stroke-width=".9"/>'
+        s += f'<text x="{cx}" y="{cy}" text-anchor="middle" dominant-baseline="central" font-family="Instrument Serif,serif" font-size="6.4" fill="#3b0f1e">{i}</text>'
+    return s + f'<rect x="0" y="0" width="{W}" height="{H}" fill="none" stroke="#3b0f1e" stroke-width="2.6"/></svg>'
 
 
 def sky(script, words, label, img_name="hana", eager=False):
@@ -399,9 +448,9 @@ def type_slides():
 rv = [r for r in REVIEWS if not r[4] and r[1] == 5 and len(r[3]) > 40]
 
 
-def reviews():
+def reviews(sid="recenze"):
     items = "".join(f'<figure class="rv__item"{"" if k == 0 else " hidden"} data-rv="{k}" style="margin:0;display:grid;justify-items:center;gap:26px"><blockquote class="serif h4 rv__q" style="margin:0">„{esc(r[3])}“</blockquote><figcaption class="rv__who"><span class="label">{esc(r[0])}</span><span class="label label--reg muted">{r[2]} · Google</span></figcaption></figure>' for k, r in enumerate(rv))
-    return f'''<section class="sec t-sky wrap" data-hdr="ink" aria-labelledby="rv-t">
+    return f'''<section class="sec t-sky wrap" id="{sid}" data-hdr="ink" aria-labelledby="rv-t">
   <div class="rv" data-rv-wrap>
     <h2 class="label" id="rv-t">Hodnocení HP DOMY na Googlu · {str(GOOGLE["rating"]).replace(".", ",")} z&nbsp;5 · {GOOGLE["count"]} recenzí</h2>
     {items}
@@ -417,11 +466,13 @@ GAL = ["hero", "street", "garden", "bungalow", "entry", "aerial", "hana"]
 home = f'''
 <section class="hero" data-hdr="light" aria-labelledby="hero-t">
   <div class="hero__media">{img("hero", "Zástupná vizualizace patrového domu v Blatci", "100vw", eager=True)}</div>
+  {seal("h", "hero__seal")}
   <div class="hero__in wrap">
-    <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega js-split" data-split="chars">Blatec</span><span class="script js-split" data-split="script">u&nbsp;Olomouce</span></h1>
+    <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega rise">Blatec</span><span class="script js-split" data-split="script">u&nbsp;Olomouce</span></h1>
     <div class="hero__row">
       <p class="serif h5" data-r="fade">Nový domov</p>
       <div class="hero__mid on-dark">
+        <a class="grate" href="o-projektu.html#recenze" data-r="fade"><b>{str(GOOGLE["rating"]).replace(".", ",")}</b><i aria-hidden="true">★★★★★</i><span>Google · {GOOGLE["count"]} recenzí</span></a>
         <p class="label" data-r="fade">14 rodinných domů · {len(FREE)} volných · od {MINP_TXT} mil. Kč</p>
         <div class="hero__cta" data-r="fade"><a class="btn btn--solid" href="nabidka.html"><span>Vybrat volný dům</span>{ICON["arrow"]}</a><button class="btn" type="button" data-book><span>Domluvit prohlídku</span></button></div>
       </div>
@@ -524,18 +575,30 @@ offer = phead("Nabídka domů", "domů", "Nabídka", extra=f'''
       <button type="button" data-f="volny" aria-pressed="false">Volné<sup>{len(FREE)}</sup></button>
       <button type="button" data-f="prizemni" aria-pressed="false">Přízemní<sup>{cnt(t="prizemni")}</sup></button>
       <button type="button" data-f="patrovy" aria-pressed="false">Patrové<sup>{cnt(t="patrovy")}</sup></button>
+      <button type="button" data-f="fav" aria-pressed="false" class="chip--fav" hidden>{ICON["heart"]}Uložené<sup class="fav-n">0</sup></button>
     </div>''').replace('</section>', f'''  <div class="offer">
     <div class="offer__plan" data-r>
       {plan_svg()}
       <div class="offer__legend"><span class="st st--volny">volný</span><span class="st st--rezervace">rezervace</span><span class="st st--prodany">prodaný</span></div>
     </div>
     <div>
+      <div class="otools"><span class="label label--reg muted" data-count>{len(HOUSES)} domů</span><label class="osort"><span class="label label--reg">Řadit</span><select data-sort aria-label="Řadit domy"><option value="id">Podle čísla domu</option><option value="price">Od nejlevnějšího</option><option value="price-d">Od nejdražšího</option><option value="plot">Největší pozemek</option></select></label></div>
       <div class="hl hl--rich" data-hl data-offer>{"".join(hrow(h, rich=True) for h in HOUSES)}</div>
-      <p class="label label--reg muted" style="margin-top:22px">Každý dům má 2 stání u&nbsp;domu. Situace je ilustrační.</p>
+      <p class="label label--reg muted" style="margin-top:22px">Každý dům má 2 stání u&nbsp;domu. Situace je ilustrační. Ikonou {ICON["cmp"]} přidáte dům do porovnání, srdíčkem si ho uložíte.</p>
     </div>
   </div>
-</section>''', 1) + final()
-page("nabidka.html", "Nabídka domů · Blatec | HP DOMY", f"{len(FREE)} volných rodinných domů v Blatci. Situace, ceny a stavy všech 14 domů.", offer)
+</section>''', 1) + watchdog(["prodej", "dum"], "Hlídací", "pes", "Nechte nám e-mail a&nbsp;dáme vám vědět, až zveřejníme ceny, nebo když se uvolní rezervovaný dům.") + final()
+CMP_UI = f'''<div class="tray" id="tray" aria-live="polite"><span class="label">Porovnání</span><span class="tray__chips" id="tray-chips"></span><button class="btn btn--solid" type="button" id="tray-go" disabled>Porovnat</button><button class="tray__x" type="button" id="tray-clear" aria-label="Zrušit porovnání">{ICON["x"]}</button></div>
+<div class="modal" id="cmp" role="dialog" aria-modal="true" aria-labelledby="cmp-t" aria-hidden="true">
+  <div class="modal__bg" data-cmp-close></div>
+  <div class="modal__box modal__box--wide t-cream">
+    <button class="modal__x" type="button" data-cmp-close aria-label="Zavřít">{ICON["x"]}</button>
+    <div class="ttl ttl--s" style="margin-bottom:22px"><p class="script">Domy</p><p class="serif h3" id="cmp-t">vedle sebe</p></div>
+    <div id="cmp-body"></div>
+  </div>
+</div>
+'''
+page("nabidka.html", "Nabídka domů · Blatec | HP DOMY", f"{len(FREE)} volných rodinných domů v Blatci. Situace, ceny a stavy všech 14 domů.", offer, extra=CMP_UI)
 
 # ======================================================================= ABOUT
 milestones = [("Příprava projektu", "Projektová dokumentace a povolení", "probíhá"), ("Spuštění prodeje", "Zveřejnění cen a rezervace", "připravujeme"),
@@ -588,6 +651,21 @@ amen = [("Vlak do Olomouce", "trať Olomouc – Nezamyslice"), ("Silnice do Olom
 pending = [("Mateřská škola", "ověřujeme"), ("Obchod s potravinami", "ověřujeme"), ("Dětské hřiště", "ověřujeme")]
 modes = '<div class="modes" role="group" aria-label="Způsob dopravy"><button type="button" data-mode="auto" aria-pressed="true">Autem</button><button type="button" data-mode="vlak" aria-pressed="false">Vlakem</button><button type="button" data-mode="kolo" aria-pressed="false">Na kole</button></div>'
 travel_rows = "".join(f'<li data-t="{k}"><span class="serif h4">{t["place"]}</span><span class="label label--reg muted">{t["note"]} · {t["km"]}&nbsp;km</span><span class="tv__min"><b class="serif h3" data-min>{t["auto"]}</b><span class="label">min</span></span></li>' for k, t in enumerate(TRAVEL))
+LMAP = '''<svg viewBox="0 0 600 540" aria-hidden="true"><rect width="600" height="540" fill="#ece3d6"/>
+<g fill="#e3d6c6"><path d="M0 40 L180 0 H320 L250 120 L60 160Z"/><path d="M380 300 L600 250 V420 L430 470Z"/><path d="M40 360 L210 330 L230 470 L0 520Z"/><path d="M420 40 L600 10 V170 L470 190Z"/></g>
+<g fill="#d4b37c" opacity=".35"><path d="M250 150 L380 130 L400 230 L270 250Z"/><path d="M420 330 L560 300 L580 380 L450 410Z"/></g>
+<path d="M600 60 C520 120 470 150 430 230 C400 290 380 360 330 420 C300 460 280 500 270 540" fill="none" stroke="#e8d6cc" stroke-width="7" stroke-linecap="round"/>
+<path d="M330 0 C326 90 322 170 316 250 C310 330 250 420 120 540" fill="none" stroke="#f4eee5" stroke-width="6"/>
+<path d="M120 0 C150 120 160 220 140 330 C125 410 80 480 40 540" fill="none" stroke="#f4eee5" stroke-width="9"/>
+<text x="150" y="190" font-family="Archivo X,Arial" font-size="12" fill="#8a7a72" transform="rotate(84 150 190)">D46</text>
+<path d="M372 0 C362 120 350 210 324 270 C300 330 230 430 160 540" fill="none" stroke="#6b1d31" stroke-width="1.4" stroke-dasharray="8 6"/>
+<text x="370" y="200" font-family="Archivo X,Arial" font-size="11" fill="#6b1d31" transform="rotate(80 370 200)">trať Olomouc – Nezamyslice</text>
+<g><circle cx="335" cy="44" r="40" fill="#e3d6c6"/><circle cx="335" cy="44" r="5" fill="#2b1a1f"/><text x="350" y="42" font-family="Instrument Serif,serif" font-size="26" fill="#2b1a1f">Olomouc</text><text x="351" y="60" font-family="Archivo X,Arial" font-size="11" fill="#6f5f58">centrum · cca 8 km</text></g>
+<g><circle cx="88" cy="510" r="34" fill="#e3d6c6"/><circle cx="88" cy="510" r="4.5" fill="#2b1a1f"/><text x="104" y="508" font-family="Instrument Serif,serif" font-size="22" fill="#2b1a1f">Prostějov</text></g>
+<path d="M318 262 L335 44" stroke="#2b1a1f" stroke-width="1" stroke-dasharray="2 4" opacity=".5"/>
+<g transform="translate(318 262)"><circle r="46" fill="#6b1d31" opacity=".14"><animate attributeName="r" values="30;58;30" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".24;0;.24" dur="3.6s" repeatCount="indefinite"/></circle>
+<circle r="9" fill="#3b0f1e" stroke="#f4eee5" stroke-width="3"/><rect x="18" y="-34" width="150" height="56" fill="#3b0f1e"/><text x="32" y="-6" font-family="Instrument Serif,serif" font-size="26" fill="#f4eee5">Blatec</text><text x="33" y="12" font-family="Archivo X,Arial" font-size="10.5" letter-spacing="1.2" fill="#d4b37c">14 NOVÝCH DOMŮ</text></g>
+<g transform="translate(548 56)" font-family="Archivo X,Arial" font-size="9" fill="#2b1a1f"><circle r="18" fill="#f4eee5"/><path d="M0 -11 L5 4 L0 1 L-5 4Z" fill="#2b1a1f"/><text x="-3.5" y="15">S</text></g></svg>'''
 loc = phead("Lokalita", "Haná", "Lokalita", "Blatec leží na Hané 8 km jižně od Olomouce. Cesta do města vede po rovině, takže dojedete i&nbsp;na kole.") + f'''
 {sky("na dosah", "Olomouc", "Blatec · okres Olomouc", eager=True)}
 <section class="sec t-soil wrap" data-hdr="light" aria-labelledby="lc-t">
@@ -596,6 +674,14 @@ loc = phead("Lokalita", "Haná", "Lokalita", "Blatec leží na Hané 8 km jižn�
     {modes}
     <ul class="tv__list">{travel_rows}</ul>
     <p class="label label--reg muted" style="text-align:center;margin-top:24px">Orientační časy ve špičce. Před spuštěním webu je ověříme.</p>
+  </div>
+</section>
+<section class="sec t-sky wrap" data-hdr="ink" aria-labelledby="lc-m">
+  <div class="lmap">
+    <div style="display:grid;gap:24px;align-content:center">{title("Kde leží", "Blatec", hid="lc-m", size="h2")}
+      <p class="p" data-r>Mezi Olomoucí a&nbsp;Prostějovem, na rovině kolem trati Olomouc – Nezamyslice. K&nbsp;dálnici D46 je to 6&nbsp;km.</p>
+      <div data-r><a class="btn" href="https://mapy.cz/zakladni?q=Blatec%2C%20okres%20Olomouc" target="_blank" rel="noopener"><span>Otevřít v&nbsp;Mapy.cz</span>{ICON["arrow"]}</a></div></div>
+    <div class="lmap__svg" role="img" aria-label="Schematická mapa: Blatec leží asi 8 km jižně od Olomouce, mezi Olomoucí a Prostějovem" data-r>{LMAP}</div>
   </div>
 </section>
 <section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="lc-a">
@@ -627,7 +713,7 @@ for k, (cid, _, name, sub, items) in enumerate(STD_CATS):
 legend = "".join(f'<span class="st {c}">{t}</span>' for t, c in TAGS.values())
 steps_ch = [("Konzultace", "S prodejcem projdete, co chcete změnit."), ("Nacenění", "Dostanete rozpočet změn a termín, do kdy je potvrdit."),
             ("Potvrzení", "Změny potvrdíte dodatkem ke smlouvě."), ("Realizace", "Stavba zapracuje změny v příslušné fázi."), ("Kontrola", "Při předání zkontrolujete, že je vše podle dohody.")]
-std = phead("Standardy", "domů", "Standardy", "Co dostanete v&nbsp;ceně, co je připravené a&nbsp;co si můžete přiobjednat.", extra=f'<div class="chips" data-r>{legend}</div>') + f'''
+std = phead("Standardy", "domů", "Standardy", "Co dostanete v&nbsp;ceně, co je připravené a&nbsp;co si můžete přiobjednat.", extra=f'<div class="chips" data-r>{legend}</div><div style="display:flex;justify-content:center;margin-top:28px" data-r><button class="btn" type="button" data-pdf="standardy">{ICON["doc"]}<span>Standardy v&nbsp;PDF</span></button></div>') + f'''
 {zoomin("entry", "Zděná stavba, tepelné čerpadlo a&nbsp;podlahové topení v&nbsp;celém domě", "Standard HP DOMY")}
 {cats}
 {hscroll("Klientské", "změny", [f'<article class="ms"><span class="ms__n serif h2">{k + 1:02d}</span><h3 class="serif h4">{n}</h3><p class="p p--s">{d}</p></article>' for k, (n, d) in enumerate(steps_ch)], "sc-z", intro="Změny je potřeba zadat dřív, než stavba dojde do příslušné fáze. Vzorky vám ukáže prodejce.", theme="t-wheat")}
@@ -649,7 +735,7 @@ buy = [("Výběr a prohlídka", "Vyberete volný dům a prohlédnete si pozemek.
 faq = "".join(f'<div class="acc__i"><button type="button" class="acc__b" aria-expanded="false"><span class="serif h5">{q}</span><span class="acc__ic">{ICON["plus"]}</span></button><div class="acc__p" hidden><p class="p">{a}</p></div></div>' for q, a in FAQ)
 contact = f'''<section class="t-cream wrap" data-hdr="ink">
   <div class="phead"><nav class="crumbs label label--reg" aria-label="Drobečková navigace"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><span>Kontakt</span></nav>
-    <h1 class="ttl ttl--rev"><span class="serif mega js-split" data-split="chars">Kontakt</span><span class="script js-split" data-split="script">prohlídka</span></h1></div>
+    <h1 class="ttl ttl--rev"><span class="serif mega rise">Kontakt</span><span class="script js-split" data-split="script">prohlídka</span></h1></div>
   <div class="ct">
     <div class="ct__people">
       <div class="person" data-r><span class="label label--reg">Výhradní prodejce · Impuls Reality</span><span class="serif h3">Pavel Čundrla</span><a class="serif h4" href="tel:{TEL}">{TEL_TXT}</a><a class="ulink p" style="justify-self:start" href="mailto:{MAIL}">{MAIL}</a></div>
@@ -672,6 +758,18 @@ contact = contact.replace('<section class="sec t-soil wrap" data-hdr="light"><fo
 page("kontakt.html", "Kontakt · Blatec | HP DOMY", "Domluvte si prohlídku rodinného domu v Blatci. Prodejce Pavel Čundrla, Impuls Reality, +420 776 294 498.", contact)
 
 # ======================================================================= HOUSE PAGES
+def garden_dial(dirn):
+    ang = 0 if dirn == "sever" else 180
+    t = lambda x, y, c, w="400": f'<text x="{x}" y="{y}" text-anchor="middle" font-family="Instrument Serif,serif" font-size="15" fill="{c}" font-weight="{w}">'
+    return (f'<svg class="dial" viewBox="-60 -60 120 120" aria-hidden="true"><circle r="57" fill="#f4eee5" stroke="#d4b37c"/><circle r="41" fill="none" stroke="#e3d6c6"/>'
+            f'{t(0, -43, "#2b1a1f")}S</text>{t(0, 53, "#8a7a72")}J</text>{t(49, 5, "#8a7a72")}V</text>{t(-49, 5, "#8a7a72")}Z</text>'
+            f'<g transform="rotate({ang})"><path d="M-15 -34 A37 37 0 0 1 15 -34 L6 -7 L-6 -7Z" fill="#6b1d31" opacity=".9"/></g><rect x="-11" y="-11" width="22" height="22" fill="#3b0f1e"/></svg>')
+
+
+def fmt(n):
+    return f"{round(n):,}".replace(",", "&nbsp;")
+
+
 GARDEN_TXT = {"jih": "Zahrada míří na jih. Slunce celý den, ideální pro terasu a&nbsp;záhony.",
               "sever": "Zahrada míří na sever, terasa bude v&nbsp;létě příjemně ve stínu. Ranní a&nbsp;večerní slunce dopadá z&nbsp;boku."}
 for h in HOUSES:
@@ -688,6 +786,11 @@ for h in HOUSES:
               "address": {"@type": "PostalAddress", "addressLocality": "Blatec", "postalCode": "783 75", "addressCountry": "CZ"}}
     if h["price"] and not sold:
         jsonld["offers"] = {"@type": "Offer", "price": h["price"], "priceCurrency": "CZK", "availability": "https://schema.org/InStock"}
+    calc_price = h["price"] or (9490000 if h["type"] == "patrovy" else 8990000)
+    similar = sorted([x for x in HOUSES if x["id"] != hid and x["status"] == "volny"], key=lambda x: (x["type"] != h["type"], abs(x["plot"] - h["plot"])))[:3]
+    dock = (f'''<nav class="dock" aria-label="Dům {hid}"><div class="dock__info"><span class="label label--reg">Dům {hid} · {STATUS[h["status"]]}</span><b>{price(h)}</b></div>
+  <a class="dock__call" href="tel:{TEL}" aria-label="Zavolat prodejci">{ICON["phone"]}</a>{f'<button class="btn btn--solid dock__cta" type="button" data-book data-house="{hid}">Mám zájem</button>' if not sold else '<a class="btn btn--solid dock__cta" href="nabidka.html#volne">Volné domy</a>'}</nav>
+''')
     gal_names = T["gal"] + ["garden", "hana"]
     gal_names = list(dict.fromkeys(gal_names))
     body = f'''
@@ -695,7 +798,7 @@ for h in HOUSES:
   <div class="hero__media">{img(T["gal"][0], f"Zástupná vizualizace: {T['label'].lower()} dům", "100vw", eager=True)}</div>
   <div class="dhero__in wrap">
     <nav class="crumbs label label--reg" aria-label="Drobečková navigace" style="margin:0"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><a class="ulink" href="nabidka.html">Nabídka</a><span aria-hidden="true">/</span><span>Dům {hid}</span></nav>
-    <h1 class="dhero__title ttl ttl--rev on-photo" id="d-t"><span class="serif mega js-split" data-split="chars">Dům {hid}</span><span class="script js-split" data-split="script">{T["label"].lower()}</span></h1>
+    <h1 class="dhero__title ttl ttl--rev on-photo" id="d-t"><span class="serif mega rise">Dům {hid}</span><span class="script js-split" data-split="script">{T["label"].lower()}</span></h1>
     <dl class="dfacts" data-r>
       <div><dt class="label label--reg">Stav</dt><dd>{STATUS[h["status"]]}</dd></div>
       <div><dt class="label label--reg">Cena</dt><dd>{price(h)}</dd></div>
@@ -704,6 +807,7 @@ for h in HOUSES:
       <div><dt class="label label--reg">Pozemek</dt><dd>{area(h["plot"])}</dd></div>
       <div><dt class="label label--reg">Zahrada</dt><dd>na {h["garden"]}</dd></div>
     </dl>
+    <div class="dhero__act" data-r>{fav_btn(hid, big=True)}<button class="fav fav--big" type="button" data-pdf="{hid}">{ICON["doc"]}<span>Karta domu v&nbsp;PDF</span></button></div>
   </div>
 </section>
 
@@ -729,13 +833,38 @@ for h in HOUSES:
   <div class="dloc">
     <div style="display:grid;gap:24px">
       <h2 class="serif h2 js-split" data-split="lines" id="d-l">Místo v&nbsp;ulici</h2>
-      <p class="p" data-r>{GARDEN_TXT[h["garden"]]}</p>
+      <div class="orient" data-r>{garden_dial(h["garden"])}<div><p class="serif h5">Zahrada na {h["garden"]}</p><p class="p">{GARDEN_TXT[h["garden"]]}</p></div></div>
       <p class="label label--reg muted" data-r>Dům {hid} je zvýrazněný v&nbsp;situaci. Ilustrační podklad.</p>
       <div data-r><a class="btn" href="nabidka.html"><span>Celá situace</span>{ICON["arrow"]}</a></div>
     </div>
     <div class="dloc__plan" data-r>{plan_svg(hl=hid)}</div>
   </div>
 </section>
+
+<section class="sec t-soil wrap" id="financovani" data-hdr="light" aria-labelledby="d-c">
+  <div class="loc__head">{title("hypotéky", "Splátka", hid="d-c", rev=True)}</div>
+  <div class="calc" data-calc data-price="{calc_price}">
+    <div class="calc__in">
+      <div class="range"><div class="range__top"><label class="label" for="c-own">Vlastní zdroje</label><output class="label label--reg" id="o-own"></output></div><input type="range" id="c-own" min="10" max="60" step="5" value="20"></div>
+      <div class="range"><div class="range__top"><label class="label" for="c-rate">Úroková sazba</label><output class="label label--reg" id="o-rate"></output></div><input type="range" id="c-rate" min="2" max="8" step="0.1" value="4.9"></div>
+      <div class="range"><div class="range__top"><label class="label" for="c-years">Doba splácení</label><output class="label label--reg" id="o-years"></output></div><input type="range" id="c-years" min="10" max="30" step="1" value="30"></div>
+      <p class="label label--reg muted">Orientační výpočet {"z ceny domu" if h["price"] else "z obvyklé ceny tohoto typu domu"} ({fmt(calc_price)} Kč). Nejde o&nbsp;nabídku úvěru.</p>
+    </div>
+    <div class="calc__out" aria-live="polite"><span class="label">Měsíční splátka</span><b class="serif mega calc__pay" id="o-pay">–</b>
+      <dl><div><dt class="label label--reg">Výše úvěru</dt><dd class="serif h5" id="o-loan">–</dd></div><div><dt class="label label--reg">Celkem zaplatíte</dt><dd class="serif h5" id="o-total">–</dd></div></dl>
+      <div><a class="btn" href="kontakt.html#dum-{hid}"><span>Pomoc s&nbsp;financováním</span>{ICON["arrow"]}</a></div></div>
+  </div>
+</section>
+
+{watchdog(["dum"], f"Dům {hid} je", "rezervovaný" if h["status"] == "rezervace" else "prodaný", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, theme="t-cream") if h["status"] != "volny" else ""}
+
+<section class="sec t-cream wrap" id="podobne" data-hdr="ink" aria-labelledby="d-sim">
+  <div class="types__head">{title("Podobné", "volné domy", hid="d-sim")}</div>
+  <div class="sim">{"".join(f'<a class="sim__i" href="dum-{x["id"]}.html" data-r><span class="sim__img">{img(x["img"], "", "(min-width:860px) 30vw, 100vw")}</span><span class="sim__row"><span class="serif h4">Dům {x["id"]:02d}</span><span class="st st--{x["status"]}">{STATUS[x["status"]]}</span></span><span class="label label--reg muted">{x["label"]} {x["disp"]} · pozemek {area(x["plot"])} · zahrada na {x["garden"]}</span><span class="serif h5">{price(x)}</span></a>' for x in similar)}</div>
+  <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="nabidka.html#volne"><span>Všechny volné domy</span>{ICON["arrow"]}</a></div>
+</section>
+
+{reviews()}
 
 {final("Domluvte si" if not sold else "Tento dům je", "Prohlídku" if not sold else "Prodaný", cta=cta, after=f"""<nav class="dnav" style="margin-top:var(--sec)" aria-label="Další domy">
     <a href="dum-{prev_id}.html"><span class="label">Předchozí</span><span class="serif h3">Dům {prev_id}</span></a>
@@ -744,6 +873,6 @@ for h in HOUSES:
 '''
     page(f"dum-{hid}.html", f"Dům {hid} · {T['label']} {T['disp']} · Blatec | HP DOMY",
          f"Dům {hid} v Blatci: {T['label'].lower()} {T['disp']}, {re.sub('&nbsp;', ' ', area(h['area']))} užitné plochy, pozemek {h['plot']} m², {STATUS[h['status']]}.",
-         body, preload=T["gal"][0], jsonld=jsonld)
+         body, preload=T["gal"][0], jsonld=jsonld, dock=dock)
 
 print("v2 built:", sorted(f for f in os.listdir(OUT) if f.endswith(".html")).__len__(), "pages")

@@ -5,7 +5,9 @@
   const motion = root.classList.contains('motion') && window.gsap;
   const D = window.BLATEC || { houses: [] };
   const IO = 'power4.inOut', OUT = 'expo.out';
-  if (window.gsap) gsap.registerPlugin(ScrollTrigger, SplitText);
+  let favs = (() => { try { return JSON.parse(localStorage.getItem('blatec-favs') || '[]').filter(id => D.houses.some(h => h.id === id)); } catch (_) { return []; } })();
+  let offerF = null;
+  if (window.gsap) { gsap.registerPlugin(ScrollTrigger, SplitText); ScrollTrigger.config({ ignoreMobileResize: true }); }
 
   /* ---------- smooth scroll (wheel only; touch stays native) ---------- */
   let lenis = null;
@@ -50,13 +52,16 @@
   /* ---------- header: colour by section underneath, hide on scroll down ---------- */
   const hdr = $('#hdr');
   let lastY = scrollY, ticking = false;
-  const cue = $('.cue');
+  const cue = $('.cue'), fab = $('.callfab'), dock = $('.dock');
   const paintHdr = () => {
     ticking = false;
     const y = scrollY;
     cue && cue.classList.toggle('is-off', y > innerHeight * .4);
     const under = document.elementsFromPoint(innerWidth / 2, 34).map(el => el.closest('[data-hdr]')).find(Boolean);
     hdr.classList.toggle('is-ink', !!under && under.dataset.hdr === 'ink');
+    hdr.classList.toggle('is-bar', y > 24 && innerWidth <= 760);
+    fab && fab.classList.toggle('is-off', y < innerHeight * .6);
+    dock && dock.classList.toggle('is-off', y < innerHeight * .5);
     hdr.classList.toggle('is-hidden', y > 260 && y > lastY + 2 && !root.classList.contains('menu-on'));
     if (y < lastY - 2 || y < 260) hdr.classList.remove('is-hidden');
     lastY = y;
@@ -114,7 +119,7 @@
   lbx.addEventListener('touchend', e => { if (tx === null) return; const d = e.changedTouches[0].clientX - tx; if (Math.abs(d) > 50) lShow(lIdx + (d < 0 ? 1 : -1)); tx = null; });
 
   /* ---------- FAQ ---------- */
-  $$('.acc__b').forEach(b => b.addEventListener('click', () => { const open = b.getAttribute('aria-expanded') === 'true'; b.setAttribute('aria-expanded', !open); b.nextElementSibling.hidden = open; if (motion && !open) gsap.from(b.nextElementSibling, { opacity: 0, y: -10, duration: .5, ease: OUT }); ScrollTrigger && ScrollTrigger.refresh(); }));
+  $$('.acc__b').forEach(b => b.addEventListener('click', () => { const open = b.getAttribute('aria-expanded') === 'true'; b.setAttribute('aria-expanded', !open); b.nextElementSibling.hidden = open; if (motion && !open) gsap.from(b.nextElementSibling, { opacity: 0, y: -10, duration: .5, ease: OUT }); window.ScrollTrigger && ScrollTrigger.refresh(); }));
 
   /* ---------- gallery filter ---------- */
   $$('[data-g]').forEach(b => b.addEventListener('click', () => { const g = b.dataset.g;
@@ -192,15 +197,22 @@
   const offer = $('[data-offer]');
   if (offer) {
     const rows = $$('.hl__row', offer), plots = $$('.plot');
-    const vis = (r, f) => f === 'all' || r.dataset.status === f || r.dataset.type === f;
+    const vis = (r, f) => f === 'all' || (f === 'fav' ? favs.includes(+r.dataset.id) : r.dataset.status === f || r.dataset.type === f);
+    offerF = f => setF(f);
     const setF = f => {
       $$('[data-f]').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === f));
       rows.forEach(r => { const v = vis(r, f); if (r.hidden !== !v) { r.hidden = !v; } });
       plots.forEach(p => { const r = rows.find(x => x.dataset.id === p.dataset.id); p.classList.toggle('is-dim', r.hidden); });
+      const n = rows.filter(r => !r.hidden).length; $('[data-count]').textContent = n + (n === 1 ? ' dům' : n < 5 ? ' domy' : ' domů');
       if (motion) { gsap.fromTo(rows.filter(r => !r.hidden), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: .7, ease: OUT, stagger: .03 }); ScrollTrigger.refresh(); }
     };
     $$('[data-f]').forEach(b => b.addEventListener('click', () => setF(b.dataset.f)));
-    const m = { volne: 'volny', patrove: 'patrovy', prizemni: 'prizemni' }[location.hash.slice(1)]; if (m) setF(m);
+    const m = { volne: 'volny', patrove: 'patrovy', prizemni: 'prizemni', oblibene: 'fav' }[location.hash.slice(1)]; if (m && (m !== 'fav' || favs.length)) setF(m);
+    const sortSel = $('[data-sort]');
+    sortSel && sortSel.addEventListener('change', () => { const k = sortSel.value;
+      const val = r => { const p = +r.dataset.price; return k === 'plot' ? -r.dataset.plot : k === 'id' ? +r.dataset.id : k === 'price' ? (p || 9e9) : (p ? -p : 9e9); };
+      rows.slice().sort((a, b) => val(a) - val(b)).forEach(r => offer.appendChild(r));
+      if (motion) gsap.fromTo(rows.filter(r => !r.hidden), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: .6, ease: OUT, stagger: .025 }); });
     const hl = (id, on) => { plots.forEach(p => p.classList.toggle('is-hl', on && p.dataset.id === id)); rows.forEach(r => r.classList.toggle('is-hl', on && r.dataset.id === id)); };
     rows.forEach(r => { r.addEventListener('mouseenter', () => hl(r.dataset.id, true)); r.addEventListener('mouseleave', () => hl(r.dataset.id, false)); });
     const pick = id => { const r = rows.find(x => x.dataset.id === id); if (r.hidden) setF('all'); scrollToEl(r, -140); r.classList.remove('is-flash'); void r.offsetWidth; r.classList.add('is-flash'); setTimeout(() => r.classList.remove('is-flash'), 1600); };
@@ -211,36 +223,115 @@
     });
   }
 
+  /* ---------- toast ---------- */
+  const toastEl = $('#toast'); let tt;
+  function toast(msg) { if (!toastEl) return; toastEl.textContent = msg; toastEl.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('is-on'), 3200); }
+  $$('[data-pdf]').forEach(b => b.addEventListener('click', () => toast(b.dataset.pdf === 'standardy' ? 'PDF se standardy doplníme po dodání podkladů' : `PDF karta domu ${b.dataset.pdf} bude k dispozici po dodání podkladů`)));
+
+  /* ---------- favourites (this browser only) ---------- */
+  const paintFavs = () => {
+    $$('[data-fav]').forEach(b => { const on = favs.includes(+b.dataset.fav); b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', `${on ? 'Odebrat' : 'Uložit'} dům ${b.dataset.fav}`); const t = $('span', b); if (t) t.textContent = on ? 'Uloženo' : 'Uložit dům'; });
+    $$('.fav-n').forEach(n => n.textContent = favs.length);
+    $$('.chip--fav').forEach(c => c.hidden = !favs.length);
+  };
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-fav]'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const id = +b.dataset.fav, i = favs.indexOf(id);
+    if (i > -1) favs.splice(i, 1); else favs.push(id);
+    try { localStorage.setItem('blatec-favs', JSON.stringify(favs)); } catch (_) {}
+    paintFavs();
+    if (motion && i < 0) gsap.fromTo($('svg', b), { scale: .6 }, { scale: 1, duration: .7, ease: 'elastic.out(1, .4)' });
+    toast(i > -1 ? `Dům ${id} odebrán z uložených` : `Dům ${id} uložen. Najdete ho v nabídce pod „Uložené“.`);
+    if (offerF && $('[data-f="fav"][aria-pressed="true"]')) offerF(favs.length ? 'fav' : 'all');
+  });
+  paintFavs();
+
+  /* ---------- compare up to 3 houses (offer page) ---------- */
+  const tray = $('#tray'), cmpM = $('#cmp'); let cmp = [];
+  if (tray && cmpM) {
+    const H = id => D.houses.find(h => h.id === id);
+    const fmt = n => Math.round(n).toLocaleString('cs-CZ');
+    const upd = () => { tray.classList.toggle('is-on', cmp.length > 0); $('#tray-chips').innerHTML = cmp.map(id => `<span>Dům ${id}</span>`).join('');
+      $('#tray-go').disabled = cmp.length < 2; $$('[data-cmp]').forEach(x => x.setAttribute('aria-pressed', cmp.includes(+x.dataset.cmp))); };
+    document.addEventListener('click', e => { const b = e.target.closest('[data-cmp]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+      const id = +b.dataset.cmp, i = cmp.indexOf(id);
+      if (i > -1) cmp.splice(i, 1); else if (cmp.length >= 3) { toast('Porovnat můžete nejvýš 3 domy'); return; } else cmp.push(id);
+      upd(); });
+    const ST = { volny: 'Volný', rezervace: 'Rezervace', prodany: 'Prodaný' };
+    const openCmp = () => { const L = cmp.map(H);
+      const rows = [['Typ', h => h.label], ['Dispozice', h => h.disp], ['Užitná plocha', h => String(h.area).replace('.', ',') + ' m²', h => h.area, 'max'],
+        ['Pozemek', h => h.plot + ' m²', h => h.plot, 'max'], ['Zahrada', h => 'na ' + h.garden], ['Parkování', h => h.parking],
+        ['Cena', h => h.price && h.status !== 'prodany' ? fmt(h.price) + ' Kč' : h.status === 'prodany' ? 'Prodáno' : 'Na dotaz', h => h.status === 'prodany' ? Infinity : (h.price || Infinity), 'min'],
+        ['Stav', h => `<span class="st st--${h.status}">${ST[h.status]}</span>`]];
+      $('#cmp-body').innerHTML = `<div style="overflow-x:auto"><table class="ctable"><thead><tr><th></th>${L.map(h => `<th scope="col">Dům ${h.id}</th>`).join('')}</tr></thead><tbody>${rows.map(([n, f, val, best]) => {
+        let bi = -1; if (val) { const vs = L.map(val); const t = best === 'max' ? Math.max(...vs) : Math.min(...vs); if (isFinite(t) && vs.filter(v => v === t).length === 1) bi = vs.indexOf(t); }
+        return `<tr><th scope="row">${n}</th>${L.map((h, k) => `<td class="${k === bi ? 'best' : ''}">${f(h)}</td>`).join('')}</tr>`; }).join('')}
+        <tr><th></th>${L.map(h => `<td><a class="ulink label" href="dum-${h.id}.html">Detail domu ${h.id}</a></td>`).join('')}</tr></tbody></table></div><p class="label label--reg muted" style="margin-top:16px">Zlatá tečka označuje nejlepší hodnotu v řádku. Zástupné údaje.</p>`;
+      cmpM.classList.add('is-open'); cmpM.setAttribute('aria-hidden', 'false'); lock(true); setTimeout(() => $('.modal__x', cmpM).focus(), 60); };
+    const closeCmp = () => { if (!cmpM.classList.contains('is-open')) return; cmpM.classList.remove('is-open'); cmpM.setAttribute('aria-hidden', 'true'); lock(false); $('#tray-go').focus(); };
+    $('#tray-go').addEventListener('click', openCmp);
+    $('#tray-clear').addEventListener('click', () => { cmp = []; upd(); });
+    $$('[data-cmp-close]', cmpM).forEach(b => b.addEventListener('click', closeCmp));
+    addEventListener('keydown', e => { if (e.key === 'Escape') closeCmp(); });
+  }
+
+  /* ---------- watchdog ---------- */
+  $$('[data-wd]').forEach(wd => {
+    $$('[data-wd-topic]', wd).forEach(b => b.addEventListener('click', () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true')));
+    wd.addEventListener('submit', e => { e.preventDefault();
+      const em = wd.email, ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim()), topics = $$('[data-wd-topic][aria-pressed="true"]', wd);
+      const f = em.closest('.field'); f.classList.toggle('is-err', !ok); let sm = $('small', f);
+      if (!ok) { if (!sm) { sm = document.createElement('small'); f.appendChild(sm); } sm.textContent = 'Zadejte e-mail ve tvaru jmeno@domena.cz'; } else sm && sm.remove();
+      wd.ok.closest('.consent').classList.toggle('is-err', !wd.ok.checked);
+      if (!topics.length) { toast('Vyberte, co máme hlídat'); return; }
+      if (!ok) { em.focus(); return; }
+      if (!wd.ok.checked) { toast('Potvrďte prosím souhlas se zasíláním'); wd.ok.focus(); return; }
+      $('[data-wd-msg]', wd).textContent = `Na ${em.value.trim()} vám napíšeme: ${topics.map(t => t.textContent.toLowerCase()).join(', ')}.`;
+      $('.wd__body', wd).hidden = true; $('.wd__done', wd).hidden = false;
+      if (motion) gsap.from($('.wd__done', wd).children, { y: 24, opacity: 0, duration: .9, ease: OUT, stagger: .08 }); });
+  });
+
+  /* ---------- mortgage calculator ---------- */
+  const calc = $('[data-calc]');
+  if (calc) {
+    const price = +calc.dataset.price, ins = { own: $('#c-own'), rate: $('#c-rate'), years: $('#c-years') };
+    const fmt = n => Math.round(n).toLocaleString('cs-CZ') + ' Kč';
+    const upd = () => { const own = +ins.own.value, rate = +ins.rate.value, years = +ins.years.value;
+      Object.values(ins).forEach(i => i.style.setProperty('--p', ((i.value - i.min) / (i.max - i.min) * 100) + '%'));
+      const loan = price * (1 - own / 100), r = rate / 100 / 12, n = years * 12, pay = r ? loan * r / (1 - Math.pow(1 + r, -n)) : loan / n;
+      $('#o-own').textContent = own + ' % · ' + fmt(price * own / 100); $('#o-rate').textContent = rate.toLocaleString('cs-CZ', { minimumFractionDigits: 1 }) + ' %';
+      $('#o-years').textContent = years + ' let'; $('#o-pay').textContent = fmt(pay); $('#o-loan').textContent = fmt(loan); $('#o-total').textContent = fmt(pay * n); };
+    Object.values(ins).forEach(i => i.addEventListener('input', upd)); upd();
+  }
+
   /* ---------- motion ---------- */
   if (!motion) return;
-  const ENTER = 'top 90%';
   const go = () => {
-    // hero title: letters rise out of a mask
-    $$('.js-split').forEach(el => {
+    // Reveals use IntersectionObserver: reliable on iOS, and anything already scrolled past is shown at once.
+    const anim = (el, instant) => {
       const kind = el.dataset.split;
-      const inView = el.getBoundingClientRect().top < innerHeight * .95;
-      if (kind === 'chars') {
-        const s = SplitText.create(el, { type: 'chars', mask: 'chars', charsClass: 'char', aria: 'none' });
-        el.style.visibility = 'visible';
-        gsap.from(s.chars, { yPercent: 115, duration: 1.4, ease: OUT, stagger: .05, delay: inView ? .15 : 0, scrollTrigger: inView ? null : { trigger: el, start: ENTER, once: true }, onComplete: () => s.revert() });
-      } else if (kind === 'script') {
-        el.style.visibility = 'visible';
-        gsap.from(el, { clipPath: 'inset(0 100% 0 0)', duration: 1.6, ease: 'power3.inOut', delay: inView ? .6 : 0, scrollTrigger: inView ? null : { trigger: el, start: ENTER, once: true }, clearProps: 'clipPath' });
-      } else {
-        const s = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'line', aria: 'none' });
-        el.style.visibility = 'visible';
-        gsap.from(s.lines, { yPercent: 115, duration: 1.2, ease: OUT, stagger: .08, scrollTrigger: { trigger: el, start: ENTER, once: true }, onComplete: () => s.revert() });
-      }
-    });
-    // simple reveals
-    ScrollTrigger.batch('[data-r]', { start: 'top 94%', once: true,
-      onEnter: b => gsap.to(b, { opacity: 1, y: 0, duration: 1.1, ease: OUT, stagger: .08, overwrite: true }) });
+      el.style.visibility = 'visible';
+      if (instant) { gsap.set(el, { opacity: 1, y: 0, clearProps: 'transform' }); return; }
+      if (kind === 'chars') { const s = SplitText.create(el, { type: 'chars', mask: 'chars', charsClass: 'char', aria: 'none' });
+        gsap.from(s.chars, { yPercent: 115, duration: 1.4, ease: OUT, stagger: .05, delay: .1, onComplete: () => s.revert() }); }
+      else if (kind === 'script') gsap.from(el, { clipPath: 'inset(0 100% 0 0)', duration: 1.6, ease: 'power3.inOut', delay: .35, clearProps: 'clipPath' });
+      else if (kind === 'lines') { const s = SplitText.create(el, { type: 'lines', mask: 'lines', linesClass: 'line', aria: 'none' });
+        gsap.from(s.lines, { yPercent: 115, duration: 1.2, ease: OUT, stagger: .08, onComplete: () => s.revert() }); }
+      else gsap.to(el, { opacity: 1, y: 0, duration: 1.1, ease: OUT, delay: (el.__q || 0) * .08, overwrite: true, clearProps: 'transform' });
+    };
+    const io = new IntersectionObserver(es => { let q = 0;
+      es.forEach(e => { const r = e.boundingClientRect; if (!e.isIntersecting && r.top > 0) return;
+        io.unobserve(e.target); e.target.__q = q++; anim(e.target, r.bottom < 0); }); }, { rootMargin: '0px 0px -5% 0px' });
+    $$('.js-split, [data-r]').forEach(el => io.observe(el));
+    // last resort: whatever is above the fold after scrolling stops is visible
+    let idle; addEventListener('scroll', () => { clearTimeout(idle); idle = setTimeout(() => $$('.js-split, [data-r]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && getComputedStyle(el).opacity === '0') anim(el, true); }), 700); }, { passive: true });
     // hero photo settles
     $$('.hero__media img').forEach(i => gsap.to(i, { scale: 1, duration: 2.2, ease: 'power3.out' }));
     $$('.hero, .dhero').forEach(h => gsap.to($('.hero__media', h), { yPercent: 18, ease: 'none', scrollTrigger: { trigger: h, start: 'top top', end: 'bottom top', scrub: true } }));
     // parallax bands
     $$('[data-par]').forEach(p => gsap.fromTo(p, { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: p.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
-    $$('.reason__img img, .space__grid img').forEach(i => gsap.fromTo(i, { yPercent: -6 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: i.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
+    $$('.reason__img img, .space__grid img').forEach(i => gsap.fromTo(i, { yPercent: -5, scale: 1.12 }, { yPercent: 5, scale: 1.12, ease: 'none', scrollTrigger: { trigger: i.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));
     // arch opens up as it rises
     const arch = $('.arch__bg');
     if (arch) gsap.fromTo(arch, { scaleX: .72 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: arch, start: 'top 95%', end: 'top 25%', scrub: true } });
@@ -273,9 +364,15 @@
       });
     });
     ScrollTrigger.refresh();
+    // keep scroll-linked scenes measured right when images, fonts or the iOS toolbar change the layout
+    let rt; const refresh = () => { clearTimeout(rt); rt = setTimeout(() => ScrollTrigger.isScrolling() ? refresh() : ScrollTrigger.refresh(), 250); };
+    addEventListener('load', refresh); addEventListener('orientationchange', refresh);
+    if ('ResizeObserver' in window) { let last = document.body.scrollHeight; new ResizeObserver(() => { const hg = document.body.scrollHeight; if (Math.abs(hg - last) > 60) { last = hg; refresh(); } }).observe(document.body); }
   };
   // fonts first so split lines are measured right; never wait longer than 1.2 s
   Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1200))]).then(go);
   // safety: never leave text hidden
   setTimeout(() => $$('.js-split').forEach(el => el.style.visibility = 'visible'), 2500);
+  // if GSAP failed to load, never leave content hidden
+  setTimeout(() => { if (!window.ScrollTrigger) root.classList.remove('motion'); }, 3000);
 })();
