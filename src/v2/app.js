@@ -63,7 +63,7 @@
     hdr.classList.toggle('is-ink', !!under && under.dataset.hdr === 'ink');
     hdr.classList.toggle('is-bar', y > 24 && innerWidth <= 760);
     fab && fab.classList.toggle('is-off', y < innerHeight * .6);
-    dock && dock.classList.toggle('is-off', y < innerHeight * .5);
+    dock && dock.classList.toggle('is-off', y < innerHeight * .5 || y > document.documentElement.scrollHeight - innerHeight * 1.6);
     hdr.classList.toggle('is-hidden', y > 260 && y > lastY + 2 && !root.classList.contains('menu-on'));
     if (y < lastY - 2 || y < 260) hdr.classList.remove('is-hidden');
     lastY = y;
@@ -347,7 +347,8 @@
       const tl = gsap.timeline({ scrollTrigger: st });
       tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .25, ease: 'none' }, 0)
         .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1, yPercent: 0 }, { opacity: 0, scale: 1.7, yPercent: -10, duration: .6, ease: 'power1.in' }, .05)
-        .fromTo($('.sky__cl--a', sec), { opacity: .95, yPercent: 0 }, { opacity: .55, yPercent: -40, duration: .9, ease: 'none' }, 0)
+        .fromTo($('.sky__cl--c', sec), { opacity: .9, scale: 1.05, yPercent: 0 }, { opacity: 0, scale: 1.5, yPercent: -18, duration: .75, ease: 'power1.in' }, .08)
+        .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .5, yPercent: -40, duration: .9, ease: 'none' }, 0)
         .fromTo($('.sky__photo img', sec), { scale: 1.25 }, { scale: 1, duration: 1, ease: 'none' }, 0)
         .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .5);
     });
@@ -364,8 +365,7 @@
     // footer: BLATEC rises out of the page, the fields drift inside the letters
     $$('.ftr__mark span').forEach(w => {
       const st = { trigger: w.parentElement, start: 'top bottom', end: 'bottom bottom', scrub: true };
-      gsap.fromTo(w, { yPercent: 55 }, { yPercent: 0, ease: 'none', scrollTrigger: st });
-      gsap.fromTo(w, { backgroundPosition: '50% 55%' }, { backgroundPosition: '50% 100%', ease: 'none', scrollTrigger: { ...st, start: 'top bottom' } });
+      gsap.fromTo(w, { yPercent: 70 }, { yPercent: 0, ease: 'none', scrollTrigger: st });
     });
     // horizontal tracks (desktop): vertical scroll drives the track sideways
     const mm = gsap.matchMedia();

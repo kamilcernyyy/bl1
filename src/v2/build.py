@@ -372,6 +372,7 @@ def sky(script, words, label, img_name="hana", eager=False):
   <div class="sky__stick">
     <div class="sky__photo">{img(img_name, CAPTION.get(img_name, "") + " – zástupná vizualizace", "100vw", eager=eager)}</div>
     <div class="sky__cl sky__cl--b" aria-hidden="true"><div class="sky__drift sky__drift--b"></div></div>
+    <div class="sky__cl sky__cl--c" aria-hidden="true"><div class="sky__drift sky__drift--c"></div></div>
     <div class="sky__cl sky__cl--a" aria-hidden="true"><div class="sky__drift sky__drift--a"></div></div>
     <div class="sky__fade" aria-hidden="true"></div>
     <div class="sky__txt wrap">
@@ -828,6 +829,8 @@ for h in HOUSES:
     <p class="p center" data-r>{TYPE_TXT[h["type"]]} Pozemek {area(h["plot"])}, dvě stání u&nbsp;domu.</p>
   </div>
 </section>
+
+{sky("z výšky", "Dům " + str(hid), f"Pozemek {area(h['plot'])} · zahrada na {h['garden']}", img_name="aerial")}
 
 {hscroll("Dům " + str(hid), "v obrazech", [hcard(n, k + 1) for k, n in enumerate(gal_names)], "d-g", theme="t-cream")}
 
