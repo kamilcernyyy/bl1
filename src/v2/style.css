@@ -962,3 +962,11 @@ html.motion .sky__drift--d{animation:drift-rx 75s linear infinite}
 html:not(.motion) .sky__cl--d{display:none}
 .sky__fog{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 80% at 50% 62%,rgba(246,243,239,.82),rgba(246,243,239,.62) 55%,rgba(246,243,239,.35) 100%)}
 html:not(.motion) .sky__fog{display:none}
+/* signature */
+.ftr>.ftr__legal{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px 24px}
+.ftr__legal>:first-child{justify-self:start}.ftr__legal>:last-child{justify-self:end}
+.ftr__made{display:inline-flex;align-items:baseline;gap:8px;color:var(--cream);opacity:1}
+.ftr__made .script{font-size:28px;line-height:1;color:var(--gold);transition:color .3s}
+@media (hover:hover){.ftr__made:hover .script{color:var(--cream)}}
+@media (max-width:760px){.ftr>.ftr__legal{grid-template-columns:1fr;justify-items:center}.ftr__legal>:first-child,.ftr__legal>:last-child{justify-self:center}.ftr__made{order:3;margin-top:6px}}
+.ftr>.ftr__legal{opacity:1}.ftr__legal>.label,.ftr__made .label{opacity:.75}.ftr__made .script{font-size:32px}

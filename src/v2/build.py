@@ -243,7 +243,7 @@ def footer():
         <div><span class="label">Developer</span><b class="serif">HP DOMY s.r.o.</b><span class="p--s">I. P. Pavlova 692/143</span><span class="p--s">783 01 Olomouc</span></div>
         <div><span class="label">Místo</span><b class="serif">Blatec na Hané</b><span class="p--s">okres Olomouc</span><span class="p--s">8 km jižně od Olomouce</span></div>
       </div>
-      <div class="ftr__legal"><span class="label label--reg">© 2026 HP DOMY · Vizualizace jsou ilustrační</span><a class="label label--reg ulink" href="../index.html">Zobrazit směr A</a></div>
+      <div class="ftr__legal"><span class="label label--reg">© 2026 HP DOMY · Vizualizace jsou ilustrační</span><a class="ftr__made" href="https://moje-vert.vercel.app" target="_blank" rel="noopener"><span class="label label--reg">S&nbsp;láskou vytvořeno,</span> <span class="script">Grafysta</span></a><a class="label label--reg ulink" href="../index.html">Zobrazit směr A</a></div>
       <div class="ftr__mark" aria-hidden="true"><span>Blatec</span></div>
     </footer>'''
 
