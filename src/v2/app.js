@@ -347,10 +347,10 @@
       const tl = gsap.timeline({ scrollTrigger: st });
       tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .25, ease: 'none' }, 0)
         .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1, yPercent: 0 }, { opacity: 0, scale: 1.7, yPercent: -10, duration: .6, ease: 'power1.in' }, .05)
-        .fromTo($('.sky__cl--c', sec), { opacity: .9, scale: 1.05, yPercent: 0 }, { opacity: 0, scale: 1.5, yPercent: -18, duration: .75, ease: 'power1.in' }, .08)
-        .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .5, yPercent: -40, duration: .9, ease: 'none' }, 0)
+        .fromTo($('.sky__cl--c', sec), { opacity: .9, scale: 1.05, yPercent: 0 }, { opacity: 0, scale: 1.5, yPercent: -18, duration: .56, ease: 'power1.in' }, .08)
+        .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .32, yPercent: -40, duration: .9, ease: 'none' }, 0)
         .fromTo($('.sky__photo img', sec), { scale: 1.25 }, { scale: 1, duration: 1, ease: 'none' }, 0)
-        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .5);
+        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .24, ease: 'power2.out' }, .64);
     });
     // pull-in photo: framed card opens to full screen
     $$('.zin').forEach(sec => {
@@ -360,7 +360,7 @@
       const r = 50 - sx;  // bottom radius = half the card width, so the bottom is a true semicircle
       tl.fromTo($('.zin__media', sec), { clipPath: `inset(${sy}% ${sx}% ${sy}% ${sx}% round 0vw 0vw ${r}vw ${r}vw)` }, { clipPath: 'inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)', duration: .7, ease: 'none' }, 0)
         .fromTo($('.zin__media img', sec), { scale: 1.35 }, { scale: 1, duration: 1, ease: 'none' }, 0)
-        .fromTo($('.zin__txt', sec), { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .3, ease: 'power2.out' }, .6);
+        .fromTo($('.zin__txt', sec), { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: .25, ease: 'power2.out' }, .72);
     });
     // footer: BLATEC rises out of the page, the fields drift inside the letters
     $$('.ftr__mark span').forEach(w => {
