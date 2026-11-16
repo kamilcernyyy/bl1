@@ -343,7 +343,8 @@
     if (arch) gsap.fromTo(arch, { scaleX: .72 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: arch, start: 'top 95%', end: 'top 25%', scrub: true } });
     // clouds: cream -> drifting clouds -> landscape
     $$('.sky').forEach(sec => {
-      const st = { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true };
+      // the whole passage fits one scroll gesture; scrub smoothing keeps it fluid
+      const st = { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: .9 };
       const tl = gsap.timeline({ scrollTrigger: st });
       tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .22, ease: 'none' }, 0)
         // a dense bank first, then it parts layer by layer
@@ -353,7 +354,7 @@
         .fromTo($('.sky__cl--d', sec), { opacity: 1, scale: 1.2, yPercent: 0 }, { opacity: 0, scale: 1.6, yPercent: 14, duration: .56, ease: 'power2.in' }, .14)
         .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .3, yPercent: -45, duration: .9, ease: 'none' }, 0)
         .fromTo($('.sky__photo img', sec), { scale: 1.3 }, { scale: 1, duration: 1, ease: 'none' }, 0)
-        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .2, ease: 'power2.out' }, .72);
+        .fromTo($('.sky__txt', sec), { opacity: 0 }, { opacity: 1, duration: .2, ease: 'power1.out' }, .72);
     });
     // pull-in photo: framed card opens to full screen
     $$('.zin').forEach(sec => {
