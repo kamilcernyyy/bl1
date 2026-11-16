@@ -287,6 +287,8 @@ def page(name, title, desc, body, preload=None, jsonld=None, dock=None, extra=""
            + modal() + extra + fab + '<div class="toast" id="toast" role="status" aria-live="polite"></div>\n<div class="hl-float" aria-hidden="true"><img alt=""></div>\n' + scripts())
     out = re.sub(r' data-r(?=[\s>=])(="[^"]*")?', '', out)
     out = re.sub(r' data-split="[^"]*"', '', out).replace(" js-split", "")
+    # a sky followed by a dark section dissolves into burgundy instead of cream
+    out = re.sub(r'<section class="sky"((?:(?!<section).)*?</section>\s*<section class="[^"]*t-soil)', r'<section class="sky sky--dark"\1', out, flags=re.S)
     open(os.path.join(OUT, name), "w", encoding="utf-8").write(cz_typo(out))
 
 
@@ -400,6 +402,7 @@ def sky(script, words, label, img_name="hana", eager=False):
     <div class="sky__cl sky__cl--d" aria-hidden="true"><div class="sky__drift sky__drift--d"></div></div>
     <div class="sky__cl sky__cl--a" aria-hidden="true"><div class="sky__drift sky__drift--a"></div></div>
     <div class="sky__fade" aria-hidden="true"></div>
+    <div class="sky__end" aria-hidden="true"></div>
     <div class="sky__txt wrap">
       <p class="label">{label}</p>
       <p class="ttl ttl--rev on-photo"><span class="serif mega">{words}</span><span class="script">{script}</span></p>

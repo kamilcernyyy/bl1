@@ -980,3 +980,18 @@ html:not(.motion) .sky__fog{display:none}
   background:url(img/cloud-a.webp) 70% 50%/auto 100% repeat-x;opacity:.9;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 35%,#000 65%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 35%,#000 65%,transparent 100%)}
 .sky__fade{background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 10%,rgba(244,238,229,0) 46%)}
+
+/* the landscape dissolves into the next section: mist and cream (or burgundy) at the bottom, no edge */
+.sky{--end:var(--cream);--end-rgb:244,238,229}
+.sky--dark{--end:var(--soil);--end-rgb:59,15,30}
+.sky__photo::after{background:linear-gradient(180deg,rgba(46,14,24,.35),rgba(46,14,24,0) 35%,rgba(46,14,24,.1) 55%,rgba(46,14,24,0) 80%)}
+.sky__txt{inset:auto 0 30svh;padding-bottom:0;z-index:2}
+body:has(.dock) .sky__txt{padding-bottom:0}
+.sky__txt::before{inset:-70% 0 -45%;background:radial-gradient(75% 60% at 50% 55%,rgba(30,8,16,.66),rgba(30,8,16,.42) 55%,rgba(30,8,16,0) 100%)}
+.sky__end{position:absolute;left:0;right:0;bottom:-1px;height:40%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(var(--end-rgb),0) 0%,rgba(var(--end-rgb),.35) 30%,rgba(var(--end-rgb),.82) 62%,var(--end) 92%)}
+.sky:not(.sky--dark) .sky__end::before{content:"";position:absolute;left:0;right:0;top:4%;height:72%;background:url(img/cloud-a.webp) 40% 50%/auto 100% repeat-x;opacity:.85;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 40%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 40%,#000 70%,transparent 100%)}
+html:not(.motion) .sky__end{height:30%}
+.sky__txt::before{inset:-55% 0 -55%;background:linear-gradient(180deg,rgba(30,8,16,0) 0%,rgba(30,8,16,.5) 34%,rgba(30,8,16,.56) 58%,rgba(30,8,16,0) 100%)}
+.sky__end{height:48%}
