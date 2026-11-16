@@ -344,9 +344,11 @@
     // clouds: cream -> drifting clouds -> landscape
     $$('.sky').forEach(sec => {
       // the whole passage fits one scroll gesture; scrub smoothing keeps it fluid
+      // the cream top stays until the section reaches the top, so the seam with the page above never shows
+      gsap.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, ease: 'none', scrollTrigger: { trigger: sec, start: 'top 15%', end: 'top -35%', scrub: .9 } });
       const st = { trigger: sec, start: 'top 85%', end: 'bottom bottom', scrub: .9 };
       const tl = gsap.timeline({ scrollTrigger: st });
-      tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .22, ease: 'none' }, 0)
+      tl
         // a dense bank first, then it parts layer by layer
         .fromTo($('.sky__fog', sec), { opacity: 1 }, { opacity: 0, duration: .5, ease: 'power1.in' }, .12)
         .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1.1, yPercent: 0 }, { opacity: 0, scale: 1.9, yPercent: -12, duration: .62, ease: 'power2.in' }, .1)

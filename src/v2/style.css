@@ -971,3 +971,12 @@ html:not(.motion) .sky__fog{display:none}
 @media (max-width:760px){.ftr>.ftr__legal{grid-template-columns:1fr;justify-items:center}.ftr__legal>:first-child,.ftr__legal>:last-child{justify-self:center}.ftr__made{order:3;margin-top:6px}}
 .ftr>.ftr__legal{opacity:1}.ftr__legal>.label,.ftr__made .label{opacity:.75}.ftr__made .script{font-size:32px}
 @media (max-width:760px){.sky{height:175vh}}
+
+/* a cloud bank straddles the seam between the page and the sky, so the hand-over happens inside the clouds */
+.sky::before{content:"";position:absolute;left:0;right:0;top:-16vh;height:50vh;z-index:3;pointer-events:none;
+  background:linear-gradient(180deg,rgba(244,238,229,0) 0%,rgba(244,238,229,.85) 42%,rgba(244,238,229,.85) 55%,rgba(244,238,229,0) 100%),url(img/cloud-b.webp) 30% 50%/auto 100% repeat-x;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 70%,transparent 100%)}
+.sky::after{content:"";position:absolute;left:0;right:0;top:-10vh;height:36vh;z-index:3;pointer-events:none;
+  background:url(img/cloud-a.webp) 70% 50%/auto 100% repeat-x;opacity:.9;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 35%,#000 65%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 35%,#000 65%,transparent 100%)}
+.sky__fade{background:linear-gradient(180deg,var(--cream) 0%,var(--cream) 10%,rgba(244,238,229,0) 46%)}
