@@ -406,7 +406,7 @@ body{letter-spacing:.012em}
 /* menu numbering */
 
 /* ---------- clouds: cream page -> drifting clouds -> landscape ---------- */
-.sky{position:relative;height:260vh;background:var(--cream);color:var(--cream)}
+.sky{position:relative;height:320vh;background:var(--cream);color:var(--cream)}
 .sky__stick{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
 .sky__photo{position:absolute;inset:0}
 .sky__photo img{width:100%;height:100%;object-fit:cover;object-position:50% 70%;transform:scale(1.25);transform-origin:50% 60%}
@@ -952,3 +952,13 @@ html:not(.motion) .sky__cl--c{display:none}
 .dfacts dd,.dhero .serif,.sky__txt .serif,.zin__txt .serif,.hero .serif{text-shadow:0 2px 30px rgba(30,8,16,.45)}
 .sky__txt .label{opacity:1;text-shadow:0 1px 3px rgba(30,8,16,.55),0 1px 16px rgba(30,8,16,.8)}
 @media (max-width:560px){.dhero__act{gap:10px 22px}.fav.fav--big{font-size:10.5px;gap:8px;letter-spacing:.1em}}
+
+/* clouds, stronger: longer passage, a fourth low bank, softer mask */
+.sky__cl{-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 8%,#000 88%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 8%,#000 88%,transparent 100%)}
+.sky__cl--d{top:30%;bottom:-25%}
+.sky__drift--d{background-image:url(img/cloud-a.webp)}
+@keyframes drift-rx{from{transform:translate3d(calc(-1 * var(--tw,2400px)),0,0) scaleX(-1)}to{transform:translate3d(0,0,0) scaleX(-1)}}
+html.motion .sky__drift--d{animation:drift-rx 75s linear infinite}
+html:not(.motion) .sky__cl--d{display:none}
+.sky__fog{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 80% at 50% 62%,rgba(246,243,239,.82),rgba(246,243,239,.62) 55%,rgba(246,243,239,.35) 100%)}
+html:not(.motion) .sky__fog{display:none}

@@ -394,8 +394,10 @@ def sky(script, words, label, img_name="hana", eager=False):
     return f'''<section class="sky" data-hdr="light" aria-label="{esc(label)}">
   <div class="sky__stick">
     <div class="sky__photo">{img(img_name, CAPTION.get(img_name, "") + " – zástupná vizualizace", "100vw", eager=eager)}</div>
+    <div class="sky__fog" aria-hidden="true"></div>
     <div class="sky__cl sky__cl--b" aria-hidden="true"><div class="sky__drift sky__drift--b"></div></div>
     <div class="sky__cl sky__cl--c" aria-hidden="true"><div class="sky__drift sky__drift--c"></div></div>
+    <div class="sky__cl sky__cl--d" aria-hidden="true"><div class="sky__drift sky__drift--d"></div></div>
     <div class="sky__cl sky__cl--a" aria-hidden="true"><div class="sky__drift sky__drift--a"></div></div>
     <div class="sky__fade" aria-hidden="true"></div>
     <div class="sky__txt wrap">

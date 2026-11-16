@@ -345,12 +345,15 @@
     $$('.sky').forEach(sec => {
       const st = { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true };
       const tl = gsap.timeline({ scrollTrigger: st });
-      tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .25, ease: 'none' }, 0)
-        .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1, yPercent: 0 }, { opacity: 0, scale: 1.7, yPercent: -10, duration: .6, ease: 'power1.in' }, .05)
-        .fromTo($('.sky__cl--c', sec), { opacity: .9, scale: 1.05, yPercent: 0 }, { opacity: 0, scale: 1.5, yPercent: -18, duration: .56, ease: 'power1.in' }, .08)
-        .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .32, yPercent: -40, duration: .9, ease: 'none' }, 0)
-        .fromTo($('.sky__photo img', sec), { scale: 1.25 }, { scale: 1, duration: 1, ease: 'none' }, 0)
-        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .24, ease: 'power2.out' }, .64);
+      tl.fromTo($('.sky__fade', sec), { opacity: 1 }, { opacity: 0, duration: .22, ease: 'none' }, 0)
+        // a dense bank first, then it parts layer by layer
+        .fromTo($('.sky__fog', sec), { opacity: 1 }, { opacity: 0, duration: .5, ease: 'power1.in' }, .12)
+        .fromTo($('.sky__cl--b', sec), { opacity: 1, scale: 1.1, yPercent: 0 }, { opacity: 0, scale: 1.9, yPercent: -12, duration: .62, ease: 'power2.in' }, .1)
+        .fromTo($('.sky__cl--c', sec), { opacity: 1, scale: 1.15, yPercent: 0 }, { opacity: 0, scale: 1.7, yPercent: -20, duration: .58, ease: 'power2.in' }, .12)
+        .fromTo($('.sky__cl--d', sec), { opacity: 1, scale: 1.2, yPercent: 0 }, { opacity: 0, scale: 1.6, yPercent: 14, duration: .56, ease: 'power2.in' }, .14)
+        .fromTo($('.sky__cl--a', sec), { opacity: 1, yPercent: 0 }, { opacity: .3, yPercent: -45, duration: .9, ease: 'none' }, 0)
+        .fromTo($('.sky__photo img', sec), { scale: 1.3 }, { scale: 1, duration: 1, ease: 'none' }, 0)
+        .fromTo($('.sky__txt', sec), { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: .2, ease: 'power2.out' }, .72);
     });
     // pull-in photo: framed card opens to full screen
     $$('.zin').forEach(sec => {
