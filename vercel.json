@@ -1,5 +1,19 @@
 {
   "redirects": [
-    { "source": "/v2", "destination": "/v2/", "permanent": false }
+    {
+      "source": "/v2",
+      "destination": "/v2/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "/v2/",
+      "permanent": false
+    },
+    {
+      "source": "/:page(index|nabidka|lokalita|o-projektu|standardy|galerie|kontakt|dum-\\d+).html",
+      "destination": "/v2/:page.html",
+      "permanent": false
+    }
   ]
 }
