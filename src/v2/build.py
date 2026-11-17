@@ -116,6 +116,7 @@ def head(title, desc, preload=None, jsonld=None):
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233b0f1e'/%3E%3Cpath d='M32 54V20M32 20c-4-4-4-11 0-15 4 4 4 11 0 15zM32 30c-8 0-12-5-12-11 8 0 12 5 12 11zM32 30c8 0 12-5 12-11-8 0-12 5-12 11zM32 42c-8 0-12-5-12-11 8 0 12 5 12 11zM32 42c8 0 12-5 12-11-8 0-12 5-12 11z' fill='none' stroke='%23f4eee5' stroke-width='2.4'/%3E%3C/svg%3E">
 <link rel="preload" as="font" type="font/woff2" href="fonts/instrument-serif-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/archivo-x-latin-400.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/instrument-serif-latin-400-italic.woff2" crossorigin>
 {pre}<script>(function(d){{var r=d.documentElement;r.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches?'rm':'motion');try{{if(sessionStorage.getItem('pt')){{r.classList.add('pt-in');sessionStorage.removeItem('pt')}}}}catch(e){{}}}})(document)</script>
 <style>{CSS}</style>
 {ld}</head>
@@ -129,7 +130,6 @@ def roll(t):
     return f'<span class="roll"><span>{t}</span><span aria-hidden="true">{t}</span></span>'
 
 
-LOGO = '<span class="logo__n">Blatec</span><span class="logo__s">HP DOMY Development</span>'
 
 
 def seal(k, cls=""):
