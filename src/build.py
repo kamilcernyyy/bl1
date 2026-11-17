@@ -214,9 +214,9 @@ def cz_typo(html_text):
     skip = False
     for i, p in enumerate(parts):
         if p.startswith('<'):
-            t = p[1:].split()[0].lower() if len(p) > 2 else ''
-            if t in ('script', 'style'): skip = True
-            elif t in ('/script', '/style'): skip = False
+            m = re.match(r'<(/?)([a-zA-Z][a-zA-Z0-9-]*)', p)
+            if m and m.group(2).lower() in ('script', 'style', 'textarea'):
+                skip = not m.group(1)
             continue
         if skip or not p.strip():
             continue

@@ -111,9 +111,33 @@
     $('.lbx__n', lbx).textContent = String(lIdx + 1).padStart(2, '0') + ' / ' + String(lGroup.length).padStart(2, '0');
     $$('.lbx__nav', lbx).forEach(n => n.hidden = lGroup.length < 2);
     if (motion) gsap.fromTo(lImg, { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .7, ease: OUT }); };
-  const lOpen = b => { lFrom = b; lGroup = $$(`[data-zoom="${b.dataset.zoom}"]`).filter(x => x.offsetParent !== null || x.closest('.hs')); lShow(lGroup.indexOf(b)); lbx.classList.add('is-open'); lbx.setAttribute('aria-hidden', 'false'); lock(true); setTimeout(() => $('.lbx__x', lbx).focus(), 50); };
+  const lOpen = b => { lFrom = b; lGroup = $$(`[data-zoom="${b.dataset.zoom}"]`).filter(x => x.offsetParent !== null || x.closest('.gv')); lShow(lGroup.indexOf(b)); lbx.classList.add('is-open'); lbx.setAttribute('aria-hidden', 'false'); lock(true); setTimeout(() => $('.lbx__x', lbx).focus(), 50); };
   const lClose = () => { if (!lbx.classList.contains('is-open')) return; lbx.classList.remove('is-open'); lbx.setAttribute('aria-hidden', 'true'); lock(false); lFrom && lFrom.focus(); };
   document.addEventListener('click', e => { const b = e.target.closest('[data-zoom]'); if (b) { e.preventDefault(); lOpen(b); } });
+  /* ---------- gallery: one large photo + thumbnails, arrows, swipe ---------- */
+  $$('[data-gv]').forEach(g => {
+    const sec = g.closest('.gv'), slides = $$('[data-gv-slide]', g), thumbs = $$('[data-gv-go]', sec);
+    const caps = (g.dataset.caps || '').split('|'), nEl = $('[data-gv-n]', g), capEl = $('[data-gv-cap]', g), strip = $('.gv__thumbs', sec);
+    const n = slides.length; let i = 0;
+    const go = k => {
+      k = (k + n) % n; if (k === i) return;
+      slides[i].classList.remove('is-on'); slides[i].setAttribute('aria-hidden', 'true');
+      thumbs[i].classList.remove('is-on'); thumbs[i].removeAttribute('aria-current');
+      slides[k].classList.add('is-on'); slides[k].removeAttribute('aria-hidden');
+      thumbs[k].classList.add('is-on'); thumbs[k].setAttribute('aria-current', 'true');
+      nEl.textContent = String(k + 1).padStart(2, '0'); capEl.textContent = caps[k] || '';
+      if (motion) gsap.fromTo($('img', slides[k]), { scale: 1.06 }, { scale: 1, duration: 1.1, ease: OUT });
+      if (strip.scrollWidth > strip.clientWidth + 2) { const t = thumbs[k].parentElement; strip.scrollTo({ left: t.offsetLeft - strip.clientWidth / 2 + t.offsetWidth / 2, behavior: motion ? 'smooth' : 'auto' }); }
+      i = k;
+    };
+    $('[data-gv-prev]', g).addEventListener('click', () => go(i - 1));
+    $('[data-gv-next]', g).addEventListener('click', () => go(i + 1));
+    thumbs.forEach((t, k) => t.addEventListener('click', () => go(k)));
+    sec.addEventListener('keydown', e => { if (e.target.closest('input,textarea')) return; if (e.key === 'ArrowRight') { go(i + 1); e.preventDefault(); } if (e.key === 'ArrowLeft') { go(i - 1); e.preventDefault(); } });
+    let sx = null, sy = 0; const st = $('.gv__stage', g);
+    st.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    st.addEventListener('touchend', e => { if (sx === null) return; const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy; sx = null; if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) go(i + (dx < 0 ? 1 : -1)); }, { passive: true });
+  });
   $('[data-lbx-close]', lbx).addEventListener('click', lClose);
   $('[data-lbx-prev]', lbx).addEventListener('click', () => lShow(lIdx - 1));
   $('[data-lbx-next]', lbx).addEventListener('click', () => lShow(lIdx + 1));
@@ -372,16 +396,6 @@
     $$('.ftr__mark span').forEach(w => {
       const st = { trigger: w.parentElement, start: 'top bottom', end: 'bottom bottom', scrub: true };
       gsap.fromTo(w, { yPercent: 70 }, { yPercent: 0, ease: 'none', scrollTrigger: st });
-    });
-    // horizontal tracks (desktop): vertical scroll drives the track sideways
-    const mm = gsap.matchMedia();
-    mm.add('(min-width: 761px)', () => {
-      $$('.hs').forEach(sec => {
-        const track = $('[data-hs]', sec), bar = $('.hs__bar i', sec);
-        const dist = () => Math.max(0, track.scrollWidth - innerWidth + parseFloat(getComputedStyle(track).paddingLeft));
-        const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: $('.hs__stick', sec), scrub: .6, invalidateOnRefresh: true, anticipatePin: 1 } });
-        tl.to(track, { x: () => -dist(), ease: 'none' }, 0).fromTo(bar, { scaleX: 0 }, { scaleX: 1, ease: 'none' }, 0);
-      });
     });
     ScrollTrigger.refresh();
     // keep scroll-linked scenes measured right when images, fonts or the iOS toolbar change the layout

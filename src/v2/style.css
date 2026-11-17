@@ -1022,3 +1022,56 @@ html:not(.motion) .sky__end{height:30%}
 .nw{white-space:nowrap}
 .sky__txt::before{inset:-60% 0 -50%;background:linear-gradient(180deg,rgba(30,8,16,0) 0%,rgba(30,8,16,.62) 24%,rgba(30,8,16,.66) 70%,rgba(30,8,16,0) 100%)}
 @media (min-width:761px){.ftr>.ftr__legal{grid-template-columns:1fr auto;align-items:baseline}}
+
+/* ===== GALERIE (17. 11.) — velká fotka, číslo, popisek, šipky a řada náhledů; stránka roluje normálně ===== */
+.gv__head,.cg__head{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:16px 40px;margin-bottom:clamp(30px,4vw,64px)}
+.gv__head .ttl,.cg__head .ttl{justify-items:start;text-align:left}
+.gv__head .ttl>.script,.cg__head .ttl>.script{margin-left:0}
+.cg__head .p{max-width:30em;justify-self:end;text-align:right}
+.gv__main{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:clamp(20px,3vw,56px);align-items:end}
+.gv__stage{position:relative;aspect-ratio:16/10;overflow:hidden;background:rgba(43,26,31,.08)}
+.gv__slide{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .7s var(--out),visibility 0s .7s}
+.gv__slide.is-on{opacity:1;visibility:visible;transition:opacity .7s var(--out),visibility 0s}
+.gv__slide .zf,.gv__slide .zf__btn{display:block;width:100%;height:100%;margin:0}
+.gv__slide img{width:100%;height:100%;object-fit:cover;display:block}
+.gv__side{display:grid;gap:clamp(14px,1.6vw,24px);align-content:end;padding-bottom:4px}
+.gv__n{display:flex;align-items:baseline;gap:10px;margin:0}
+.gv__n .h3{line-height:.8}
+.gv__n .label{opacity:.6}
+.gv__cap{margin:0;min-height:2em;text-wrap:balance}
+.gv__nav{display:flex;gap:10px}
+.gv__btn{width:clamp(48px,3.6vw,58px);height:clamp(48px,3.6vw,58px);border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;color:inherit;transition:background-color .35s var(--out),color .35s var(--out)}
+.gv__btn svg{width:16px;height:16px}
+@media (hover:hover){.gv__btn:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}}
+.gv__btn:focus-visible,.gv__t:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.gv__thumbs{list-style:none;margin:clamp(16px,1.8vw,26px) auto 0;display:grid;grid-template-columns:repeat(var(--gv-n,7),minmax(0,1fr));gap:clamp(8px,.8vw,14px)}
+.gv__thumbs li{min-width:0}
+.gv__t{position:relative;display:block;width:100%;aspect-ratio:4/3;overflow:hidden;opacity:.5;transition:opacity .35s var(--out)}
+.gv__t img{width:100%;height:100%;object-fit:cover;display:block}
+.gv__t .label{position:absolute;left:8px;bottom:6px;color:var(--cream);text-shadow:0 1px 8px rgba(30,8,16,.6)}
+.gv__t.is-on{opacity:1;outline:1px solid var(--ink);outline-offset:4px}
+@media (hover:hover){.gv__t:hover{opacity:.85}}
+.t-soil .gv__t.is-on{outline-color:var(--cream)}
+@media (max-width:760px){
+  .gv__head,.cg__head{grid-template-columns:1fr}
+  .cg__head .p{justify-self:start;text-align:left}
+  .gv__main{grid-template-columns:1fr;gap:16px}
+  .gv__stage{aspect-ratio:4/3;margin-inline:calc(-1 * var(--gut))}
+  .gv__side{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:6px 16px}
+  .gv__n{grid-column:1/-1}
+  .gv__thumbs{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-block:6px;padding-right:var(--gut)}
+  .gv__thumbs::-webkit-scrollbar{display:none}
+  .gv__thumbs li{flex:0 0 76px;scroll-snap-align:start}
+}
+/* textové karty v mřížce místo posuvného pásu */
+.cg__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:clamp(12px,1.2vw,20px)}
+.cg .ms{width:auto;min-height:0;scroll-snap-align:none}
+.cg .ms h3{font-size:var(--t-h5);text-wrap:balance;overflow-wrap:anywhere}
+.cg .ms__n{font-size:var(--t-h4)}
+@media (min-width:1100px){.cg__grid{grid-template-columns:repeat(var(--cg-n,5),minmax(0,1fr))}}
+.gv__t .label{left:6px;bottom:6px;padding:5px 7px 4px;background:var(--soil);outline:1px solid var(--soil);color:var(--cream);text-shadow:none;line-height:1}
+@media (min-width:761px){.gv__thumbs{grid-template-columns:repeat(var(--gv-n,7),minmax(0,170px));justify-content:start}}
+@media (min-width:761px){.gv__main{grid-template-columns:minmax(0,2.4fr) minmax(0,1fr)}.gv__stage{aspect-ratio:16/9;max-height:64svh;width:100%}}
+.gv__n .label{opacity:1}
+.gv__t{opacity:1}.gv__t img{opacity:.5;transition:opacity .35s var(--out)}.gv__t.is-on img{opacity:1}
+@media (hover:hover){.gv__t:hover{opacity:1}.gv__t:hover img{opacity:.85}}

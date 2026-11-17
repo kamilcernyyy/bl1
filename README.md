@@ -37,6 +37,7 @@ Druhý designový směr inspirovaný Era Residence: velká didotová písma verz
 - Menu: vycentrovaný seznam, dole telefon a prohlídka; vejde se bez rolování od 375 × 560 px
 - Psací akcenty nad nadpisy nikdy nezakrývají háčky, čárky a kroužky (akcent leží za verzálkami), řádkování velkých nadpisů má místo na Ů, Č, Ř
 - Nadpisy stránek naskakují čistě přes CSS, takže se vykreslí hned (LCP kolem 1 s i na pomalém 4G)
+- Galerie (úvod i detail domu): jedna velká fotka s číslem a popiskem, šipky, řada náhledů, na mobilu přejetí prstem; klik otevře fotku přes celou obrazovku. Harmonogram, Postup koupě a Klientské změny jsou karty v mřížce. Stránka nikde neroluje do strany.
 - SEO a AEO připravené: titulky a popisy všech stránek, Open Graph obrázek `v2/img/og-1200x630.jpg`, strukturovaná data (Residence, Organization s hodnocením, WebSite, BreadcrumbList, ItemList domů, SingleFamilyResidence s cenou, FAQPage, Place, ImageGallery), `v2/sitemap.xml`
 - Audit 15. 11. 2026: všech 21 stránek bez chyb v konzoli, bez rozbitých odkazů a kotev, jeden H1 na stránku, všechny obrázky s alt; Lighthouse mobil výkon 91–96, přístupnost a doporučené postupy 100, SEO 100 (bez `noindex`); počítač 99–100
 - **Při spuštění:** odstranit `noindex`, v `src/v2/build.py` přepsat `BASE` (a adresu og:image) na finální doménu, napojit formuláře (prohlídka, hlídací pes) na e-mail nebo CRM, přidat sitemap do robots.txt

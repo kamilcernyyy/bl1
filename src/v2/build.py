@@ -425,20 +425,36 @@ def zoomin(name, quote, label=None):
 </section>'''
 
 
-def hscroll(script, words, items, hid, intro=None, theme="t-cream", hdr="ink"):
-    """Pinned horizontal track. items = list of (html) cards."""
-    return f'''<section class="hs {theme}" data-hdr="{hdr}" aria-labelledby="{hid}">
-  <div class="hs__stick">
-    <div class="hs__head wrap">{title(script, words, hid=hid, size="h2")}{f'<p class="p">{intro}</p>' if intro else ""}<p class="label label--reg muted hs__hint">Rolováním se posunete do strany</p></div>
-    <div class="hs__track" data-hs>{"".join(items)}</div>
-    <div class="hs__bar wrap" aria-hidden="true"><i></i></div>
+def gview(script, words, names, hid, theme="t-wheat", hdr="ink", group="hs"):
+    """Gallery: one large photo, number + caption, arrows and a row of thumbnails. Page scrolls normally."""
+    n = len(names)
+    slides = "".join(
+        f'<div class="gv__slide{" is-on" if k == 0 else ""}" data-gv-slide{"" if k == 0 else " aria-hidden=\"true\""}>{zoom(nm, group, sizes="(min-width:860px) 70vw, 100vw")}</div>'
+        for k, nm in enumerate(names))
+    thumbs = "".join(
+        f'<li><button type="button" class="gv__t{" is-on" if k == 0 else ""}" data-gv-go="{k}" aria-label="{k + 1:02d} · {esc(CAPTION.get(nm, ""))}"{" aria-current=\"true\"" if k == 0 else ""}>{img(nm, "", "120px")}<span class="label">{k + 1:02d}</span></button></li>'
+        for k, nm in enumerate(names))
+    caps = "|".join(esc(CAPTION.get(nm, "")) for nm in names)
+    return f'''<section class="gv sec {theme}" data-hdr="{hdr}" aria-labelledby="{hid}">
+  <div class="gv__head wrap">{title(script, words, hid=hid, size="h2")}</div>
+  <div class="gv__main wrap" data-gv data-caps="{caps}">
+    <div class="gv__stage">{slides}</div>
+    <div class="gv__side">
+      <p class="gv__n" aria-hidden="true"><span class="serif h3" data-gv-n>01</span><span class="label">/ {n:02d}</span></p>
+      <p class="serif h4 gv__cap" data-gv-cap aria-live="polite">{CAPTION.get(names[0], "")}</p>
+      <div class="gv__nav"><button type="button" class="gv__btn" data-gv-prev aria-label="Předchozí fotka">{ICON["left"]}</button><button type="button" class="gv__btn" data-gv-next aria-label="Další fotka">{ICON["right"]}</button></div>
+    </div>
   </div>
+  <ul class="gv__thumbs wrap" role="list" style="--gv-n:{n}">{thumbs}</ul>
 </section>'''
 
 
-def hcard(name, n, text=None):
-    return (f'<article class="hs__card">{zoom(name, "hs", sizes="(min-width:760px) 42vw, 84vw")}'
-            f'<div class="hs__cap"><span class="label">{n:02d}</span><span class="serif h5">{CAPTION.get(name, "")}</span>{f"<p class=\"p p--s muted\">{text}</p>" if text else ""}</div></article>')
+def cgrid(script, words, items, hid, intro=None, theme="t-cream", hdr="ink"):
+    """Text cards in a plain grid (replaces the old sideways track)."""
+    return f'''<section class="cg sec {theme}" data-hdr="{hdr}" aria-labelledby="{hid}">
+  <div class="cg__head wrap">{title(script, words, hid=hid, size="h2")}{f'<p class="p">{intro}</p>' if intro else ""}</div>
+  <div class="cg__grid wrap" style="--cg-n:{len(items)}">{"".join(items)}</div>
+</section>'''
 
 
 # ======================================================================= HOME
@@ -589,7 +605,7 @@ home = f'''
   <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="standardy.html"><span>Všechny standardy</span>{ICON["arrow"]}</a></div>
 </section>
 
-{hscroll("Prohlédněte si", "Galerii", [hcard(n, k + 1) for k, n in enumerate(GAL)], "gal-t", theme="t-wheat")}
+{gview("Prohlédněte si", "Galerii", GAL, "gal-t", theme="t-wheat")}
 
 {reviews()}
 
@@ -670,7 +686,7 @@ about = phead("O projektu", "v Blatci", "14 domů", "Nová ulice s&nbsp;domy ve 
   <dl class="spec">{"".join(f'<div data-r><dt class="label">{k}</dt><dd class="serif h5">{v}</dd></div>' for k, v in spec_rows)}</dl>
   <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="standardy.html"><span>Všechny standardy</span>{ICON["arrow"]}</a></div>
 </section>
-{hscroll("Krok za krokem", "Harmonogram", ms_cards, "ab-h", intro="Termíny zveřejníme se spuštěním prodeje.")}
+{cgrid("Krok za krokem", "Harmonogram", ms_cards, "ab-h", intro="Termíny zveřejníme se spuštěním prodeje.")}
 <section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="ab-d">
   <div class="stmt"><h2 class="serif h1 js-split" data-split="lines" id="ab-d">HP DOMY</h2><p class="p center" data-r>Developer z&nbsp;Olomouce. Předchozí projekty HP DOMY stojí v&nbsp;Olšanech a&nbsp;ve Slavoníně, můžete se na ně podívat.</p></div>
   <div class="refs">
@@ -755,7 +771,7 @@ steps_ch = [("Konzultace", "S prodejcem projdete, co chcete změnit."), ("Nacen�
 std = phead("Standardy", "domů", "Standardy", "Co dostanete v&nbsp;ceně, co je připravené a&nbsp;co si můžete přiobjednat.", extra=f'<div class="chips" data-r>{legend}</div><div style="display:flex;justify-content:center;margin-top:28px" data-r><button class="btn" type="button" data-pdf="standardy">{ICON["doc"]}<span>Standardy v&nbsp;PDF</span></button></div>') + f'''
 {zoomin("entry", "Zděná stavba, tepelné čerpadlo a&nbsp;podlahové topení v&nbsp;celém domě", "Standard HP DOMY")}
 {cats}
-{hscroll("Klientské", "změny", [f'<article class="ms"><span class="ms__n serif h2">{k + 1:02d}</span><h3 class="serif h4">{n}</h3><p class="p p--s">{d}</p></article>' for k, (n, d) in enumerate(steps_ch)], "sc-z", intro="Změny je potřeba zadat dřív, než stavba dojde do příslušné fáze. Vzorky vám ukáže prodejce.", theme="t-wheat")}
+{cgrid("Klientské", "změny", [f'<article class="ms"><span class="ms__n serif h2">{k + 1:02d}</span><h3 class="serif h4">{n}</h3><p class="p p--s">{d}</p></article>' for k, (n, d) in enumerate(steps_ch)], "sc-z", intro="Změny je potřeba zadat dřív, než stavba dojde do příslušné fáze. Vzorky vám ukáže prodejce.", theme="t-wheat")}
 {final()}'''
 page("standardy.html", "Standardy domů · Blatec | HP DOMY", "Standardy rodinných domů v Blatci: konstrukce, vytápění, okna, interiér a technologie. Co je v ceně a co za příplatek.", std)
 
@@ -787,7 +803,7 @@ contact = f'''<section class="t-cream wrap" data-hdr="ink">
     </div>
   </div>
 </section>
-{hscroll("Postup", "koupě", [f'<article class="ms"><span class="ms__n serif h2">{k + 1:02d}</span><h3 class="serif h4">{n}</h3><p class="p p--s">{d}</p></article>' for k, (n, d) in enumerate(buy)], "ct-b", intro="Obvyklý postup u novostavby. Podmínky upřesní prodejce.", theme="t-wheat")}
+{cgrid("Postup", "koupě", [f'<article class="ms"><span class="ms__n serif h2">{k + 1:02d}</span><h3 class="serif h4">{n}</h3><p class="p p--s">{d}</p></article>' for k, (n, d) in enumerate(buy)], "ct-b", intro="Obvyklý postup u novostavby. Podmínky upřesní prodejce.", theme="t-wheat")}
 <section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="ct-f">
   <div class="types__head">{title("Časté", "dotazy", hid="ct-f")}</div>
   <div class="acc">{faq}</div>
@@ -862,7 +878,7 @@ for h in HOUSES:
 
 {sky("z výšky", "Dům " + str(hid), f"Pozemek {area(h['plot'])} · zahrada na {h['garden']}", img_name="aerial")}
 
-{hscroll("Dům " + str(hid), "v obrazech", [hcard(n, k + 1) for k, n in enumerate(gal_names)], "d-g", theme="t-cream")}
+{gview("Dům " + str(hid), "v obrazech", gal_names, "d-g", theme="t-cream")}
 
 <section class="sec t-sky wrap" id="pudorys" data-hdr="ink" aria-labelledby="d-p">
   <div class="types__head"><h2 class="serif h1 js-split" data-split="lines" id="d-p">Půdorys</h2></div>
