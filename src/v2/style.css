@@ -57,7 +57,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .label{font:600 var(--t-label)/1.35 var(--f-sans);text-transform:uppercase;letter-spacing:.07em;margin:0}
 .label--reg{font-weight:600}
 .p{max-width:34em;margin:0}
-.p--s{font-size:calc(var(--t-p) * .92)}
+.p--s{font-size:var(--t-p)}
 .center{text-align:center;margin-inline:auto}
 .num{font-family:var(--f-serif);font-size:var(--t-num);line-height:.9;letter-spacing:-.02em;text-transform:uppercase;font-variant-numeric:lining-nums}
 .muted{opacity:.78}
@@ -995,7 +995,7 @@ html:not(.motion) .sky__end{height:30%}
 
 /* ===== TYPE · varianta A (17. 11.) — 2 písma: Instrument Serif (+ kurzíva místo ručního písma) a Archivo; nadpisy v 6 stupních: mega, h1–h5 ===== */
 :root{--t-h5:clamp(20px,1.9vw,30px)}
-.hdr__pick,.hl__price,.dock__info b,.fplan__rooms li b,.kit b,.dfacts dd,.kv dd,.menu__tel,.ftr__nav a,.ftr__cols b,.modal__box .ttl .h3{font-size:var(--t-h5)}
+.hl__price,.dock__info b,.fplan__rooms li b,.kit b,.dfacts dd,.kv dd,.menu__tel,.ftr__nav a,.ftr__cols b,.modal__box .ttl .h3{font-size:var(--t-h5)}
 .num,.final__tel{font-size:var(--t-h4)}
 .quote__mark,.rate__num b{font-size:var(--t-h3)}.calc__pay{font-size:var(--t-h3)!important}
 .menu__nav a{font-size:min(var(--t-h3),7.2vh)}
@@ -1004,3 +1004,20 @@ html:not(.motion) .sky__end{height:30%}
 @media (max-width:760px){.ttl--rev:not(.hero__title):not(.dhero__title)>.script{margin-left:6%}}
 @media (min-width:761px){.ttl>.script{white-space:nowrap}}
 @media (max-width:380px){.modes{flex-wrap:wrap}.modes button{padding:0 16px}.calc__out{grid-template-columns:minmax(0,1fr);padding:22px 18px}.calc__out dl{grid-template-columns:minmax(0,1fr)}.calc__out .btn{white-space:normal;text-align:center;height:auto;min-height:46px;padding:12px 18px;letter-spacing:.05em}}
+
+/* ===== HLAVIČKA (17. 11.) — pod sebou, jedním písmem; Menu jako plná pilulka ===== */
+.hdr__links{gap:11px;padding-top:4px}
+.hdr__links a,.hdr__links button{font:600 var(--t-label)/1 var(--f-sans);letter-spacing:.08em;text-transform:uppercase;color:inherit}
+.hdr__menu{display:inline-flex;align-items:center;gap:10px;height:38px;margin-top:5px;padding:0 17px 0 15px;border-radius:999px;background:var(--cream);color:var(--soil)!important;transition:background-color .35s var(--out),color .35s var(--out)}
+.hdr.is-ink .hdr__menu{background:var(--soil);color:var(--cream)!important}
+.hdr__menu i{display:block;width:15px;height:1px;background:currentColor;box-shadow:0 5px 0 currentColor;transform:translateY(-2.5px)}
+.hdr__menu .roll{padding-top:.3em;margin-top:-.3em}
+@media (hover:hover){.hdr__menu:hover{background:var(--gold);color:var(--soil)!important}}
+.hdr__menu:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+/* jeden štítek: stejná velikost i proklad pro štítky, tlačítka a odkazy v hlavičce */
+.label,.btn,.btn span,.hdr__links a,.hdr__links button,.fav,.fav span,.skip,.chips button,.modes button,.field .label,.st,.topics span,.callfab span{letter-spacing:.08em}
+.dock__info .label,.fav.fav--big{font-size:var(--t-label);letter-spacing:.08em}
+.ttabs{max-width:1040px}
+@media (min-width:761px){.ttab{grid-template-columns:clamp(56px,5vw,80px) minmax(0,1fr) auto}}
+.nw{white-space:nowrap}
+.sky__txt::before{inset:-60% 0 -50%;background:linear-gradient(180deg,rgba(30,8,16,0) 0%,rgba(30,8,16,.62) 24%,rgba(30,8,16,.66) 70%,rgba(30,8,16,0) 100%)}

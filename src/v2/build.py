@@ -165,10 +165,10 @@ def header():
     return f'''<header class="hdr" id="hdr">
   <a class="logo logo--seal" href="index.html">{seal("hdr", "seal--logo")}<span class="sr">Blatec · HP DOMY Development, úvod</span></a>
   <div class="hdr__r">
-    <a class="hdr__pick" href="nabidka.html">{roll("Vybrat<br>volný dům")}</a>
     <div class="hdr__links">
+      <a href="nabidka.html">{roll("Vybrat volný dům")}</a>
       <button type="button" data-book>{roll("Prohlídka &amp; hovor")}</button>
-      <button type="button" data-menu aria-expanded="false" aria-controls="menu">{roll("Menu")}</button>
+      <button class="hdr__menu" type="button" data-menu aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i>{roll("Menu")}</button>
     </div>
     <button class="burger" type="button" data-menu aria-expanded="false" aria-controls="menu" aria-label="Otevřít menu"><i></i></button>
   </div>
@@ -458,10 +458,9 @@ def type_slides():
     for k, (t, T) in enumerate(TYPES.items()):
         hs = [h for h in HOUSES if h["type"] == t]
         free = [h for h in hs if h["status"] == "volny"]
-        rooms = len([r for f in PLANS[t] for r in f["rooms"] if r["n"] in ("Ložnice", "Pokoj", "Pracovna")])
         tabs += (f'<button class="ttab" type="button" role="tab" id="tt-{k}" aria-controls="ts-{k}" aria-selected="{str(k == 0).lower()}" data-ttab="{k}">'
                  f'<span class="ttab__img"><img src="{thumb(T["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></span>'
-                 f'<span class="ttab__t"><span class="serif h5">{T["label"]} dům</span><span class="label label--reg">{T["disp"]} · {area(T["area"])} · {len(free)} volných</span></span>'
+                 f'<span class="ttab__t"><span class="serif h5">{T["label"]} dům</span><span class="label label--reg"><span class="nw">{T["disp"]} · {area(T["area"]).replace(" ", "&nbsp;")}</span> · <span class="nw">{len(free)}&nbsp;volných</span></span></span>'
                  f'<span class="ttab__dot" aria-hidden="true"></span></button>')
         slides += f'''<div class="tslide{" is-on" if k == 0 else ""}" id="ts-{k}" data-slide="{k}" role="tabpanel" aria-labelledby="tt-{k}">
         <div class="tslide__grid">
@@ -473,7 +472,6 @@ def type_slides():
           <a class="tslide__img" href="dum-{free[0]["id"]}.html" aria-label="Detail domu {free[0]["id"]}">{img(T["img"], f"Zástupná vizualizace: {T['label'].lower()} dům", "(min-width:860px) 34vw, 100vw")}</a>
           <div class="tslide__txt">
             <p class="p">{TYPE_TXT[t]}</p>
-            <p class="label label--reg muted">{rooms} pokoje a&nbsp;obývací pokoj · {len(PLANS[t])} podlaží</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--solid" href="nabidka.html#{"patrove" if t == "patrovy" else "prizemni"}"><span>{T["label"]} domy v&nbsp;nabídce</span>{ICON["arrow"]}</a><a class="btn" href="dum-{free[0]["id"]}.html">Dům {free[0]["id"]}</a></div>
           </div>
         </div>
