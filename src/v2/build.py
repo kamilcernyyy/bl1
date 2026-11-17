@@ -472,7 +472,7 @@ def type_slides():
           <a class="tslide__img" href="dum-{free[0]["id"]}.html" aria-label="Detail domu {free[0]["id"]}">{img(T["img"], f"Zástupná vizualizace: {T['label'].lower()} dům", "(min-width:860px) 34vw, 100vw")}</a>
           <div class="tslide__txt">
             <p class="p">{TYPE_TXT[t]}</p>
-            <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--solid" href="nabidka.html#{"patrove" if t == "patrovy" else "prizemni"}"><span>{T["label"]} domy v&nbsp;nabídce</span>{ICON["arrow"]}</a><a class="btn" href="dum-{free[0]["id"]}.html">Dům {free[0]["id"]}</a></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--solid" href="nabidka.html#{"patrove" if t == "patrovy" else "prizemni"}"><span>{"Patrové" if t == "patrovy" else "Přízemní"} domy v&nbsp;nabídce</span>{ICON["arrow"]}</a><a class="btn" href="dum-{free[0]["id"]}.html">Dům {free[0]["id"]}</a></div>
           </div>
         </div>
         <p class="tslide__name serif h2" aria-hidden="true">{T["label"]} dům</p>
