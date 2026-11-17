@@ -500,20 +500,6 @@ def type_slides():
   </div>'''
 
 
-rv = [r for r in REVIEWS if not r[4] and r[1] == 5 and len(r[3]) > 40]
-
-
-def reviews(sid="recenze"):
-    items = "".join(f'<figure class="rv__item"{"" if k == 0 else " hidden"} data-rv="{k}" style="margin:0;display:grid;justify-items:center;gap:26px"><blockquote class="serif h4 rv__q" style="margin:0">„{esc(r[3])}“</blockquote><figcaption class="rv__who"><span class="label">{esc(r[0])}</span><span class="label label--reg muted">{r[2]} · Google</span></figcaption></figure>' for k, r in enumerate(rv))
-    return f'''<section class="sec t-sky wrap" id="{sid}" data-hdr="ink" aria-labelledby="rv-t">
-  <div class="rv" data-rv-wrap>
-    <h2 class="label" id="rv-t">Hodnocení HP DOMY na Googlu · {str(GOOGLE["rating"]).replace(".", ",")} z&nbsp;5 · {GOOGLE["count"]} recenzí</h2>
-    {items}
-    <div class="tpag" style="margin-top:0"><button type="button" data-rprev aria-label="Předchozí recenze">{ICON["left"]}</button><span class="label" data-rcur>01 / {len(rv):02d}</span><button type="button" data-rnext aria-label="Další recenze">{ICON["right"]}</button></div>
-  </div>
-</section>'''
-
-
 loc_line = " <span aria-hidden=\"true\">·</span> ".join(f'<span><b>{t["place"].replace("Olomouc, hlavní nádraží", "Hlavní nádraží")}</b> {t["auto"]}&nbsp;min</span>' for t in TRAVEL)
 KIT = [
     ("Zděná stavba", "Porotherm, drží teplo a&nbsp;tlumí hluk", "M3 6h18v12H3zM3 10h18M3 14h18M8 6v4M15 6v4M11.5 10v4M6 14v4M17 14v4"),
@@ -607,7 +593,6 @@ home = f'''
 
 {gview("Prohlédněte si", "Galerii", GAL, "gal-t", theme="t-wheat")}
 
-{reviews()}
 
 
 {final(text="Prodejce vám ukáže pozemek na místě, projde s&nbsp;vámi půdorysy a&nbsp;poradí s&nbsp;financováním.")}
@@ -695,7 +680,6 @@ about = phead("O projektu", "v Blatci", "14 domů", "Nová ulice s&nbsp;domy ve 
     <a class="ref" href="https://www.hpdomy.cz" target="_blank" rel="noopener" data-r><span class="serif h4">HP DOMY s.r.o.</span><span class="label label--reg">I. P. Pavlova 692/143, Olomouc · IČ 28603494</span><span class="ref__go">{ICON["arrow"]}</span></a>
   </div>
 </section>
-{reviews()}
 {final()}'''
 page("o-projektu.html", "O projektu · Blatec | HP DOMY", "Projekt 14 rodinných domů v Blatci u Olomouce: dva typy domů, co je v ceně, harmonogram a developer HP DOMY.", about, preload=None)
 
@@ -808,7 +792,6 @@ contact = f'''<section class="t-cream wrap" data-hdr="ink">
   <div class="types__head">{title("Časté", "dotazy", hid="ct-f")}</div>
   <div class="acc">{faq}</div>
 </section>
-{reviews()}
 <section class="sec t-soil wrap" data-hdr="light">{footer()}</section>'''
 contact = contact.replace('<section class="sec t-soil wrap" data-hdr="light"><footer class="ftr">', '<section class="sec--end t-soil wrap" data-hdr="light"><footer class="ftr" style="margin-top:0">')
 faq_ld = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": re.sub("<[^>]+>|&nbsp;", " ", q), "acceptedAnswer": {"@type": "Answer", "text": re.sub("<[^>]+>", "", a).replace("&nbsp;", " ")}} for q, a in FAQ]}
@@ -843,7 +826,6 @@ for h in HOUSES:
               "address": {"@type": "PostalAddress", "addressLocality": "Blatec", "postalCode": "783 75", "addressCountry": "CZ"}}
     if h["price"] and not sold:
         jsonld["offers"] = {"@type": "Offer", "price": h["price"], "priceCurrency": "CZK", "availability": "https://schema.org/InStock"}
-    calc_price = h["price"] or (9490000 if h["type"] == "patrovy" else 8990000)
     similar = sorted([x for x in HOUSES if x["id"] != hid and x["status"] == "volny"], key=lambda x: (x["type"] != h["type"], abs(x["plot"] - h["plot"])))[:3]
     dock = (f'''<nav class="dock" aria-label="Dům {hid}"><div class="dock__info"><span class="label label--reg">Dům {hid} · {STATUS[h["status"]]}</span><b>{price(h)}</b></div>
   <a class="dock__call" href="tel:{TEL}" aria-label="Zavolat prodejci">{ICON["phone"]}</a>{f'<button class="btn btn--solid dock__cta" type="button" data-book data-house="{hid}">Mám zájem</button>' if not sold else '<a class="btn btn--solid dock__cta" href="nabidka.html#volne">Volné domy</a>'}</nav>
@@ -900,30 +882,14 @@ for h in HOUSES:
   </div>
 </section>
 
-<section class="sec t-soil wrap" id="financovani" data-hdr="light" aria-labelledby="d-c">
-  <div class="loc__head">{title("hypotéky", "Splátka", hid="d-c", rev=True)}</div>
-  <div class="calc" data-calc data-price="{calc_price}">
-    <div class="calc__in">
-      <div class="range"><div class="range__top"><label class="label" for="c-own">Vlastní zdroje</label><output class="label label--reg" id="o-own"></output></div><input type="range" id="c-own" min="10" max="60" step="5" value="20"></div>
-      <div class="range"><div class="range__top"><label class="label" for="c-rate">Úroková sazba</label><output class="label label--reg" id="o-rate"></output></div><input type="range" id="c-rate" min="2" max="8" step="0.1" value="4.9"></div>
-      <div class="range"><div class="range__top"><label class="label" for="c-years">Doba splácení</label><output class="label label--reg" id="o-years"></output></div><input type="range" id="c-years" min="10" max="30" step="1" value="30"></div>
-      <p class="label label--reg muted">Orientační výpočet {"z ceny domu" if h["price"] else "z obvyklé ceny tohoto typu domu"} ({fmt(calc_price)} Kč). Nejde o&nbsp;nabídku úvěru.</p>
-    </div>
-    <div class="calc__out" aria-live="polite"><span class="label">Měsíční splátka</span><b class="serif mega calc__pay" id="o-pay">–</b>
-      <dl><div><dt class="label label--reg">Výše úvěru</dt><dd class="serif h5" id="o-loan">–</dd></div><div><dt class="label label--reg">Celkem zaplatíte</dt><dd class="serif h5" id="o-total">–</dd></div></dl>
-      <div><a class="btn" href="kontakt.html#dum-{hid}"><span>Pomoc s&nbsp;financováním</span>{ICON["arrow"]}</a></div></div>
-  </div>
-</section>
+{watchdog(["dum"], f"Dům {hid} je", "rezervovaný" if h["status"] == "rezervace" else "prodaný", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, theme="t-wheat") if h["status"] != "volny" else ""}
 
-{watchdog(["dum"], f"Dům {hid} je", "rezervovaný" if h["status"] == "rezervace" else "prodaný", "Rezervace někdy padnou. Dáme vám vědět e-mailem, kdyby se dům uvolnil, nebo když se objeví podobný.", house=hid, theme="t-cream") if h["status"] != "volny" else ""}
-
-<section class="sec t-cream wrap" id="podobne" data-hdr="ink" aria-labelledby="d-sim">
+<section class="sec t-sky wrap" id="podobne" data-hdr="ink" aria-labelledby="d-sim">
   <div class="types__head">{title("Podobné", "volné domy", hid="d-sim")}</div>
   <div class="sim">{"".join(f'<a class="sim__i" href="dum-{x["id"]}.html" data-r><span class="sim__img">{img(x["img"], "", "(min-width:860px) 30vw, 100vw")}</span><span class="sim__row"><span class="serif h4">Dům {x["id"]:02d}</span><span class="st st--{x["status"]}">{STATUS[x["status"]]}</span></span><span class="label label--reg muted">{x["label"]} {x["disp"]} · pozemek {area(x["plot"])} · zahrada na {x["garden"]}</span><span class="serif h5">{price(x)}</span></a>' for x in similar)}</div>
   <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="nabidka.html#volne"><span>Všechny volné domy</span>{ICON["arrow"]}</a></div>
 </section>
 
-{reviews()}
 
 {final("Domluvte si" if not sold else "Tento dům je", "Prohlídku" if not sold else "Prodaný", cta=cta, after=f"""<nav class="dnav" style="margin-top:var(--sec)" aria-label="Další domy">
     <a href="dum-{prev_id}.html"><span class="label">Předchozí</span><span class="serif h3">Dům {prev_id}</span></a>

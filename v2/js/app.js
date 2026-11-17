@@ -188,18 +188,6 @@
     $('.ttabs', ts).addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { show(cur + (e.key === 'ArrowRight' ? 1 : -1)); $$('[data-ttab]', ts)[cur].focus(); } });
   }
 
-  /* ---------- reviews slider ---------- */
-  const rw = $('[data-rv-wrap]');
-  if (rw) {
-    const items = $$('[data-rv]', rw); let cur = 0;
-    const show = n => { const nx = (n + items.length) % items.length;
-      items[cur].hidden = true; items[nx].hidden = false; cur = nx;
-      $('[data-rcur]', rw).textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(items.length).padStart(2, '0');
-      if (motion) gsap.fromTo(items[cur].children, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: OUT, stagger: .08 }); };
-    $('[data-rprev]', rw).addEventListener('click', () => show(cur - 1));
-    $('[data-rnext]', rw).addEventListener('click', () => show(cur + 1));
-  }
-
   /* ---------- floor plan tabs ---------- */
   $$('[data-ftab]').forEach(b => b.addEventListener('click', () => {
     const k = b.dataset.ftab;
@@ -334,19 +322,6 @@
       $('.wd__body', wd).hidden = true; $('.wd__done', wd).hidden = false;
       if (motion) gsap.from($('.wd__done', wd).children, { y: 24, opacity: 0, duration: .9, ease: OUT, stagger: .08 }); });
   });
-
-  /* ---------- mortgage calculator ---------- */
-  const calc = $('[data-calc]');
-  if (calc) {
-    const price = +calc.dataset.price, ins = { own: $('#c-own'), rate: $('#c-rate'), years: $('#c-years') };
-    const fmt = n => Math.round(n).toLocaleString('cs-CZ') + ' Kč';
-    const upd = () => { const own = +ins.own.value, rate = +ins.rate.value, years = +ins.years.value;
-      Object.values(ins).forEach(i => i.style.setProperty('--p', ((i.value - i.min) / (i.max - i.min) * 100) + '%'));
-      const loan = price * (1 - own / 100), r = rate / 100 / 12, n = years * 12, pay = r ? loan * r / (1 - Math.pow(1 + r, -n)) : loan / n;
-      $('#o-own').textContent = own + ' % · ' + fmt(price * own / 100); $('#o-rate').textContent = rate.toLocaleString('cs-CZ', { minimumFractionDigits: 1 }) + ' %';
-      $('#o-years').textContent = years + ' let'; $('#o-pay').textContent = fmt(pay); $('#o-loan').textContent = fmt(loan); $('#o-total').textContent = fmt(pay * n); };
-    Object.values(ins).forEach(i => i.addEventListener('input', upd)); upd();
-  }
 
   /* ---------- motion ---------- */
   if (!motion) return;

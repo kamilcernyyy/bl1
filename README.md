@@ -30,7 +30,7 @@ Druhý designový směr inspirovaný Era Residence: velká didotová písma verz
 - Sestavení: `python3 src/v2/build.py` (zdroje v `src/v2/`: `build.py`, `style.css`, `app.js`)
 - Písma: jen dvě rodiny – Instrument Serif (verzálky na nadpisy, kurzíva jako akcent) a Archivo Expanded (text a štítky), lokálně v `v2/fonts/`, s češtinou. Nadpisy v 6 velikostech: mega, h1–h5.
 - Pohyb: GSAP 3.13 + ScrollTrigger + SplitText, Lenis (jen kolečko myši, dotyk zůstává nativní)
-- Funkce: uložené domy (srdíčko, filtr `#oblibene`), porovnání až 3 domů, hlídací pes, kalkulačka splátky, podobné volné domy, orientace zahrady, schematická mapa, recenze, tlačítko Zavolat na mobilu a spodní lišta s cenou na detailu domu
+- Funkce: uložené domy (srdíčko, filtr `#oblibene`), porovnání až 3 domů, hlídací pes, podobné volné domy, orientace zahrady, schematická mapa, tlačítko Zavolat na mobilu a spodní lišta s cenou na detailu domu
 - Na mobilu je hlavička po odrolování plná lišta (krémová nad světlými sekcemi, bordó nad tmavými)
 - Logo je otáčivá pečeť (točí se podle rolování), text se při rolování nikdy neskrývá ani neposouvá – animují se jen fotky (ořez při příchodu, paralaxa, mraky)
 - Mraky jsou opakující se dlaždice (`v2/img/cloud-a/b.webp`, 1100 × 504 px), JS dopočítá šířku dlaždice, takže smyčka nemá šev
