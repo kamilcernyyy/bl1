@@ -449,6 +449,20 @@ def zoomin(name, quote, label=None):
 </section>'''
 
 
+REEL = ["hero", "tv", "bungalow", "ivory-4", "bazen"]
+
+
+def hero_reel():
+    """Homepage hero: first photo loads eagerly (LCP); the rest carry data-srcset and load after the page is ready."""
+    first = img(REEL[0], "", "100vw", eager=True).replace("<img", '<img class="hero__slide is-on"', 1).replace('class="hero__slide is-on" class="', 'class="hero__slide is-on ')
+    rest = []
+    for n in REEL[1:]:
+        base, have = _src(n); w, h = dims(n)
+        rest.append(f'<img class="hero__slide" data-srcset="{", ".join(f"{base}/{n}-{x}.webp {x}w" for x in have)}" sizes="100vw" '
+                    f'width="{w}" height="{h}" alt="{esc(alt_of(n))}" decoding="async">')
+    return first + "".join(rest)
+
+
 def gview(script, words, names, hid, theme="t-wheat", hdr="ink", group="hs"):
     """Gallery: one large photo, number + caption, arrows and a row of thumbnails. Page scrolls normally."""
     n = len(names)
@@ -538,7 +552,7 @@ GAL = ["hero", "street", "bungalow", "garden", "obyvak", "ivory-4", "aerial"]
 
 home = f'''
 <section class="hero" data-hdr="light" aria-labelledby="hero-t">
-  <div class="hero__media">{img("hero", "Vizualizace patrového domu s krytým stáním v Blatci", "100vw", eager=True)}</div>
+  <div class="hero__media" data-reel>{hero_reel()}</div>
   <div class="hero__in wrap">
     <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega rise">Blatec</span><span class="script rise rise--s">u&nbsp;Olomouce</span></h1>
     <div class="hero__row">

@@ -333,21 +333,34 @@
   const go = () => {
     // hero photo settles
     $$('.dhero .hero__media img').forEach(i => gsap.to(i, { scale: 1, duration: 2.2, ease: 'power3.out' }));
-    // homepage: the camera slowly circles and pushes in (1.08 → 1.17 and back over ~26 s, one orbit ~22 s)
-    const cam = $('.hero .hero__media img');
-    if (cam) {
-      const z = { v: 0, in: 0 };
-      gsap.to(z, { in: 1, duration: 2.4, ease: 'power2.out' });                      // ease into the motion after load
-      gsap.to(z, { v: 1, duration: 26, ease: 'sine.inOut', repeat: -1, yoyo: true });
-      let on = true, t = 0;
-      new IntersectionObserver(es => { on = es[0].isIntersecting; }).observe($('.hero'));
-      gsap.ticker.add((_, dt) => {
-        if (!on) return;
-        t += dt / 1000;
-        const a = t * Math.PI * 2 / 22, k = z.in;
-        const s = 1.08 + .09 * z.v * k, x = Math.cos(a) * 1.1 * k, y = Math.sin(a) * .7 * k, r = Math.sin(a) * .4 * k;
-        cam.style.transform = `translate3d(${x.toFixed(3)}%,${y.toFixed(3)}%,0) scale(${s.toFixed(4)}) rotate(${r.toFixed(3)}deg)`;
-      });
+    // homepage reel: 5 photos, 5 s each + 1.5 s soft crossfade; the camera drifts along a slow arc and pushes in on every photo
+    const reel = $('.hero__media[data-reel]');
+    if (reel) {
+      const slides = $$('.hero__slide', reel), HOLD = 5, FADE = 1.5, LIFE = HOLD + FADE * 2;
+      let cur = 0, z = 1, on = true; const live = new Set();
+      const load = el => el.dataset.srcset ? new Promise(res => { el.onload = el.onerror = () => res(); el.srcset = el.dataset.srcset; el.removeAttribute('data-srcset'); }).then(() => el.decode ? el.decode().catch(() => {}) : 0) : Promise.resolve();
+      const track = tw => { live.forEach(t => { if (t.progress() === 1) live.delete(t); }); live.add(tw); if (!on) tw.pause(); return tw; };
+      const camera = (el, k) => {                                   // arc of ~100° around a slightly off-centre point, alternating direction
+        const p = { v: 0 }, dir = k % 2 ? -1 : 1, a0 = k * 1.3;
+        track(gsap.to(p, { v: 1, duration: LIFE, ease: 'none', onUpdate() {
+          const a = a0 + dir * p.v * 1.75, s = 1.06 + .1 * p.v;
+          el.style.transform = `translate3d(${(Math.cos(a) * 1.1).toFixed(3)}%,${(Math.sin(a) * .7).toFixed(3)}%,0) scale(${s.toFixed(4)}) rotate(${(Math.sin(a) * .35).toFixed(3)}deg)`;
+        } }));
+      };
+      const step = () => {
+        const nxt = (cur + 1) % slides.length, el = slides[nxt];
+        load(el).then(() => {
+          if (z > 9000) { slides.forEach(s => { s.style.zIndex = s === slides[cur] ? 1 : 0; }); z = 1; } el.style.zIndex = ++z; el.classList.add('is-on'); camera(el, nxt);
+          track(gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: FADE, ease: 'sine.inOut', onComplete: () => { slides.forEach((s, k) => { if (k !== nxt) { s.classList.remove('is-on'); gsap.set(s, { opacity: 0 }); } }); } }));
+          cur = nxt; load(slides[(nxt + 1) % slides.length]);
+          track(gsap.delayedCall(HOLD + FADE, step));
+        });
+      };
+      gsap.set(slides[0], { opacity: 0 }); slides[0].style.zIndex = 1;
+      track(gsap.to(slides[0], { opacity: 1, duration: .01 })); camera(slides[0], 0);
+      const start = () => { load(slides[1]); track(gsap.delayedCall(HOLD, step)); };
+      if (document.readyState === 'complete') setTimeout(start, 600); else addEventListener('load', () => setTimeout(start, 600), { once: true });
+      new IntersectionObserver(es => { on = es[0].isIntersecting; live.forEach(t => { if (t.progress() === 1) live.delete(t); else on ? t.resume() : t.pause(); }); }).observe($('.hero'));
     }
     $$('.hero, .dhero').forEach(h => gsap.to($('.hero__media', h), { yPercent: 18, ease: 'none', scrollTrigger: { trigger: h, start: 'top top', end: 'bottom top', scrub: true } }));
     // parallax bands
