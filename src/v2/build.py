@@ -449,7 +449,7 @@ def zoomin(name, quote, label=None):
 </section>'''
 
 
-REEL = ["hero", "tv", "bungalow", "ivory-4", "bazen"]
+REEL = ["hero", "bungalow", "terasa", "bazen", "hana"]
 
 
 def hero_reel():
