@@ -23,6 +23,9 @@ sys.argv = _argv
 TYPES, HOUSES, GEO, PLANS, REVIEWS, GOOGLE, TRAVEL, STD_CATS, STATUS, FAQ, GALLERY = (D[k] for k in
     ("TYPES", "HOUSES", "GEO", "PLANS", "REVIEWS", "GOOGLE", "TRAVEL", "STD_CATS", "STATUS", "FAQ", "GALLERY"))
 cz_typo = D["cz_typo"]
+# v2 uses the real HP DOMY renders (v2/img); exterior views per house type
+TYPES["patrovy"]["gal"] = ["hero", "entry", "carport", "street", "zahrada"]
+TYPES["prizemni"]["gal"] = ["bungalow", "terasa", "bazen", "aerial"]
 esc = html.escape
 
 TEL, TEL_TXT, MAIL = "+420776294498", "+420 776 294 498", "info@impulsreality.com"
@@ -62,16 +65,30 @@ EMBLEM = ('<svg class="emblem" viewBox="0 0 40 60" aria-hidden="true"><g fill="n
           + "".join(f'<path d="M20 {y + 8}c-7 0-10.5-4.6-10.5-9.4 7 0 10.5 4.6 10.5 9.4z"/><path d="M20 {y + 8}c7 0 10.5-4.6 10.5-9.4-7 0-10.5 4.6-10.5 9.4z"/>' for y in (16, 27, 38))
           + '<path d="M14 58h12"/></g></svg>')
 
-CAPTION = {"hero": "Patrový dům od ulice", "street": "Nová ulice", "garden": "Terasa a zahrada", "aerial": "Domy z ptačí perspektivy",
-           "bungalow": "Přízemní dům", "entry": "Vstup s dřevěným obkladem", "hana": "Blatec a hanácká pole"}
+CAPTION = {"hero": "Patrový dům s krytým stáním", "street": "Patrové domy od ulice", "bungalow": "Přízemní dům s dřevěným obkladem",
+           "carport": "Patrový dům a kryté stání", "hana": "Domy při západu slunce", "entry": "Vstup s kamenným obkladem",
+           "garden": "Zahrada s bazénem", "terasa": "Terasa přízemního domu", "zahrada": "Zahrady za domy", "bazen": "Zahrada při západu slunce",
+           "aerial": "Ulice z ptačí perspektivy", "obyvak": "Obývací pokoj", "tv": "Obývací stěna", "detail": "Detail obývacího pokoje",
+           "kuchyn": "Kuchyňská linka",
+           **{f"{v}-{n}": ("WC" if n >= 7 else "Koupelna") + f" · varianta {v.capitalize()}" for v in ("ivory", "sand") for n in range(1, 9)}}
 
 
 def _src(name):
-    """Prefer the warm colour renders in v2/img, fall back to the shared clay renders."""
-    local = [s for s in (800, 1200, 1600, 1920) if os.path.exists(os.path.join(OUT, "img", f"{name}-{s}.webp"))]
-    if local:
-        return "img", local
+    """Responsive WebP set in v2/img: {name}-{width}.webp."""
+    have = sorted(int(m.group(1)) for f in os.listdir(os.path.join(OUT, "img")) for m in [re.fullmatch(re.escape(name) + r"-(\d+)\.webp", f)] if m)
+    if have:
+        return "img", have
     return "../img", [s for s in (800, 1200, 1600, 1920) if os.path.exists(os.path.join(ROOT, "img", f"{name}-{s}.webp"))]
+
+
+_DIMS = {}
+def dims(name):
+    if name not in _DIMS:
+        from PIL import Image
+        base, have = _src(name)
+        with Image.open(os.path.join(OUT if base == "img" else ROOT, "img", f"{name}-{have[-1]}.webp")) as im:
+            _DIMS[name] = im.size
+    return _DIMS[name]
 
 
 def img(name, alt, sizes="100vw", eager=False, cls=""):
@@ -79,7 +96,9 @@ def img(name, alt, sizes="100vw", eager=False, cls=""):
     srcset = ", ".join(f"{base}/{name}-{s}.webp {s}w" for s in have)
     load = 'fetchpriority="high" decoding="async"' if eager else 'loading="lazy" decoding="async"'
     c = f' class="{cls}"' if cls else ""
-    return f'<img{c} src="{base}/{name}-{have[-1]}.webp" srcset="{srcset}" sizes="{sizes}" width="1600" height="900" alt="{esc(alt)}" {load}>'
+    w, h = dims(name)
+    if h > w: c = f' class="{(cls + " ") if cls else ""}is-tall"'
+    return f'<img{c} src="{base}/{name}-{have[-1]}.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{esc(alt)}" {load}>'
 
 
 def zoom(name, group, alt=None, sizes="(min-width:760px) 50vw, 100vw", cls="", eager=False):
@@ -87,7 +106,7 @@ def zoom(name, group, alt=None, sizes="(min-width:760px) 50vw, 100vw", cls="", e
     base, have = _src(name)
     cap = CAPTION.get(name, "")
     return (f'<figure class="zf {cls}" data-r><button type="button" class="zf__btn" data-zoom="{group}" data-src="{base}/{name}-{have[-1]}.webp" data-cap="{esc(cap)}" aria-label="Zvětšit: {esc(cap or (alt or ""))}">'
-            f'{img(name, alt or (cap + " – zástupná vizualizace"), sizes, eager)}<span class="zf__ic">{ICON["zoom"]}</span></button></figure>')
+            f'{img(name, alt or ("Vizualizace: " + cap.lower()), sizes, eager)}<span class="zf__ic">{ICON["zoom"]}</span></button></figure>')
 
 
 def thumb(name):
@@ -353,7 +372,7 @@ def hrow_rich(h):
 def hcard_house(h):
     T = TYPES[h["type"]]
     pic = T["gal"][h["id"] % len(T["gal"])]
-    return (f'<a class="hc__card" href="dum-{h["id"]}.html"><span class="hc__img">{img(pic, f"Zástupná vizualizace: dům {h['id']}, {T['label'].lower()}", "(min-width:860px) 30vw, 80vw")}</span>'
+    return (f'<a class="hc__card" href="dum-{h["id"]}.html"><span class="hc__img">{img(pic, f"Vizualizace: dům {h['id']}, {T['label'].lower()} dům", "(min-width:860px) 30vw, 80vw")}</span>'
             f'<span class="hc__row"><span class="serif h4">Dům {h["id"]:02d}</span><span class="st st--{h["status"]}">{STATUS[h["status"]]}</span></span>'
             f'<span class="label label--reg">{h["label"]} {h["disp"]} · {area(h["area"])} · pozemek {area(h["plot"])}</span>'
             f'<span class="hc__row hc__price"><span class="serif h5">{price(h)}</span><span class="hc__go">{ICON["arrow"]}</span></span></a>')
@@ -395,7 +414,7 @@ def sky(script, words, label, img_name="hana", eager=False):
     base, have = _src(img_name)
     return f'''<section class="sky" data-hdr="light" aria-label="{esc(label)}">
   <div class="sky__stick">
-    <div class="sky__photo">{img(img_name, CAPTION.get(img_name, "") + " – zástupná vizualizace", "100vw", eager=eager)}</div>
+    <div class="sky__photo">{img(img_name, "Vizualizace: " + CAPTION.get(img_name, "").lower(), "100vw", eager=eager)}</div>
     <div class="sky__fog" aria-hidden="true"></div>
     <div class="sky__cl sky__cl--b" aria-hidden="true"><div class="sky__drift sky__drift--b"></div></div>
     <div class="sky__cl sky__cl--c" aria-hidden="true"><div class="sky__drift sky__drift--c"></div></div>
@@ -415,7 +434,7 @@ def zoomin(name, quote, label=None):
     """Photo that pulls you in: starts as a framed card, opens to full screen while scrolling."""
     return f'''<section class="zin t-cream" data-hdr="light" aria-label="Citát">
   <div class="zin__stick">
-    <div class="zin__media">{img(name, CAPTION.get(name, "") + " – zástupná vizualizace", "100vw")}</div>
+    <div class="zin__media">{img(name, "Vizualizace: " + CAPTION.get(name, "").lower(), "100vw")}</div>
     <div class="zin__txt wrap">
       <span class="quote__mark" aria-hidden="true">“</span>
       <p class="serif h4">{quote}</p>
@@ -485,7 +504,7 @@ def type_slides():
             <dl><dt class="label label--reg">Užitná plocha</dt><dd class="num">{area(T["area"])}</dd></dl>
             <dl><dt class="label label--reg">Volných domů z&nbsp;{len(hs)}</dt><dd class="num">{len(free)}</dd></dl>
           </div>
-          <a class="tslide__img" href="dum-{free[0]["id"]}.html" aria-label="Detail domu {free[0]["id"]}">{img(T["img"], f"Zástupná vizualizace: {T['label'].lower()} dům", "(min-width:860px) 34vw, 100vw")}</a>
+          <a class="tslide__img" href="dum-{free[0]["id"]}.html" aria-label="Detail domu {free[0]["id"]}">{img(T["img"], f"Vizualizace: {T['label'].lower()} dům", "(min-width:860px) 34vw, 100vw")}</a>
           <div class="tslide__txt">
             <p class="p">{TYPE_TXT[t]}</p>
             <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--solid" href="nabidka.html#{"patrove" if t == "patrovy" else "prizemni"}"><span>{"Patrové" if t == "patrovy" else "Přízemní"} domy v&nbsp;nabídce</span>{ICON["arrow"]}</a><a class="btn" href="dum-{free[0]["id"]}.html">Dům {free[0]["id"]}</a></div>
@@ -510,11 +529,11 @@ KIT = [
     ("Okna s&nbsp;trojsklem", "Tichá, úsporná, venkovní žaluzie připravené", "M5 3h14v18H5zM5 12h14M12 3v18M7.5 5.5l2.5-.01M14.5 14.5h2.5"),
 ]
 std_items = [(n, d) for _, _, _, _, items in STD_CATS for n, d, tag in items if tag == "in"][:6]
-GAL = ["hero", "street", "garden", "bungalow", "entry", "aerial", "hana"]
+GAL = ["hero", "street", "bungalow", "garden", "obyvak", "ivory-4", "aerial"]
 
 home = f'''
 <section class="hero" data-hdr="light" aria-labelledby="hero-t">
-  <div class="hero__media">{img("hero", "Zástupná vizualizace patrového domu v Blatci", "100vw", eager=True)}</div>
+  <div class="hero__media">{img("hero", "Vizualizace patrového domu s krytým stáním v Blatci", "100vw", eager=True)}</div>
   <div class="hero__in wrap">
     <h1 class="hero__title ttl ttl--rev on-photo" id="hero-t"><span class="serif mega rise">Blatec</span><span class="script rise rise--s">u&nbsp;Olomouce</span></h1>
     <div class="hero__row">
@@ -586,7 +605,7 @@ home = f'''
 
 <section class="sec t-cream wrap" data-hdr="ink" aria-labelledby="space-t">
   <div class="space__head">{title("pro život", "Prostor", hid="space-t", rev=True)}</div>
-  <div class="space__grid">{"".join(zoom(n, "space") for n in ("garden", "bungalow", "entry", "street"))}</div>
+  <div class="space__grid">{"".join(zoom(n, "space") for n in ("garden", "obyvak", "ivory-1", "entry"))}</div>
   <ul class="kit">{"".join(f'<li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="{ic}"/></svg><b>{n}</b><span class="p p--s">{d}</span></li>' for n, d, ic in KIT)}</ul>
   <div style="display:flex;justify-content:center;margin-top:clamp(40px,5vw,70px)" data-r><a class="btn" href="standardy.html"><span>Všechny standardy</span>{ICON["arrow"]}</a></div>
 </section>
@@ -760,13 +779,17 @@ std = phead("Standardy", "domů", "Standardy", "Co dostanete v&nbsp;ceně, co je
 page("standardy.html", "Standardy domů · Blatec | HP DOMY", "Standardy rodinných domů v Blatci: konstrukce, vytápění, okna, interiér a technologie. Co je v ceně a co za příplatek.", std)
 
 # ======================================================================= GALLERY
-gtabs = [("all", "Vše"), ("ext", "Exteriér"), ("patrovy", "Patrový dům"), ("prizemni", "Přízemní dům"), ("okoli", "Okolí")]
-GITEMS = GALLERY + [dict(src="hana", title="Blatec a hanácká pole", tags=["okoli"])]
-gal = phead("Galerie", "z Blatce", "Galerie", "Zástupné vizualizace. Skutečné vizualizace a fotky ze stavby doplníme.", extra=
+gtabs = [("all", "Vše"), ("ext", "Exteriér"), ("int", "Interiér"), ("patrovy", "Patrový dům"), ("prizemni", "Přízemní dům"), ("okoli", "Okolí")]
+GITEMS = ([dict(src=n, tags=t) for n, t in (("hero", "ext patrovy"), ("entry", "ext patrovy"), ("carport", "ext patrovy"), ("street", "ext patrovy okoli"),
+            ("hana", "ext patrovy"), ("bungalow", "ext prizemni"), ("terasa", "ext prizemni"), ("bazen", "ext prizemni"), ("garden", "ext okoli"),
+            ("zahrada", "ext patrovy"), ("aerial", "ext okoli"), ("obyvak", "int"), ("tv", "int"), ("detail", "int"), ("kuchyn", "int"))]
+          + [dict(src=f"{v}-{n}", tags="int") for v in ("ivory", "sand") for n in (4, 5, 6, 1, 2, 3, 7, 8)])
+for g in GITEMS: g["title"] = CAPTION[g["src"]]
+gal = phead("Galerie", "z Blatce", "Galerie", "Vizualizace domů, zahrad a&nbsp;interiérů. Fotky ze stavby doplníme.", extra=
             '<div class="chips" role="group" aria-label="Filtr galerie" data-r>' + "".join(f'<button type="button" data-g="{v}" aria-pressed="{str(k == 0).lower()}">{t}</button>' for k, (v, t) in enumerate(gtabs)) + "</div>").replace(
-    '</section>', '<div class="gal">' + "".join(f'<div class="gal__i" data-tags="{" ".join(g["tags"])}">{zoom(g["src"], "gal", sizes="(min-width:860px) 33vw, 100vw")}<p class="label label--reg">{g["title"]}</p></div>' for g in GITEMS) + '</div>\n</section>', 1) + final()
-page("galerie.html", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci u Olomouce: patrové a přízemní domy, zahrady, nová ulice a krajina Hané.", gal,
-     jsonld={"@context": "https://schema.org", "@type": "ImageGallery", "name": "Galerie Blatec", "description": "Zástupné vizualizace rodinných domů v Blatci."})
+    '</section>', '<div class="gal">' + "".join(f'<div class="gal__i" data-tags="{g["tags"]}">{zoom(g["src"], "gal", sizes="(min-width:860px) 33vw, 100vw")}<p class="label label--reg">{g["title"]}</p></div>' for g in GITEMS) + '</div>\n</section>', 1) + final()
+page("galerie.html", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci u Olomouce: patrové a přízemní domy, zahrady s bazénem, nová ulice, obývací pokoj a koupelny.", gal,
+     jsonld={"@context": "https://schema.org", "@type": "ImageGallery", "name": "Galerie Blatec", "description": "Vizualizace rodinných domů, zahrad a interiérů v Blatci."})
 
 # ======================================================================= CONTACT
 buy = [("Výběr a prohlídka", "Vyberete volný dům a prohlédnete si pozemek."), ("Rezervace", "Rezervační smlouvou si dům podržíte, v nabídce se označí jako rezervovaný."),
@@ -830,11 +853,11 @@ for h in HOUSES:
     dock = (f'''<nav class="dock" aria-label="Dům {hid}"><div class="dock__info"><span class="label label--reg">Dům {hid} · {STATUS[h["status"]]}</span><b>{price(h)}</b></div>
   <a class="dock__call" href="tel:{TEL}" aria-label="Zavolat prodejci">{ICON["phone"]}</a>{f'<button class="btn btn--solid dock__cta" type="button" data-book data-house="{hid}">Mám zájem</button>' if not sold else '<a class="btn btn--solid dock__cta" href="nabidka.html#volne">Volné domy</a>'}</nav>
 ''')
-    gal_names = T["gal"] + ["garden", "hana"]
+    gal_names = T["gal"] + ["obyvak", "kuchyn", "ivory-4", "sand-4"]
     gal_names = list(dict.fromkeys(gal_names))
     body = f'''
 <section class="dhero" data-hdr="light" aria-labelledby="d-t">
-  <div class="hero__media">{img(T["gal"][0], f"Zástupná vizualizace: {T['label'].lower()} dům", "100vw", eager=True)}</div>
+  <div class="hero__media">{img(T["gal"][0], f"Vizualizace: {T['label'].lower()} dům", "100vw", eager=True)}</div>
   <div class="dhero__in wrap">
     <nav class="crumbs label label--reg" aria-label="Drobečková navigace" style="margin:0"><a class="ulink" href="index.html">Blatec</a><span aria-hidden="true">/</span><a class="ulink" href="nabidka.html">Nabídka</a><span aria-hidden="true">/</span><span>Dům {hid}</span></nav>
     <h1 class="dhero__title ttl ttl--rev on-photo" id="d-t"><span class="serif mega rise">Dům {hid}</span><span class="script rise rise--s">{T["label"].lower()}</span></h1>

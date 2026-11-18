@@ -908,7 +908,7 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 .ftr__legal{display:flex;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;padding:20px 0;margin:0;border-top:0!important;opacity:.7}
 .ftr__mark{margin:0 calc(-1 * var(--gut));overflow:hidden;line-height:0;padding-top:1vw}
 .ftr__mark span{display:block;font:400 37vw/1 var(--f-serif);text-transform:uppercase;letter-spacing:-.035em;padding-top:.02em;margin-bottom:-.04em;
-  color:var(--gold);background:url(img/hana-1920.webp) 50% 80%/cover no-repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;will-change:transform}
+  color:var(--gold);background:url(img/hana-1600.webp) 50% 80%/cover no-repeat;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;will-change:transform}
 @media (max-width:760px){
   .ftr__nav{gap:4px 10px}.ftr__nav a{font-size:19px}
   .ftr__cols{grid-template-columns:1fr}
@@ -1075,3 +1075,8 @@ html:not(.motion) .sky__end{height:30%}
 .gv__n .label{opacity:1}
 .gv__t{opacity:1}.gv__t img{opacity:.5;transition:opacity .35s var(--out)}.gv__t.is-on img{opacity:1}
 @media (hover:hover){.gv__t:hover{opacity:1}.gv__t:hover img{opacity:.85}}
+
+/* ===== SKUTEČNÉ VIZUALIZACE (18. 11.) — fotky na výšku ===== */
+.gv__slide img.is-tall{object-fit:contain;background:rgba(43,26,31,.06)}
+.gal__i:has(.is-tall) .zf{aspect-ratio:4/5}
+.lbx img{object-fit:contain}
