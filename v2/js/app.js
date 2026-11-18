@@ -107,7 +107,7 @@
   /* ---------- lightbox: every zoomable photo ---------- */
   const lbx = $('#lbx'), lImg = $('img', lbx); let lGroup = [], lIdx = 0, lFrom = null;
   const lShow = i => { lIdx = (i + lGroup.length) % lGroup.length; const b = lGroup[lIdx];
-    lImg.src = b.dataset.src; lImg.alt = b.dataset.cap || ''; $('.lbx__cap', lbx).textContent = b.dataset.cap || '';
+    lImg.src = b.dataset.src; lImg.alt = b.dataset.alt || b.dataset.cap || ''; $('.lbx__cap', lbx).textContent = b.dataset.cap || '';
     $('.lbx__n', lbx).textContent = String(lIdx + 1).padStart(2, '0') + ' / ' + String(lGroup.length).padStart(2, '0');
     $$('.lbx__nav', lbx).forEach(n => n.hidden = lGroup.length < 2);
     if (motion) gsap.fromTo(lImg, { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .7, ease: OUT }); };
@@ -332,7 +332,23 @@
   zfs.forEach(f => zio.observe(f));
   const go = () => {
     // hero photo settles
-    $$('.hero__media img').forEach(i => gsap.to(i, { scale: 1, duration: 2.2, ease: 'power3.out' }));
+    $$('.dhero .hero__media img').forEach(i => gsap.to(i, { scale: 1, duration: 2.2, ease: 'power3.out' }));
+    // homepage: the camera slowly circles and pushes in (1.08 → 1.17 and back over ~26 s, one orbit ~22 s)
+    const cam = $('.hero .hero__media img');
+    if (cam) {
+      const z = { v: 0, in: 0 };
+      gsap.to(z, { in: 1, duration: 2.4, ease: 'power2.out' });                      // ease into the motion after load
+      gsap.to(z, { v: 1, duration: 26, ease: 'sine.inOut', repeat: -1, yoyo: true });
+      let on = true, t = 0;
+      new IntersectionObserver(es => { on = es[0].isIntersecting; }).observe($('.hero'));
+      gsap.ticker.add((_, dt) => {
+        if (!on) return;
+        t += dt / 1000;
+        const a = t * Math.PI * 2 / 22, k = z.in;
+        const s = 1.08 + .09 * z.v * k, x = Math.cos(a) * 1.1 * k, y = Math.sin(a) * .7 * k, r = Math.sin(a) * .4 * k;
+        cam.style.transform = `translate3d(${x.toFixed(3)}%,${y.toFixed(3)}%,0) scale(${s.toFixed(4)}) rotate(${r.toFixed(3)}deg)`;
+      });
+    }
     $$('.hero, .dhero').forEach(h => gsap.to($('.hero__media', h), { yPercent: 18, ease: 'none', scrollTrigger: { trigger: h, start: 'top top', end: 'bottom top', scrub: true } }));
     // parallax bands
     $$('[data-par]').forEach(p => gsap.fromTo(p, { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: p.parentElement, start: 'top bottom', end: 'bottom top', scrub: true } }));

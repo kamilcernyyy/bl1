@@ -1080,3 +1080,8 @@ html:not(.motion) .sky__end{height:30%}
 .gv__slide img.is-tall{object-fit:contain;background:rgba(43,26,31,.06)}
 .gal__i:has(.is-tall) .zf{aspect-ratio:4/5}
 .lbx img{object-fit:contain}
+.hero .hero__media img{will-change:transform;backface-visibility:hidden}
+/* nové fotky mají světlejší oblohu: silnější horní pruh pod hlavičkou a závoj pod názvem */
+.hero .hero__media::after{background:linear-gradient(180deg,rgba(46,14,24,.72) 0%,rgba(46,14,24,.42) 14%,rgba(46,14,24,.14) 30%,rgba(46,14,24,.1) 44%,rgba(46,14,24,.6) 66%,rgba(46,14,24,.88) 100%)}
+.hero__in::before{background:radial-gradient(72% 38% at 50% 47%,rgba(30,8,16,.66),rgba(30,8,16,.32) 60%,rgba(30,8,16,0) 100%),linear-gradient(180deg,rgba(30,8,16,0) 52%,rgba(30,8,16,.62) 100%)}
+.hero .hero__title,.hdr:not(.is-ink) .hdr__links a,.hdr:not(.is-ink) .hdr__links button:not(.hdr__menu){text-shadow:0 1px 18px rgba(30,8,16,.45)}

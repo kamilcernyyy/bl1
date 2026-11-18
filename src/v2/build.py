@@ -73,6 +73,11 @@ CAPTION = {"hero": "Patrový dům s krytým stáním", "street": "Patrové domy 
            **{f"{v}-{n}": ("WC" if n >= 7 else "Koupelna") + f" · varianta {v.capitalize()}" for v in ("ivory", "sand") for n in range(1, 9)}}
 
 
+def alt_of(name):
+    """Image description for alt / structured data: brand + place first, then what the photo shows."""
+    return f"HP DOMY Blatec – {CAPTION.get(name, 'vizualizace')}"
+
+
 def _src(name):
     """Responsive WebP set in v2/img: {name}-{width}.webp."""
     have = sorted(int(m.group(1)) for f in os.listdir(os.path.join(OUT, "img")) for m in [re.fullmatch(re.escape(name) + r"-(\d+)\.webp", f)] if m)
@@ -98,14 +103,14 @@ def img(name, alt, sizes="100vw", eager=False, cls=""):
     c = f' class="{cls}"' if cls else ""
     w, h = dims(name)
     if h > w: c = f' class="{(cls + " ") if cls else ""}is-tall"'
-    return f'<img{c} src="{base}/{name}-{have[-1]}.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{esc(alt)}" {load}>'
+    return f'<img{c} src="{base}/{name}-{have[-1]}.webp" srcset="{srcset}" sizes="{sizes}" width="{w}" height="{h}" alt="{esc(alt_of(name))}" {load}>'
 
 
 def zoom(name, group, alt=None, sizes="(min-width:760px) 50vw, 100vw", cls="", eager=False):
     """A figure that opens in the lightbox."""
     base, have = _src(name)
     cap = CAPTION.get(name, "")
-    return (f'<figure class="zf {cls}" data-r><button type="button" class="zf__btn" data-zoom="{group}" data-src="{base}/{name}-{have[-1]}.webp" data-cap="{esc(cap)}" aria-label="Zvětšit: {esc(cap or (alt or ""))}">'
+    return (f'<figure class="zf {cls}" data-r><button type="button" class="zf__btn" data-zoom="{group}" data-src="{base}/{name}-{have[-1]}.webp" data-cap="{esc(cap)}" data-alt="{esc(alt_of(name))}" aria-label="Zvětšit: {esc(cap or (alt or ""))}">'
             f'{img(name, alt or ("Vizualizace: " + cap.lower()), sizes, eager)}<span class="zf__ic">{ICON["zoom"]}</span></button></figure>')
 
 
@@ -348,7 +353,7 @@ def hrow(h, rich=False):
     if rich:
         return hrow_rich(h)
     sold = h["status"] == "prodany"
-    th = f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></div>' if rich else ""
+    th = f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="{esc(alt_of(h["img"]))}" width="320" height="240" loading="lazy" decoding="async"></div>' if rich else ""
     base, have = _src(h["img"])
     return (f'<a class="hl__row{" is-sold" if sold else ""}" href="dum-{h["id"]}.html" data-id="{h["id"]}" data-img="{base}/{h["img"]}-800.webp" data-type="{h["type"]}" data-status="{h["status"]}">'
             f'{th}<span class="hl__name">Dům {h["id"]:02d}</span><span class="hl__type label label--reg">{h["label"]} · {h["disp"]} · {area(h["area"])}</span>'
@@ -362,7 +367,7 @@ def hrow_rich(h):
     sold = h["status"] == "prodany"
     base, have = _src(h["img"])
     return (f'<div class="hl__row{" is-sold" if sold else ""}" data-id="{h["id"]}" data-img="{base}/{h["img"]}-800.webp" data-type="{h["type"]}" data-status="{h["status"]}" data-price="{h["price"] or 0}" data-plot="{h["plot"]}">'
-            f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></div>'
+            f'<div class="hl__thumb"><img src="{thumb(h["img"])}" alt="{esc(alt_of(h["img"]))}" width="320" height="240" loading="lazy" decoding="async"></div>'
             f'<a class="hl__name hl__link" href="dum-{h["id"]}.html">Dům {h["id"]:02d}</a><span class="hl__type label label--reg">{h["label"]} · {h["disp"]} · {area(h["area"])}</span>'
             f'<span class="hl__plot label label--reg">Pozemek {area(h["plot"])}</span><span class="hl__plot label label--reg">Zahrada na {h["garden"]}</span>'
             f'<span class="hl__price">{price(h)}</span><span class="hl__st"><span class="st st--{h["status"]}">{STATUS[h["status"]]}</span></span>'
@@ -494,7 +499,7 @@ def type_slides():
         hs = [h for h in HOUSES if h["type"] == t]
         free = [h for h in hs if h["status"] == "volny"]
         tabs += (f'<button class="ttab" type="button" role="tab" id="tt-{k}" aria-controls="ts-{k}" aria-selected="{str(k == 0).lower()}" data-ttab="{k}">'
-                 f'<span class="ttab__img"><img src="{thumb(T["img"])}" alt="" width="320" height="240" loading="lazy" decoding="async"></span>'
+                 f'<span class="ttab__img"><img src="{thumb(T["img"])}" alt="{esc(alt_of(T["img"]))}" width="320" height="240" loading="lazy" decoding="async"></span>'
                  f'<span class="ttab__t"><span class="serif h5">{T["label"]} dům</span><span class="label label--reg"><span class="nw">{T["disp"]} · {area(T["area"]).replace(" ", "&nbsp;")}</span> · <span class="nw">{len(free)}&nbsp;volných</span></span></span>'
                  f'<span class="ttab__dot" aria-hidden="true"></span></button>')
         slides += f'''<div class="tslide{" is-on" if k == 0 else ""}" id="ts-{k}" data-slide="{k}" role="tabpanel" aria-labelledby="tt-{k}">
@@ -789,7 +794,9 @@ gal = phead("Galerie", "z Blatce", "Galerie", "Vizualizace domů, zahrad a&nbsp;
             '<div class="chips" role="group" aria-label="Filtr galerie" data-r>' + "".join(f'<button type="button" data-g="{v}" aria-pressed="{str(k == 0).lower()}">{t}</button>' for k, (v, t) in enumerate(gtabs)) + "</div>").replace(
     '</section>', '<div class="gal">' + "".join(f'<div class="gal__i" data-tags="{g["tags"]}">{zoom(g["src"], "gal", sizes="(min-width:860px) 33vw, 100vw")}<p class="label label--reg">{g["title"]}</p></div>' for g in GITEMS) + '</div>\n</section>', 1) + final()
 page("galerie.html", "Galerie · Blatec | HP DOMY", "Vizualizace rodinných domů v Blatci u Olomouce: patrové a přízemní domy, zahrady s bazénem, nová ulice, obývací pokoj a koupelny.", gal,
-     jsonld={"@context": "https://schema.org", "@type": "ImageGallery", "name": "Galerie Blatec", "description": "Vizualizace rodinných domů, zahrad a interiérů v Blatci."})
+     jsonld={"@context": "https://schema.org", "@type": "ImageGallery", "name": "Galerie Blatec", "description": "Vizualizace rodinných domů, zahrad a interiérů v Blatci.",
+             "associatedMedia": [{"@type": "ImageObject", "contentUrl": BASE + f"img/{g['src']}-{_src(g['src'])[1][-1]}.webp", "name": alt_of(g["src"]),
+                                  "caption": CAPTION[g["src"]], "creditText": "HP DOMY", "copyrightNotice": "HP DOMY s.r.o."} for g in GITEMS]})
 
 # ======================================================================= CONTACT
 buy = [("Výběr a prohlídka", "Vyberete volný dům a prohlédnete si pozemek."), ("Rezervace", "Rezervační smlouvou si dům podržíte, v nabídce se označí jako rezervovaný."),
@@ -924,5 +931,10 @@ for h in HOUSES:
          body, preload=T["gal"][0], jsonld=jsonld, dock=dock)
 
 urls = sorted(f for f in os.listdir(OUT) if f.endswith(".html") and not f.startswith("_"))
-open(os.path.join(OUT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"  <url><loc>{BASE}{'' if u == 'index.html' else u}</loc></url>\n" for u in urls) + "</urlset>\n")
+PAGE_IMGS = {"index.html": ["hero", "street", "garden", "entry", "aerial", "hana", "obyvak", "ivory-1"], "galerie.html": [g["src"] for g in GITEMS],
+             **{f"dum-{h['id']}.html": list(dict.fromkeys(TYPES[h["type"]]["gal"] + ["obyvak", "kuchyn", "ivory-4", "sand-4"])) for h in HOUSES}}
+def _sm(u):
+    ims = "".join(f"<image:image><image:loc>{BASE}img/{n}-{_src(n)[1][-1]}.webp</image:loc></image:image>" for n in PAGE_IMGS.get(u, []))
+    return f"  <url><loc>{BASE}{'' if u == 'index.html' else u}</loc>{ims}</url>\n"
+open(os.path.join(OUT, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n' + "".join(_sm(u) for u in urls) + "</urlset>\n")
 print("v2 built:", sorted(f for f in os.listdir(OUT) if f.endswith(".html")).__len__(), "pages")
