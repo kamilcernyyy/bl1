@@ -376,7 +376,8 @@ def hrow_rich(h):
 
 def hcard_house(h):
     T = TYPES[h["type"]]
-    pic = T["gal"][h["id"] % len(T["gal"])]
+    fronts = [n for n in T["gal"] if n != "aerial"]   # the top-down street view is not a photo of one house
+    pic = fronts[h["id"] % len(fronts)]
     return (f'<a class="hc__card" href="dum-{h["id"]}.html"><span class="hc__img">{img(pic, f"Vizualizace: dům {h['id']}, {T['label'].lower()} dům", "(min-width:860px) 30vw, 80vw")}</span>'
             f'<span class="hc__row"><span class="serif h4">Dům {h["id"]:02d}</span><span class="st st--{h["status"]}">{STATUS[h["status"]]}</span></span>'
             f'<span class="label label--reg">{h["label"]} {h["disp"]} · {area(h["area"])} · pozemek {area(h["plot"])}</span>'
@@ -606,7 +607,8 @@ home = f'''
   <p class="p center hc__lead">Dům si otevřete klepnutím. Rezervované a&nbsp;prodané najdete v&nbsp;celé nabídce.</p>
   <div class="hc" data-hc>
     <div class="hc__track" data-hc-track>{"".join(hcard_house(h) for h in FREE)}</div>
-    <div class="hc__nav"><button type="button" data-hc-prev aria-label="Předchozí domy">{ICON["left"]}</button><span class="hc__bar" aria-hidden="true"><i></i></span><button type="button" data-hc-next aria-label="Další domy">{ICON["right"]}</button></div>
+    <button type="button" class="hc__arr hc__arr--prev" data-hc-prev aria-label="Předchozí domy">{ICON["left"]}</button>
+    <button type="button" class="hc__arr hc__arr--next" data-hc-next aria-label="Další domy">{ICON["right"]}</button>
   </div>
   <div style="display:flex;justify-content:center;margin-top:clamp(36px,4vw,64px)"><a class="btn btn--solid" href="nabidka.html"><span>Celá nabídka a&nbsp;situace</span>{ICON["arrow"]}</a></div>
 </section>

@@ -245,12 +245,14 @@
 
   /* ---------- free houses: swipeable cards ---------- */
   $$('[data-hc]').forEach(hc => {
-    const tr = $('[data-hc-track]', hc), bar = $('.hc__bar i', hc);
+    const tr = $('[data-hc-track]', hc), prev = $('[data-hc-prev]', hc), next = $('[data-hc-next]', hc);
     const step = () => { const c = tr.firstElementChild; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(tr).columnGap || 16) : 300; };
-    const paint = () => { const w = tr.clientWidth / tr.scrollWidth; bar.style.width = (w * 100) + '%'; bar.style.left = (tr.scrollLeft / tr.scrollWidth * 100) + '%';
-      $('[data-hc-prev]', hc).disabled = tr.scrollLeft < 4; $('[data-hc-next]', hc).disabled = tr.scrollLeft + tr.clientWidth > tr.scrollWidth - 4; };
-    $('[data-hc-prev]', hc).addEventListener('click', () => tr.scrollBy({ left: -step(), behavior: 'smooth' }));
-    $('[data-hc-next]', hc).addEventListener('click', () => tr.scrollBy({ left: step(), behavior: 'smooth' }));
+    const paint = () => {
+      const im = $('.hc__img', tr); if (im) hc.style.setProperty('--hc-mid', (im.offsetHeight / 2) + 'px');   // arrows sit on the middle of the photos
+      prev.disabled = tr.scrollLeft < 4; next.disabled = tr.scrollLeft + tr.clientWidth > tr.scrollWidth - 4;
+    };
+    prev.addEventListener('click', () => tr.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => tr.scrollBy({ left: step(), behavior: 'smooth' }));
     tr.addEventListener('scroll', paint, { passive: true }); addEventListener('resize', paint); paint();
   });
 

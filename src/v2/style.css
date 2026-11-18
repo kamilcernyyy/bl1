@@ -786,13 +786,6 @@ html.motion .rise--s{animation:wipe 1.5s cubic-bezier(.65,0,.35,1) .55s both}
 .hc__go{width:42px;height:42px;flex:none;border:1px solid currentColor;border-radius:50%;display:grid;place-items:center;transition:background-color .4s,color .4s,transform .6s var(--io)}
 .hc__go svg{width:13px;height:13px}
 @media (hover:hover){.hc__card:hover .hc__img img{transform:scale(1.06)}.hc__card:hover .hc__go{background:var(--soil);border-color:var(--soil);color:var(--cream);transform:rotate(45deg)}}
-.hc__nav{display:flex;align-items:center;gap:18px;margin-top:26px}
-.hc__nav button{width:46px;height:46px;border-radius:50%;border:1px solid currentColor;display:grid;place-items:center;transition:opacity .3s}
-.hc__nav button svg{width:14px;height:14px}
-.hc__nav button:disabled{opacity:.3}
-.hc__bar{position:relative;flex:1;height:1px;background:var(--line)}
-.hc__bar i{position:absolute;top:-1px;bottom:-1px;left:0;width:20%;background:var(--ink);transition:left .2s linear}
-@media (hover:none){.hc__nav button{display:none}}
 /* equipment: icon grid */
 .kit{list-style:none;margin:clamp(50px,6vw,100px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid currentColor}
 .kit li{display:grid;gap:10px;align-content:start;padding:clamp(24px,2.6vw,44px) clamp(14px,2vw,34px) clamp(24px,2.6vw,44px) 0;border-bottom:1px solid var(--line);min-width:0}
@@ -1093,3 +1086,15 @@ html:not(.motion) .sky__end{height:30%}
 .hero__media[data-reel] .hero__slide.is-tall{object-position:50% 58%}
 .hero__media[data-reel]::after{z-index:9999}
 .hero__media[data-reel]::after{background:radial-gradient(38% 26% at 100% 0,rgba(46,14,24,.38),rgba(46,14,24,0) 100%),linear-gradient(180deg,rgba(46,14,24,.72) 0%,rgba(46,14,24,.42) 14%,rgba(46,14,24,.14) 30%,rgba(46,14,24,.1) 44%,rgba(46,14,24,.6) 66%,rgba(46,14,24,.88) 100%)}
+
+/* ===== VOLNÉ DOMY · šipky přímo na kraji fotek (18. 11.) ===== */
+.hc{position:relative}
+.hc__arr{position:absolute;z-index:3;top:var(--hc-mid,30%);translate:0 -50%;width:clamp(48px,4vw,60px);height:clamp(48px,4vw,60px);border-radius:50%;display:grid;place-items:center;
+  background:rgba(244,238,229,.94);color:var(--soil);box-shadow:0 10px 30px -12px rgba(30,8,16,.55);transition:opacity .35s var(--out),visibility 0s,background-color .35s var(--out),color .35s var(--out),scale .35s var(--out)}
+.hc__arr svg{width:16px;height:16px}
+.hc__arr--prev{left:calc(var(--gut) * 0 + 14px)}
+.hc__arr--next{right:14px}
+.hc__arr:disabled{opacity:0;visibility:hidden;transition:opacity .35s var(--out),visibility 0s .35s}
+@media (hover:hover){.hc__arr:hover{background:var(--soil);color:var(--cream);scale:1.06}}
+.hc__arr:focus-visible{outline:2px solid var(--soil);outline-offset:3px}
+@media (max-width:760px){.hc__arr{width:44px;height:44px}.hc__arr--prev{left:6px}.hc__arr--next{right:6px}}
